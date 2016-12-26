@@ -1,0 +1,4 @@
+<Config>
+	<SDP ip="127.0.0.1" port="30000"/>
+	<Cam url="rtsp://192.0.0.64:554/1" bandwidth="4000"/>
+</Config>

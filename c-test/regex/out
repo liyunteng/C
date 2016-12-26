@@ -1,0 +1,25 @@
+total 0
+lrwxrwxrwx 1 root root 0 Feb 12 17:21 dm-0 -> ../devices/virtual/block/dm-0
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 loop0 -> ../devices/virtual/block/loop0
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 loop1 -> ../devices/virtual/block/loop1
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 loop2 -> ../devices/virtual/block/loop2
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 loop3 -> ../devices/virtual/block/loop3
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 loop4 -> ../devices/virtual/block/loop4
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 loop5 -> ../devices/virtual/block/loop5
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 loop6 -> ../devices/virtual/block/loop6
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 loop7 -> ../devices/virtual/block/loop7
+lrwxrwxrwx 1 root root 0 Feb 12 17:21 md1 -> ../devices/virtual/block/md1
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 pda -> ../devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/pda
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 pdb -> ../devices/pci0000:00/0000:00:1c.0/0000:08:00.0/ata7/host6/target6:0:0/6:0:0:0/block/pdb
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 pdc -> ../devices/pci0000:00/0000:00:1c.0/0000:08:00.0/ata9/host8/target8:0:0/8:0:0:0/block/pdc
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 pdd -> ../devices/pci0000:00/0000:00:1c.1/0000:09:00.0/ata11/host10/target10:0:0/10:0:0:0/block/pdd
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 pde -> ../devices/pci0000:00/0000:00:1c.1/0000:09:00.0/ata12/host11/target11:0:0/11:0:0:0/block/pde
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 pdf -> ../devices/pci0000:00/0000:00:1c.2/0000:0a:00.0/ata17/host16/target16:0:0/16:0:0:0/block/pdf
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 pdg -> ../devices/pci0000:00/0000:00:1c.3/0000:0b:00.0/ata19/host18/target18:0:0/18:0:0:0/block/pdg
+lrwxrwxrwx 1 root root 0 Feb 12 17:21 sda -> ../devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sda
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 sdb -> ../devices/pci0000:00/0000:00:1c.0/0000:08:00.0/ata7/host6/target6:0:0/6:0:0:0/block/sdb
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 sdc -> ../devices/pci0000:00/0000:00:1c.0/0000:08:00.0/ata9/host8/target8:0:0/8:0:0:0/block/sdc
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 sdd -> ../devices/pci0000:00/0000:00:1c.1/0000:09:00.0/ata11/host10/target10:0:0/10:0:0:0/block/sdd
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 sde -> ../devices/pci0000:00/0000:00:1c.1/0000:09:00.0/ata12/host11/target11:0:0/11:0:0:0/block/sde
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 sdf -> ../devices/pci0000:00/0000:00:1c.2/0000:0a:00.0/ata17/host16/target16:0:0/16:0:0:0/block/sdf
+lrwxrwxrwx 1 root root 0 Feb 12 17:22 sdg -> ../devices/pci0000:00/0000:00:1c.3/0000:0b:00.0/ata19/host18/target18:0:0/18:0:0:0/block/sdg

@@ -1,0 +1,1 @@
+cmd_/home/lyt/git/document/kernel/prog/1/hello.ko := ld -r -m elf_x86_64 -T /usr/src/linux-3.12.6/scripts/module-common.lds --build-id  -o /home/lyt/git/document/kernel/prog/1/hello.ko /home/lyt/git/document/kernel/prog/1/hello.o /home/lyt/git/document/kernel/prog/1/hello.mod.o

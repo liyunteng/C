@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+        <dev_id>beijing-SO</dev_id>
+        <user_acount>beijing-SO</user_acount>
+        <vsp_url><![CDATA[www.streamoceam.com]]></vsp_url>
+        <code>200</code>
+        <msg>success</msg>
+        <user>
+                <user_id>example</user_id>
+                <user_acount>example</user_acount>
+                <user_name>example</user_name>
+                <big_visit_num>4</big_visit_num>
+                <vsp_id></vsp_id>
+                <vsp_name>test</vsp_name>
+        </user>
+        <msms>
+                <msm>
+                        <msm_ip>115.182.35.112</msm_ip>
+                        <msm_port>2003</msm_port>
+                </msm>
+        </msms>
+</root>

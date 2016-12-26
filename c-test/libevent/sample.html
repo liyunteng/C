@@ -1,0 +1,556 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>磁盘管理界面</title>
+<script language="javascript" src="jQuery-1.8.3.min.js/jquery-1.8.3.min.js"></script>
+<style type="text/css">
+html, body, input, select, textarea {
+	font-size:12px;
+	font-family: tahoma, Arial, 微软雅黑, "Microsoft YaHei", 微软正黑体, "Lucida Sans Unicode", Helvetica, Verdana, Tahoma, sans-serif;
+	font-family: "宋体", "Arial Narrow", HELVETICA\0/;
+ *font-family: "宋体", "Arial Narrow", HELVETICA;
+}
+body {
+	margin:0px;
+	padding:0px;
+}
+.disk_manage {
+	border:solid 1px #999;
+	width:710px;
+	height:auto;
+	display:block;
+	margin:20px;
+	padding:5px;
+	font-weight:bold;
+}
+.disk_list {
+	display:inline-block;
+}
+.disk_table {
+	width:630px;
+	border-top:1px solid #000;
+	border-bottom:1px solid #000;
+	border-left:15px solid #999;
+	border-right:15px solid #999;
+	background-color:#EFEFEF;
+}
+.slot {
+	width:150px;
+	height:38px;
+	padding:1px;
+}
+.tray {
+	border:1px solid #CCCCCC;
+	height:36px;
+	width:148px;
+}
+.tray_div {
+	width:30px;
+	float:left;
+	height:36px;
+	line-height:36px;
+	background:#D6E0EF;
+}
+.tray_div_fang {
+	width:100%;
+	height:18px;
+	text-align:center;
+	background-repeat:no-repeat;
+	background-position:center;
+	cursor:pointer;
+	line-height:16px;
+}
+.tray_div_fang_yes {
+	width:100%;
+	height:18px;
+	text-align:center;
+	cursor:pointer;
+	display:inline-block;
+	background-repeat:no-repeat;
+	background-image:url(image1/sel_1.gif);
+	background-position:center;
+}
+.tray_div_shu {
+	height:18px;
+	width:100%;
+	text-align:center;
+	line-height:16px;
+}
+.tray_div_zhong {
+	height:36px;
+	line-height:36px;
+	width:100px;
+	display:inline-block;
+//	text-align:center;
+//	float:left;
+}
+.tray_div_you {
+	width:10px;
+	height:36px;
+	line-height:36px;
+	float:left;
+}
+.tray_div_lv {
+	margin:3px 5px;
+	background-color:#CCCCCC;
+	background-repeat:no-repeat;
+	height:10px;
+	width:10px;
+	background-image:url(image1/disk_pow.gif);
+}
+.tray_div_hong {
+	margin:8px 5px;
+	background-color:#CCCCCC;
+	background-repeat:no-repeat;
+	height:10px;
+	width:10px;
+}
+#disk {
+	float:left;
+}
+#disk_info {
+	float:left;
+	width:290px;
+	display:block;
+	margin:20px;
+}
+#disk_info th {
+	font-weight:normal;
+	padding-right:5px;
+	text-align:right;
+	width:115px;
+	height:20px;
+	line-height:20px;
+}
+#disk_info td {
+	width:195px;
+	text-indent:5px;
+	height:20px;
+	line-height:20px;
+}
+.pan {
+	width:100px;
+	height:36px;
+	line-height:36px;
+	text-align:center;
+	float:left;
+ background:;
+	cursor:pointer;
+}
+.raid_pan {
+	width:100px;
+	height:18px;
+	line-height:18px;
+	text-align:center;
+	cursor:pointer;
+	float:left;
+}
+.Detail {
+	width:100px;
+	height:36px;
+	line-height:36px;
+	text-align:center;
+	cursor:pointer;
+	float:left;
+}
+</style>
+<script type="text/javascript">
+/*$(function(){
+     $(".tray_div_fang").click(function(){
+		 $(this).toggleClass("tray_div_fang_yes");
+	      $(this).removeClass('tray_div_fang');
+	      $(this).addClass('tray_div_fang_yes');
+	});
+});*/
+/*$(function(){
+	$('#disk_info').hide();
+	$('.tray_div_zhong').click(function(){
+		$('#disk_info').slideDown();
+		});
+	});*/
+/*$(function(){
+	$('.pan').click(function(){
+		$(".tray_div_fang").addClass('tray_div_fang_yes');
+		});
+	});
+	*/
+/*$(function(){
+	$('.tray_div_fang').live('click',function(){
+		if($(this).hasClass('tray_div_fang')){
+			$(this).removeClass('tray_div_fang');
+			$(this).addClass('tray_div_fang_yes');
+			} else if($(this).hasClass('tray_div_fang_yes')){
+				$(this).removeClass('tray_div_fang_yes');
+				$(this).addClass('tray_div_fang');
+				}
+		});
+});*/
+$(function(){
+	$('.tray_div_zhong').live('click',function() {//查看磁盘详细信息
+			var slotid = $(this).parent().parent().attr('id');
+			$("#disk_info").load("/disk/DiskDetailed.php",{slotid:slotid})
+		});
+	});
+/*$(function(){
+	$('#disk').load(function(){
+		var stid = '';
+		var state = '';
+		var SMART = '';
+		var capacity = '';
+		$.post("#disk",function(data){
+			for(var i = 0; i < data['rows'].length; i++ ){
+				stid = $.trim(data['rows'][i]['slot']).replace(/:/g, '_');
+				state = $.trim(data['rows'][i]['state']);
+				SMART = $.trim(['rows'][i]['SMART']);
+				name = $.trim(['rows'][i]['raid_name']);
+				switch ('#disk'){
+					case 'Free':
+					     $('#slot_id_'+stid+'.Detail').text('空闲盘');
+						 $('#slot_id_'+stid).addClass('Free');
+						 $('#slot_id_'+stid+'.tray_div_fang').addClass('tray_div_fang_yes');
+						 break;
+					}
+				}
+			});
+		});
+	});*/
+$(function(){
+	switch('#disk'){
+		case 'Free':
+		$('#slot_id_').text('空闲盘');
+		$('#slot_id_').addClass('Free');
+		$('#slot_id_').addClass('tray_div_fang');
+		break;
+	}
+	});
+</script>
+</head>
+<body>
+<div class="disk_manage" id="disk">
+  <div style="margin-top:40px;display:inline-block;width:60px;text-align:center;vertical-align:top;">
+    主机柜
+  </div>
+  <span class="disk_list">
+  <table class="disk_table" cellpadding="0" cellspacing="0" border="1">
+    <tbody>
+      <tr>
+        <td class="Free" id="slot_id_0_1"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                1
+              </div>
+            </div>
+            <div class="tray_div_zhong Detail">
+              <div class="tray_div_zhong Detail">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_5"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                5
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_9"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                9
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_13"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                13
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+      </tr>
+      <tr>
+        <td class="slot" id="slot_id_0_2"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                2
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_6"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                6
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_10"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                10
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_14"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                14
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+      </tr>
+      <tr>
+        <td class="slot" id="slot_id_0_3"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                3
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_7"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                7
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_11"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                11
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_15"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                15
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+      </tr>
+      <tr>
+        <td class="slot" id="slot_id_0_4"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                4
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_8"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                8
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_12"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                12
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+        <td class="slot" id="slot_id_0_16"><div class="tray">
+            <div class="tray_div">
+              <div class="tray_div_fang">
+              </div>
+              <div class="tray_div_shu">
+                16
+              </div>
+            </div>
+            <div class="tray_div_zhong">
+              <div class="pan">
+              </div>
+            </div>
+            <div class="tray_div_you">
+              <div class="tray_div_lv">
+              </div>
+              <div class="tray_div_hong">
+              </div>
+            </div>
+          </div></td>
+      </tr>
+    </tbody>
+  </table>
+  </span>
+</div>
+<div id="disk_info">
+</div>
+</body>
+</html>
