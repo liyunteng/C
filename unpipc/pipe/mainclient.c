@@ -9,40 +9,40 @@
 
 int main(int argc, char *argv[])
 {
-	int readfifo, writefifo;
-	size_t len;
-	ssize_t n;
-	char *ptr, fifoname[MAXLINE], buf[MAXLINE];
-	pid_t pid;
+    int readfifo, writefifo;
+    size_t len;
+    ssize_t n;
+    char *ptr, fifoname[MAXLINE], buf[MAXLINE];
+    pid_t pid;
 
-	pid = getpid();
-	snprintf(fifoname, sizeof(fifoname), "/tmp/fifo.%ld", (long)pid);
-	if ((mkfifo(fifoname, 644) < 0) && (errno != EEXIST)) {
-		err_sys("can't create %s", fifoname);
-	}
-	snprintf(buf, sizeof(buf), "%ld ", (long)pid);
-	len = strlen(buf);
-	ptr = buf + len;
+    pid = getpid();
+    snprintf(fifoname, sizeof(fifoname), "/tmp/fifo.%ld", (long) pid);
+    if ((mkfifo(fifoname, 644) < 0) && (errno != EEXIST)) {
+	err_sys("can't create %s", fifoname);
+    }
+    snprintf(buf, sizeof(buf), "%ld ", (long) pid);
+    len = strlen(buf);
+    ptr = buf + len;
 
-	if (fgets(ptr, MAXLINE-len, stdin) < 0) {
-		err_sys("get file name failed");
+    if (fgets(ptr, MAXLINE - len, stdin) < 0) {
+	err_sys("get file name failed");
+    }
+    len = strlen(buf);
+    if ((writefifo = open(SERV_FIFO, O_WRONLY)) < 0) {
+	err_sys("can't open %s", SERV_FIFO);
+    }
+    if (write(writefifo, buf, len) != len) {
+	err_sys("write failed");
+    }
+    if ((readfifo = open(fifoname, O_RDONLY)) < 0) {
+	err_sys("can't open %s", fifoname);
+    }
+    while ((n = read(readfifo, buf, MAXLINE)) > 0) {
+	if (write(STDOUT_FILENO, buf, n) != n) {
+	    err_msg("write failed");
 	}
-	len = strlen(buf);
-	if ((writefifo = open(SERV_FIFO, O_WRONLY)) < 0)   {
-		err_sys("can't open %s", SERV_FIFO);
-	}
-	if (write(writefifo, buf, len) != len) {
-		err_sys("write failed");
-	}
-	if ((readfifo = open(fifoname, O_RDONLY)) < 0) {
-		err_sys("can't open %s", fifoname);
-	}
-	while((n = read(readfifo, buf, MAXLINE)) > 0) {
-		if (write(STDOUT_FILENO, buf, n) != n) {
-			err_msg("write failed");
-		}
-	}
-	close(readfifo);
-	unlink(fifoname);
-	return 0;
+    }
+    close(readfifo);
+    unlink(fifoname);
+    return 0;
 }

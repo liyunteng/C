@@ -27,48 +27,48 @@
 #include <string.h>
 #include <stdlib.h>
 
-ssize_t readn(int fd, void *ptr, size_t n) /* Read "n" bytes from a
-					  * descriptor */
-{
-	size_t	nleft;
-	ssize_t nread;
+ssize_t readn(int fd, void *ptr, size_t n)
+{				/* Read "n" bytes from a
+				 * descriptor */
+    size_t nleft;
+    ssize_t nread;
 
-	nleft = n;
-	while (nleft > 0) {
-		if ((nread = read(fd, ptr, nleft)) < 0) {
-			if (nleft == n)
-				return (-1); /* error, return -1 */
-			else
-				break; /* error, return amount read
-					* so far */
-		} else if (nread == 0) {
-			break;	/* EOF */
-		}
-		nleft -= nread;
-		ptr += nread;
+    nleft = n;
+    while (nleft > 0) {
+	if ((nread = read(fd, ptr, nleft)) < 0) {
+	    if (nleft == n)
+		return (-1);	/* error, return -1 */
+	    else
+		break;		/* error, return amount read
+				 * so far */
+	} else if (nread == 0) {
+	    break;		/* EOF */
 	}
-	return (n-nleft); 	/* return >= 0 */
+	nleft -= nread;
+	ptr += nread;
+    }
+    return (n - nleft);		/* return >= 0 */
 }
 
-ssize_t writen(int fd, const void *ptr, size_t n) /* Write "n" bytes to
-						 * a descriptor */
-{
-	size_t	nleft;
-	ssize_t nwritten;
+ssize_t writen(int fd, const void *ptr, size_t n)
+{				/* Write "n" bytes to
+				 * a descriptor */
+    size_t nleft;
+    ssize_t nwritten;
 
-	nleft = n;
-	while (nleft > 0){
-		if ((nwritten = write(fd, ptr, nleft)) < 0){
-			if (nleft == n)
-				return(-1);
-			else
-				break;
-		} else if (nwritten == 0) {
-			break;
-		}
-		nleft -= nwritten;
-		ptr += nwritten;
+    nleft = n;
+    while (nleft > 0) {
+	if ((nwritten = write(fd, ptr, nleft)) < 0) {
+	    if (nleft == n)
+		return (-1);
+	    else
+		break;
+	} else if (nwritten == 0) {
+	    break;
 	}
-	return (n - nleft);
-	
+	nleft -= nwritten;
+	ptr += nwritten;
+    }
+    return (n - nleft);
+
 }

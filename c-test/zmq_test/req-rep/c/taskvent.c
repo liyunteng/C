@@ -31,41 +31,41 @@
 
 int main(void)
 {
-        void *context = zmq_ctx_new();
+    void *context = zmq_ctx_new();
 
-        void *sender = zmq_socket(context, ZMQ_PUSH);
-        zmq_bind(sender, "tcp://*:5557");
+    void *sender = zmq_socket(context, ZMQ_PUSH);
+    zmq_bind(sender, "tcp://*:5557");
 
-        void *sink = zmq_socket(context, ZMQ_PUSH);
-        zmq_connect(sink, "tcp://localhost:5558");
+    void *sink = zmq_socket(context, ZMQ_PUSH);
+    zmq_connect(sink, "tcp://localhost:5558");
 
-        printf("Press Enter when the workers are ready: ");
-        getchar();
-        printf("Sending tasks to workers...\n");
+    printf("Press Enter when the workers are ready: ");
+    getchar();
+    printf("Sending tasks to workers...\n");
 
 
-        int ret = zmq_send(sink, "0", sizeof("0"), 0);
-        assert(ret == 2);
+    int ret = zmq_send(sink, "0", sizeof("0"), 0);
+    assert(ret == 2);
 
-        srandom(time(NULL));
-        int task_nbr;
-        int total_msec = 0;
-        for (task_nbr = 0; task_nbr != 100; ++ task_nbr) {
-                int workload;
+    srandom(time(NULL));
+    int task_nbr;
+    int total_msec = 0;
+    for (task_nbr = 0; task_nbr != 100; ++task_nbr) {
+	int workload;
 
-                workload = random() % 100 + 1;
-                total_msec += workload;
-                char string[10];
-                sprintf(string, "%d", workload);
-                ret = zmq_send(sender, string, strlen(string)+1, 0);
-                assert(ret == strlen(string) + 1);
-        }
+	workload = random() % 100 + 1;
+	total_msec += workload;
+	char string[10];
+	sprintf(string, "%d", workload);
+	ret = zmq_send(sender, string, strlen(string) + 1, 0);
+	assert(ret == strlen(string) + 1);
+    }
 
-        printf("Total expencted cost: %d msec", total_msec);
-        sleep(1);
+    printf("Total expencted cost: %d msec", total_msec);
+    sleep(1);
 
-        zmq_close(sink);
-        zmq_close(sender);
-        zmq_ctx_destroy(context);
-        return 0;
+    zmq_close(sink);
+    zmq_close(sender);
+    zmq_ctx_destroy(context);
+    return 0;
 }

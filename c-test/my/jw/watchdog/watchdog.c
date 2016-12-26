@@ -5,15 +5,15 @@
 
 int main(int argc, char *argv[])
 {
-	while (1) {
-		if (watchdog_enale() < 0) {
-			sleep(3);
-			continue;
-		}
-
-		while (watchdog_feed() >= 0)
-			sleep(WATCHDOG_FEED_INTERVAL);
-		
+    while (1) {
+	if (watchdog_enale() < 0) {
+	    sleep(3);
+	    continue;
 	}
-	return 0;
+
+	while (watchdog_feed() >= 0)
+	    sleep(WATCHDOG_FEED_INTERVAL);
+
+    }
+    return 0;
 }

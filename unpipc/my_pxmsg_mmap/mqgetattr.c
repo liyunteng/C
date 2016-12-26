@@ -26,26 +26,24 @@
 
 int main(int argc, char *argv[])
 {
-	mqd_t	mqd;
-	struct mq_attr attr;
+    mqd_t mqd;
+    struct mq_attr attr;
 
-	if (argc != 2)
-		err_quit("usage: mgetattr <name>\n");
+    if (argc != 2)
+	err_quit("usage: mgetattr <name>\n");
 
-	mqd = mq_open(argv[1], O_RDONLY);
-	if (mqd < 0)
-		err_quit("mq_open error:");
+    mqd = mq_open(argv[1], O_RDONLY);
+    if (mqd < 0)
+	err_quit("mq_open error:");
 
-	if (mq_getattr(mqd, &attr) < 0) {
-		err_quit("mq_getattr error:");
-	}
-	printf("flags #flags = %ld, max #msgs = %ld, max #bytes/msg = %ld, "
-	       "#currently on queue = %ld\n", attr.mq_flags,
-	       attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
+    if (mq_getattr(mqd, &attr) < 0) {
+	err_quit("mq_getattr error:");
+    }
+    printf("flags #flags = %ld, max #msgs = %ld, max #bytes/msg = %ld, "
+	   "#currently on queue = %ld\n", attr.mq_flags,
+	   attr.mq_maxmsg, attr.mq_msgsize, attr.mq_curmsgs);
 
-	mq_close(mqd);
-	
-	return 0;
+    mq_close(mqd);
+
+    return 0;
 }
-
-

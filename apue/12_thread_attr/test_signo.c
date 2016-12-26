@@ -19,7 +19,7 @@
  * this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
  * 
- */ 
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,79 +30,78 @@
 #include <signal.h>
 
 
-int		quitflag;	/* set nonzero by thread */
-sigset_t	mask;
+int quitflag;			/* set nonzero by thread */
+sigset_t mask;
 
-pthread_mutex_t	lock = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t	wait = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t wait = PTHREAD_COND_INITIALIZER;
 
 void *thr_fn(void *arg)
 {
-	int err, signo;
+    int err, signo;
 
-	for(;;) {
-		err = sigwait(&mask, &signo);
-		if (err != 0) {
-			fprintf(stderr, "sigwait failed: %s\n",
-				strerror(err));
-			return((void *)err);
-		}
-		switch (signo) {
-		case SIGINT:
-			printf("interrupt\n");
-			break;
-			
-		case SIGQUIT:
-			pthread_mutex_lock(&lock);
-			quitflag = 1;
-			pthread_mutex_unlock(&lock);
-			pthread_cond_signal(&wait);
-			return(0);
-			
-		default:
-			printf("unexpected signal %d\n", signo);
-			exit(1);
-		}
-
+    for (;;) {
+	err = sigwait(&mask, &signo);
+	if (err != 0) {
+	    fprintf(stderr, "sigwait failed: %s\n", strerror(err));
+	    return ((void *) err);
 	}
+	switch (signo) {
+	case SIGINT:
+	    printf("interrupt\n");
+	    break;
+
+	case SIGQUIT:
+	    pthread_mutex_lock(&lock);
+	    quitflag = 1;
+	    pthread_mutex_unlock(&lock);
+	    pthread_cond_signal(&wait);
+	    return (0);
+
+	default:
+	    printf("unexpected signal %d\n", signo);
+	    exit(1);
+	}
+
+    }
 }
 
 int main(int argc, char *argv[])
 {
-	int		err;
-	sigset_t	oldmask;
-	pthread_t	tid;
+    int err;
+    sigset_t oldmask;
+    pthread_t tid;
 
-	sigemptyset(&mask);
-	sigaddset(&mask, SIGINT);
-	sigaddset(&mask, SIGQUIT);
-	sigaddset(&mask, SIGILL);
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGINT);
+    sigaddset(&mask, SIGQUIT);
+    sigaddset(&mask, SIGILL);
 
-	if ((err = pthread_sigmask(SIG_BLOCK, &mask, &oldmask)) != 0) {
-		fprintf(stderr, "SIG_BLOCK faield: %s\n", strerror(err));
-		return(err);
-	}
+    if ((err = pthread_sigmask(SIG_BLOCK, &mask, &oldmask)) != 0) {
+	fprintf(stderr, "SIG_BLOCK faield: %s\n", strerror(err));
+	return (err);
+    }
 
-	err = pthread_create(&tid, NULL, thr_fn, NULL);
-	if (err != 0) {
-		fprintf(stderr, "pthread create failed: %s\n", strerror(err));
-		return(err);
-	}
+    err = pthread_create(&tid, NULL, thr_fn, NULL);
+    if (err != 0) {
+	fprintf(stderr, "pthread create failed: %s\n", strerror(err));
+	return (err);
+    }
 
-	pthread_mutex_lock(&lock);
-	while(quitflag == 0) {
-		pthread_cond_wait(&wait, &lock);
-	}
-	pthread_mutex_unlock(&lock);
-	
-	printf("in main thread\n");
-	
-	quitflag = 0;
+    pthread_mutex_lock(&lock);
+    while (quitflag == 0) {
+	pthread_cond_wait(&wait, &lock);
+    }
+    pthread_mutex_unlock(&lock);
 
-	if (sigprocmask(SIG_SETMASK, &oldmask, NULL) < 0) {
-		fprintf(stderr, "SIG_SETMASK failed: %s\n", strerror(errno));
-		return(errno);
-	}
-	
-	return 0;
+    printf("in main thread\n");
+
+    quitflag = 0;
+
+    if (sigprocmask(SIG_SETMASK, &oldmask, NULL) < 0) {
+	fprintf(stderr, "SIG_SETMASK failed: %s\n", strerror(errno));
+	return (errno);
+    }
+
+    return 0;
 }

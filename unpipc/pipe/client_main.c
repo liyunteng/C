@@ -11,21 +11,17 @@
 
 int main(int argc, char *argv[])
 {
-	int readfd, writefd;
+    int readfd, writefd;
 
 
-	if ((writefd = open(FIFO1, O_WRONLY)) < 0)
-		err_sys("can't open %s", FIFO1);
-	if ((readfd = open(FIFO2, O_RDONLY)) < 0)
-		err_sys("can't open %s", FIFO2);
+    if ((writefd = open(FIFO1, O_WRONLY)) < 0)
+	err_sys("can't open %s", FIFO1);
+    if ((readfd = open(FIFO2, O_RDONLY)) < 0)
+	err_sys("can't open %s", FIFO2);
 
-	client(readfd, writefd);
-	
-	close(readfd);
-	close(writefd);
-	return 0;
+    client(readfd, writefd);
+
+    close(readfd);
+    close(writefd);
+    return 0;
 }
-
-
-
-

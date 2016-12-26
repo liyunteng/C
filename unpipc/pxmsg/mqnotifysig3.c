@@ -25,83 +25,83 @@
 #include <mqueue.h>
 #include "../unpipc.h"
 
-volatile sig_atomic_t	mqflag;
+volatile sig_atomic_t mqflag;
 static void sig_usr1(int);
 
 int main(int argc, char *argv[])
 {
-	mqd_t	mqd;
-	void	*buf;
-	ssize_t	n;
-	sigset_t zeromask, newmask, oldmask;
-	struct sigevent sigev;
-	struct mq_attr attr;
+    mqd_t mqd;
+    void *buf;
+    ssize_t n;
+    sigset_t zeromask, newmask, oldmask;
+    struct sigevent sigev;
+    struct mq_attr attr;
 
-	if (argc != 2) {
-		err_quit("usage: mqnotifysig3 <name>\n");
+    if (argc != 2) {
+	err_quit("usage: mqnotifysig3 <name>\n");
+    }
+
+    if ((mqd = mq_open(argv[1], O_RDONLY | O_NONBLOCK)) < 0) {
+	err_sys("mq_open error: ");
+    }
+    if (mq_getattr(mqd, &attr) < 0) {
+	err_sys("mq_getattr error: ");
+    }
+    buf = malloc(attr.mq_msgsize);
+    if (buf == NULL) {
+	err_sys("malloc error: ");
+    }
+
+    if (sigemptyset(&zeromask) < 0) {
+	err_sys("sigemptyset error: ");
+    }
+    if (sigemptyset(&newmask) < 0) {
+	err_sys("sigemptyset error: ");
+    }
+    if (sigemptyset(&oldmask) < 0) {
+	err_sys("sigemptyset error: ");
+    }
+    if (sigaddset(&newmask, SIGUSR1) < 0) {
+	err_sys("sigaddset error: ");
+    }
+
+    if (signal(SIGUSR1, sig_usr1) == SIG_ERR) {
+	err_sys("signal error: ");
+    }
+    sigev.sigev_notify = SIGEV_SIGNAL;
+    sigev.sigev_signo = SIGUSR1;
+    if (mq_notify(mqd, &sigev) < 0) {
+	err_sys("mq_notify error: ");
+    }
+
+    for (;;) {
+	if (sigprocmask(SIG_BLOCK, &newmask, &oldmask) < 0) {
+	    err_sys("sigprocmask error: ");
 	}
-	
-	if ((mqd = mq_open(argv[1], O_RDONLY|O_NONBLOCK)) < 0) {
-		err_sys("mq_open error: ");
-	}
-	if (mq_getattr(mqd, &attr) < 0) {
-		err_sys("mq_getattr error: ");
-	}
-	buf = malloc(attr.mq_msgsize);
-	if (buf == NULL) {
-		err_sys("malloc error: ");
+	while (mqflag == 0) {
+	    sigsuspend(&zeromask);
 	}
 
-	if (sigemptyset(&zeromask) < 0) {
-		err_sys("sigemptyset error: ");
-	}
-	if (sigemptyset(&newmask) < 0) {
-		err_sys("sigemptyset error: ");
-	}
-	if (sigemptyset(&oldmask) < 0) {
-		err_sys("sigemptyset error: ");
-	}
-	if (sigaddset(&newmask, SIGUSR1) < 0) {
-		err_sys("sigaddset error: ");
-	}
-
-	if (signal(SIGUSR1, sig_usr1) == SIG_ERR) {
-		err_sys("signal error: ");
-	}
-	sigev.sigev_notify = SIGEV_SIGNAL;
-	sigev.sigev_signo = SIGUSR1;
+	mqflag = 0;
 	if (mq_notify(mqd, &sigev) < 0) {
-		err_sys("mq_notify error: ");
+	    err_sys("mq_notfiy error: ");
 	}
-
-	for (;;) {
-		if (sigprocmask(SIG_BLOCK, &newmask, &oldmask) < 0) {
-			err_sys("sigprocmask error: ");
-		}
-		while (mqflag == 0) {
-			sigsuspend(&zeromask);
-		}
-
-		mqflag = 0;
-		if (mq_notify(mqd, &sigev) < 0) {
-			err_sys("mq_notfiy error: ");
-		}
-		while ((n = mq_receive(mqd, buf, attr.mq_msgsize, NULL)) >= 0) {
-			printf("read %ld bytes\n", (long)n);
-		}
-		if (errno != EAGAIN) {
-			err_sys("mq_receive error: ");
-		}
-		if (sigprocmask(SIG_UNBLOCK, &newmask, NULL) < 0) {
-			err_sys("sigprocmask error: ");
-		}
+	while ((n = mq_receive(mqd, buf, attr.mq_msgsize, NULL)) >= 0) {
+	    printf("read %ld bytes\n", (long) n);
 	}
-	return 0;
+	if (errno != EAGAIN) {
+	    err_sys("mq_receive error: ");
+	}
+	if (sigprocmask(SIG_UNBLOCK, &newmask, NULL) < 0) {
+	    err_sys("sigprocmask error: ");
+	}
+    }
+    return 0;
 }
 
 
 static void sig_usr1(int signo)
 {
-	mqflag = 1;
-	return;
+    mqflag = 1;
+    return;
 }

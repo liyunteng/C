@@ -26,47 +26,44 @@
 
 int main(int argc, char *argv[])
 {
-	int	c, flags;
-	mqd_t	mqd;
-	ssize_t	n;
-	uint32_t prio;
-	void	*buf;
-	struct mq_attr attr;
+    int c, flags;
+    mqd_t mqd;
+    ssize_t n;
+    uint32_t prio;
+    void *buf;
+    struct mq_attr attr;
 
-	flags = O_RDONLY;
-	while ((c = getopt(argc, argv, "n")) != -1) {
-		switch (c) {
-		case 'n':
-			flags |= O_NONBLOCK;
-			break;
-		}
+    flags = O_RDONLY;
+    while ((c = getopt(argc, argv, "n")) != -1) {
+	switch (c) {
+	case 'n':
+	    flags |= O_NONBLOCK;
+	    break;
 	}
-	if (optind != argc -1)
-		err_quit("usage: mqreceive [ -n ] <name>\n");
+    }
+    if (optind != argc - 1)
+	err_quit("usage: mqreceive [ -n ] <name>\n");
 
-	mqd = mq_open(argv[optind],flags);
-	if (mqd < 0) {
-		err_sys("mq_open error:");
-	}
-	if (mq_getattr(mqd, &attr) < 0) {
-		err_sys("mq_getattr error:");
-	}
+    mqd = mq_open(argv[optind], flags);
+    if (mqd < 0) {
+	err_sys("mq_open error:");
+    }
+    if (mq_getattr(mqd, &attr) < 0) {
+	err_sys("mq_getattr error:");
+    }
 
-	buf = malloc(attr.mq_msgsize);
-	if (buf == NULL) {
-		err_sys("malloc error:");
-	}
+    buf = malloc(attr.mq_msgsize);
+    if (buf == NULL) {
+	err_sys("malloc error:");
+    }
 
-	n = mq_receive(mqd,buf, attr.mq_msgsize, &prio);
-	if (n < 0) {
-		err_sys("mq_receive error:");
-	}
+    n = mq_receive(mqd, buf, attr.mq_msgsize, &prio);
+    if (n < 0) {
+	err_sys("mq_receive error:");
+    }
 
-	printf("read %ld bytes, priority = %u\n",
-	       (long)n, prio);
-	
-	
-	return 0;
+    printf("read %ld bytes, priority = %u\n", (long) n, prio);
+
+
+    return 0;
 }
-
-

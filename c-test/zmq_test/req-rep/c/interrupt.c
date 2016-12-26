@@ -32,39 +32,39 @@ static int s_interrupted = 0;
 
 static void s_signal_handler(int signal_value)
 {
-        s_interrupted = 1;
+    s_interrupted = 1;
 }
 
 static void s_catch_signals(void)
 {
-        struct sigaction action;
-        action.sa_handler = s_signal_handler;
-        action.sa_flags = 0;
-        sigemptyset(&action.sa_mask);
-        sigaction(SIGINT, &action, NULL);
-        sigaction(SIGTERM, &action, NULL);
+    struct sigaction action;
+    action.sa_handler = s_signal_handler;
+    action.sa_flags = 0;
+    sigemptyset(&action.sa_mask);
+    sigaction(SIGINT, &action, NULL);
+    sigaction(SIGTERM, &action, NULL);
 }
 
 
 int main(void)
 {
-        void *context = zmq_ctx_new();
-        void *socket = zmq_socket(context, ZMQ_REP);
-        zmq_bind(socket, "tcp://*:5555");
+    void *context = zmq_ctx_new();
+    void *socket = zmq_socket(context, ZMQ_REP);
+    zmq_bind(socket, "tcp://*:5555");
 
-        s_catch_signals();
-        while(1) {
-                zmq_msg_t message;
-                zmq_msg_init(&message);
-                zmq_msg_recv(&message, socket, 0);
+    s_catch_signals();
+    while (1) {
+	zmq_msg_t message;
+	zmq_msg_init(&message);
+	zmq_msg_recv(&message, socket, 0);
 
-                if (s_interrupted) {
-                        printf("W: interrupt recieved. killing server...\n");
-                        break;
-                }
-        }
+	if (s_interrupted) {
+	    printf("W: interrupt recieved. killing server...\n");
+	    break;
+	}
+    }
 
-        zmq_close(socket);
-        zmq_ctx_destroy(context);
-        return 0;
+    zmq_close(socket);
+    zmq_ctx_destroy(context);
+    return 0;
 }

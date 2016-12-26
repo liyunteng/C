@@ -19,7 +19,7 @@
  * this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
  * 
- */ 
+ */
 
 #include <stdio.h>
 #include <errno.h>
@@ -28,70 +28,64 @@
 #include <pthread.h>
 #include <string.h>
 
-pthread_mutex_t	lock1 = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t lock1 = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t lock2 = PTHREAD_MUTEX_INITIALIZER;
 
 void prepare(void)
 {
-	printf("preparing locks...\n");
-	pthread_mutex_lock(&lock1);
-	pthread_mutex_lock(&lock2);
+    printf("preparing locks...\n");
+    pthread_mutex_lock(&lock1);
+    pthread_mutex_lock(&lock2);
 }
 
 void parent(void)
 {
-	printf("parent unlocking locks...\n");
-	pthread_mutex_unlock(&lock1);
-	pthread_mutex_unlock(&lock2);
+    printf("parent unlocking locks...\n");
+    pthread_mutex_unlock(&lock1);
+    pthread_mutex_unlock(&lock2);
 }
 
 void child(void)
 {
-	printf("child unlock locks...\n");
-	pthread_mutex_unlock(&lock1);
-	pthread_mutex_unlock(&lock2);
+    printf("child unlock locks...\n");
+    pthread_mutex_unlock(&lock1);
+    pthread_mutex_unlock(&lock2);
 }
 
 void *thr_fn(void *arg)
 {
-	printf("thread stared ...\n");
-	pause();
-	return(0);
+    printf("thread stared ...\n");
+    pause();
+    return (0);
 }
 
 int main(int argc, char *argv[])
 {
-	int		err;
-	pid_t		pid;
-	pthread_t	tid;
+    int err;
+    pid_t pid;
+    pthread_t tid;
 
-	if ((err = pthread_atfork(prepare, parent, child)) != 0) {
-		fprintf(stderr, "pthread_atfork failed: %s\n", strerror(err));
-		return(err);
-	}
-	err = pthread_create(&tid, NULL, thr_fn, NULL);
-	if (err != 0) {
-		fprintf(stderr, "pthread_create failed: %s\n", strerror(err));
-		return(err);
-	}
-	
-	sleep(2);
+    if ((err = pthread_atfork(prepare, parent, child)) != 0) {
+	fprintf(stderr, "pthread_atfork failed: %s\n", strerror(err));
+	return (err);
+    }
+    err = pthread_create(&tid, NULL, thr_fn, NULL);
+    if (err != 0) {
+	fprintf(stderr, "pthread_create failed: %s\n", strerror(err));
+	return (err);
+    }
 
-	printf("parent about to fork...\n");
-	if ((pid = fork()) < 0) {
-		fprintf(stderr, "fork failed: %s\n", strerror(errno));
-		return(errno);
-	} else if (pid == 0) {
-		printf("child returned from fork\n");
-	} else {
-		printf("parent return from fork\n");
-	}
-	
-	return 0;
+    sleep(2);
+
+    printf("parent about to fork...\n");
+    if ((pid = fork()) < 0) {
+	fprintf(stderr, "fork failed: %s\n", strerror(errno));
+	return (errno);
+    } else if (pid == 0) {
+	printf("child returned from fork\n");
+    } else {
+	printf("parent return from fork\n");
+    }
+
+    return 0;
 }
-
-
-
-
-
-

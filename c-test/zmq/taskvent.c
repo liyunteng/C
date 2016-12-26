@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 {
     void *context = zmq_ctx_new();
 
-    void *sender =  zmq_socket(context, ZMQ_PUSH);
+    void *sender = zmq_socket(context, ZMQ_PUSH);
     zmq_bind(sender, "tcp://*:5557");
 
     void *sink = zmq_socket(context, ZMQ_PUSH);
@@ -44,12 +44,12 @@ int main(int argc, char *argv[])
     int task_nbr;
     int total_msec = 0;
     for (task_nbr = 0; task_nbr < 100; task_nbr++) {
-        int workload;
-        workload = randof(100) + 1;
-        total_msec += workload;
-        char string[10];
-        sprintf(string, "%d", workload);
-        s_send(sender, string);
+	int workload;
+	workload = randof(100) + 1;
+	total_msec += workload;
+	char string[10];
+	sprintf(string, "%d", workload);
+	s_send(sender, string);
     }
 
     printf("Total expected cost: %d msec\n", total_msec);

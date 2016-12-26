@@ -22,20 +22,20 @@ regex_t ata_disk_slot_regex;
 
 it us_regex_init(void)
 {
-	regcomp(&udev_sd_regex, REG_UDEV_DISK, REG_EXTENDED);
-	regcomp(&udev_usb_regex, REG_UDEV_USB, REG_EXTENDED);
-	regcomp(&udev_md_regex, REG_UDEV_MD, REG_EXTENDED);
-	regcomp(&md_disk_info_regex, REG_MD_DISK_INFO, REG_EXTENDED);
-	regcomp(&udev_dom_disk_regex, REG_DOM_DISK, REG_EXTENDED);
-	regcomp(&ata_disk_slot_regex, REG_ATA_DISK_SLOT, REG_EXTENDED);
+    regcomp(&udev_sd_regex, REG_UDEV_DISK, REG_EXTENDED);
+    regcomp(&udev_usb_regex, REG_UDEV_USB, REG_EXTENDED);
+    regcomp(&udev_md_regex, REG_UDEV_MD, REG_EXTENDED);
+    regcomp(&md_disk_info_regex, REG_MD_DISK_INFO, REG_EXTENDED);
+    regcomp(&udev_dom_disk_regex, REG_DOM_DISK, REG_EXTENDED);
+    regcomp(&ata_disk_slot_regex, REG_ATA_DISK_SLOT, REG_EXTENDED);
 
-	return 0;
+    return 0;
 }
 
 void us_regex_release(void)
 {
-	regfree(&udev_usb_regex);
-	regfree(&udev_sd_regex);
-	regfree(&udev_md_regex);
-	regfree(&md_disk_info_regex);
+    regfree(&udev_usb_regex);
+    regfree(&udev_sd_regex);
+    regfree(&udev_md_regex);
+    regfree(&md_disk_info_regex);
 }

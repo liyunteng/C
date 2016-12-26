@@ -14,31 +14,25 @@
 int main(int argc, char *argv[])
 {
 
-	size_t		n;
-	char		buf[MAXLINE], command[MAXLINE];
-	FILE		*fp;
+    size_t n;
+    char buf[MAXLINE], command[MAXLINE];
+    FILE *fp;
 
-	if (fgets(buf, MAXLINE, stdin) < 0) {
-		fprintf(stderr, "fgets failed: %s\n", strerror(errno));
-	}
-	n = strlen(buf);
-	if (buf[n-1] == '\n')
-		n--;
+    if (fgets(buf, MAXLINE, stdin) < 0) {
+	fprintf(stderr, "fgets failed: %s\n", strerror(errno));
+    }
+    n = strlen(buf);
+    if (buf[n - 1] == '\n')
+	n--;
 
-	snprintf(command, sizeof(command), "cat %s", buf);
-	if ((fp = popen(command, "r")) == NULL) {
-		fprintf(stderr, "popen failed: %s\n", strerror(errno));
-	}
-	while (fgets(buf, MAXLINE, fp) != NULL) {
+    snprintf(command, sizeof(command), "cat %s", buf);
+    if ((fp = popen(command, "r")) == NULL) {
+	fprintf(stderr, "popen failed: %s\n", strerror(errno));
+    }
+    while (fgets(buf, MAXLINE, fp) != NULL) {
 
-		fputs(buf, stdout);
-	}
-	pclose(fp);
-	return 0;
+	fputs(buf, stdout);
+    }
+    pclose(fp);
+    return 0;
 }
-
-
-
-
-
-

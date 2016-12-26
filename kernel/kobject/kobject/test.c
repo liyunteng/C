@@ -10,64 +10,67 @@ MODULE_AUTHOR("liyunteng");
 MODULE_LICENSE("GPL");
 
 void obj_test_release(struct kobject *kobject);
-ssize_t kobj_test_show(struct kobject *kobject, struct attribute *attr,char *buf);
-ssize_t kobj_test_store(struct kobject *kobject, struct attribute *attr, const char *buf, size_t count);
+ssize_t kobj_test_show(struct kobject *kobject, struct attribute *attr,
+		       char *buf);
+ssize_t kobj_test_store(struct kobject *kobject, struct attribute *attr,
+			const char *buf, size_t count);
 
 struct attribute test_attr = {
-	.name = "kobj_confi",
-	.mode = S_IRWXUGO,
+    .name = "kobj_confi",
+    .mode = S_IRWXUGO,
 };
 
 static struct attribute *def_attrs[] = {
-	&test_attr,
-	NULL,
+    &test_attr,
+    NULL,
 };
 
 struct sysfs_ops obj_test_sysops = {
-	.show = kobj_test_show,
-	.store = kobj_test_store,
+    .show = kobj_test_show,
+    .store = kobj_test_store,
 };
 
 struct kobj_type ktype = {
-	.release = obj_test_release,
-	.sysfs_ops = &obj_test_sysops,
-	.default_attrs = def_attrs,
+    .release = obj_test_release,
+    .sysfs_ops = &obj_test_sysops,
+    .default_attrs = def_attrs,
 };
 
 void obj_test_release(struct kobject *kobject)
 {
-	printk("eric_test: release.\n");
+    printk("eric_test: release.\n");
 }
 
-ssize_t kobj_test_show(struct kobject *kobject, struct attribute *attr, char *buf)
+ssize_t kobj_test_show(struct kobject *kobject, struct attribute *attr,
+		       char *buf)
 {
-	printk("have show.\n");
-	printk("attrname: %s.\n", attr->name);
-	sprintf(buf, "%s\n", attr->name);
-	return strlen(attr->name)+2;
+    printk("have show.\n");
+    printk("attrname: %s.\n", attr->name);
+    sprintf(buf, "%s\n", attr->name);
+    return strlen(attr->name) + 2;
 }
 
-ssize_t kobj_test_store(struct kobject *kobject, struct attribute *attr,
+ssize_t kobj_test_store(struct kobject * kobject, struct attribute * attr,
 			const char *buf, size_t count)
 {
-	printk("have store.\n");
-	printk("write: %s\n", buf);
-	return count;
+    printk("have store.\n");
+    printk("write: %s\n", buf);
+    return count;
 }
 
 struct kobject kobj;
 
 static int __init kobj_test_init(void)
 {
-	printk("kobject test init.\n");
-	kobject_init_and_add(&kobj, &ktype, NULL, "kobject_test");
-	return 0;
+    printk("kobject test init.\n");
+    kobject_init_and_add(&kobj, &ktype, NULL, "kobject_test");
+    return 0;
 }
 
 static void __exit kobj_test_exit(void)
 {
-	printk("kobject test exit.\n");
-	kobject_del(&kobj);
+    printk("kobject test exit.\n");
+    kobject_del(&kobj);
 }
 
 module_init(kobj_test_init);

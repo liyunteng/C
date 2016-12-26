@@ -35,32 +35,32 @@
 
 int main(void)
 {
-        void *context = zmq_ctx_new();
+    void *context = zmq_ctx_new();
 
-        void *receiver = zmq_socket(context, ZMQ_PULL);
-        zmq_connect(receiver, "tcp://localhost:5557");
+    void *receiver = zmq_socket(context, ZMQ_PULL);
+    zmq_connect(receiver, "tcp://localhost:5557");
 
 
-        void *sender = zmq_socket(context, ZMQ_PUSH);
-        zmq_connect(sender, "tcp://localhost:5558");
+    void *sender = zmq_socket(context, ZMQ_PUSH);
+    zmq_connect(sender, "tcp://localhost:5558");
 
-        struct timeval tv;
-        while(1) {
-                char buf[16];
-                zmq_recv(receiver, buf, sizeof(buf), 0);
-                fflush(stdout);
-                printf("%s.\n", buf);
+    struct timeval tv;
+    while (1) {
+	char buf[16];
+	zmq_recv(receiver, buf, sizeof(buf), 0);
+	fflush(stdout);
+	printf("%s.\n", buf);
 
-                tv.tv_sec = 0;
-                tv.tv_usec = (atoi(buf) * 1000);
-                select(0, NULL, NULL, NULL, &tv);
+	tv.tv_sec = 0;
+	tv.tv_usec = (atoi(buf) * 1000);
+	select(0, NULL, NULL, NULL, &tv);
 
-                int ret = zmq_send(sender, "", sizeof(""), 0);
-                assert(ret == sizeof(""));
-        }
+	int ret = zmq_send(sender, "", sizeof(""), 0);
+	assert(ret == sizeof(""));
+    }
 
-        zmq_close(receiver);
-        zmq_close(sender);
-        zmq_ctx_destroy(context);
-        return 0;
+    zmq_close(receiver);
+    zmq_close(sender);
+    zmq_ctx_destroy(context);
+    return 0;
 }

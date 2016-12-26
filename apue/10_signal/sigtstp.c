@@ -29,36 +29,36 @@
 
 #define BUFFSIZE	1024
 
- static void sig_tstp(int);
+static void sig_tstp(int);
 
- int main(int argc, char *argv[])
- {
-     int n;
-     char buf[BUFFSIZE];
+int main(int argc, char *argv[])
+{
+    int n;
+    char buf[BUFFSIZE];
 
-     if (signal(SIGTSTP, SIG_IGN) == SIG_DFL)
-         signal(SIGTSTP, sig_tstp);
+    if (signal(SIGTSTP, SIG_IGN) == SIG_DFL)
+	signal(SIGTSTP, sig_tstp);
 
-     while ((n=read(STDIN_FILENO, buf, BUFFSIZE)) > 0)
-         if (write(STDOUT_FILENO, buf, n) != n)
-             fprintf(stderr, "write error");
+    while ((n = read(STDIN_FILENO, buf, BUFFSIZE)) > 0)
+	if (write(STDOUT_FILENO, buf, n) != n)
+	    fprintf(stderr, "write error");
 
-     if (n < 0)
-         fprintf(stderr, "read error");
-     return 0;
- }
+    if (n < 0)
+	fprintf(stderr, "read error");
+    return 0;
+}
 
- static void sig_tstp(int signo)
- {
-     sigset_t mask;
+static void sig_tstp(int signo)
+{
+    sigset_t mask;
 
-     sigemptyset(&mask);
-     sigprocmask(SIG_UNBLOCK, &mask, NULL);
+    sigemptyset(&mask);
+    sigprocmask(SIG_UNBLOCK, &mask, NULL);
 
 
-     signal(SIGTSTP, SIG_DFL);
+    signal(SIGTSTP, SIG_DFL);
 
-     kill(getpid(), SIGTSTP);
+    kill(getpid(), SIGTSTP);
 
-     signal(SIGTSTP, sig_tstp);
+    signal(SIGTSTP, sig_tstp);
 }

@@ -33,41 +33,35 @@
 
 int main(int argc, char *argv[])
 {
-	int keyboard, ret;
-	char c;
-	fd_set readfd;
-	struct timeval timeout;
+    int keyboard, ret;
+    char c;
+    fd_set readfd;
+    struct timeval timeout;
 
-	keyboard = open("/dev/tty", O_RDONLY);
-	assert(keyboard > 0);
+    keyboard = open("/dev/tty", O_RDONLY);
+    assert(keyboard > 0);
 
-	while (1) {
-		timeout.tv_sec = 5;
-		timeout.tv_usec = 0;
-		FD_ZERO(&readfd);
-		FD_SET(keyboard, &readfd);
-		ret = select(keyboard+1, &readfd, NULL, NULL, &timeout);
+    while (1) {
+	timeout.tv_sec = 5;
+	timeout.tv_usec = 0;
+	FD_ZERO(&readfd);
+	FD_SET(keyboard, &readfd);
+	ret = select(keyboard + 1, &readfd, NULL, NULL, &timeout);
 
-		if (ret == -1) {
-			perror("select error");
-		} else if (ret) {
-			if (FD_ISSET(keyboard, &readfd)) {
-				read(keyboard, &c, 1);
-				printf("%c", c);
-				if ('q' == c)
-					break;
-			} 
-		} else if (ret == 0) {
-			printf("time out\n");
-		}
- 		
+	if (ret == -1) {
+	    perror("select error");
+	} else if (ret) {
+	    if (FD_ISSET(keyboard, &readfd)) {
+		read(keyboard, &c, 1);
+		printf("%c", c);
+		if ('q' == c)
+		    break;
+	    }
+	} else if (ret == 0) {
+	    printf("time out\n");
 	}
-	
-	return 0;
+
+    }
+
+    return 0;
 }
-
-
-
-
-
-

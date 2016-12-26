@@ -11,10 +11,10 @@ extern int fd_map(int out_fd, int argc, char *argv[]);
 
 int main(int argc, char *argv[])
 {
-	argc--;
-	argv++;
+    argc--;
+    argv++;
 
-	fd_map(1, argc, argv);
+    fd_map(1, argc, argv);
 
-	return 0;
+    return 0;
 }

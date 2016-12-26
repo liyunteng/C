@@ -31,30 +31,24 @@
 
 int main(int argc, char *argv[])
 {
-	int fd;
-	struct stat statbuf;
+    int fd;
+    struct stat statbuf;
 
-	if (argc != 2) {
-		fprintf(stderr, "usage: %s <filename>\n", argv[0]);
-		return (-1);
-	}
+    if (argc != 2) {
+	fprintf(stderr, "usage: %s <filename>\n", argv[0]);
+	return (-1);
+    }
 
-	if ((fd = open(argv[0], O_RDONLY)) < 0) {
-		fprintf(stderr, "open file error: %s\n", strerror(errno));
-		return (errno);
-	}
+    if ((fd = open(argv[0], O_RDONLY)) < 0) {
+	fprintf(stderr, "open file error: %s\n", strerror(errno));
+	return (errno);
+    }
 
-	if (fstat(fd, &statbuf) != 0) {
-		fprintf(stderr, "fstat error: %s\n", strerror(errno));
-		return (errno);
-	}
-	
-	printf("size: %lu\n",statbuf.st_size);
-	return 0;
+    if (fstat(fd, &statbuf) != 0) {
+	fprintf(stderr, "fstat error: %s\n", strerror(errno));
+	return (errno);
+    }
+
+    printf("size: %lu\n", statbuf.st_size);
+    return 0;
 }
-
-
-
-
-
-

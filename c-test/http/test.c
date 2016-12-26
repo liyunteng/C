@@ -45,58 +45,63 @@ int main(int argc, char **argv)
     int sockfd, ret, i, h;
     struct sockaddr_in servaddr;
     char str1[4096], buf[BUFSIZE];
-    fd_set   t_set1;
-    struct timeval  tv;
+    fd_set t_set1;
+    struct timeval tv;
     struct hostent *host;
     struct in_addr addr;
     char *ip = NULL;
 
     if ((host = gethostbyname("www.streamocean.com"))) {
-        char *p =host->h_addr_list[0];
-        memcpy(&addr.s_addr, p, host->h_length);
-        ip = inet_ntoa(addr);
-        printf("ip: %s\n", ip);
+	char *p = host->h_addr_list[0];
+	memcpy(&addr.s_addr, p, host->h_length);
+	ip = inet_ntoa(addr);
+	printf("ip: %s\n", ip);
 
     } else {
-        printf("error.\n");
+	printf("error.\n");
     }
 
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0 ) {
-        printf("创建网络连接失败,本线程即将终止---socket error!\n");
-        exit(0);
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+	printf
+	    ("创建网络连接失败,本线程即将终止---socket error!\n");
+	exit(0);
     };
 
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(PORT);
-    if (inet_pton(AF_INET, IPSTR, &servaddr.sin_addr) <= 0 ){
-        printf("创建网络连接失败,本线程即将终止--inet_pton error!\n");
-        exit(0);
+    if (inet_pton(AF_INET, IPSTR, &servaddr.sin_addr) <= 0) {
+	printf
+	    ("创建网络连接失败,本线程即将终止--inet_pton error!\n");
+	exit(0);
     };
 
-    if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0){
-        printf("连接到服务器失败,connect error!\n");
-        exit(0);
+    if (connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) <
+	0) {
+	printf("连接到服务器失败,connect error!\n");
+	exit(0);
     }
     printf("与远端建立了连接\n");
 
     //发送数据
     memset(str1, 0, 4096);
-    strcat(str1, "GET /SOTP/index.php/Interface/estimate/estimate/dev/dtest20150326-3/user/bjdx_2 HTTP/1.1\r\n");
+    strcat(str1,
+	   "GET /SOTP/index.php/Interface/estimate/estimate/dev/dtest20150326-3/user/bjdx_2 HTTP/1.1\r\n");
     /* strcat(str1, "GET /SOTP/index.php/Interface/content/content/dev/dtest20150326-3/user/bjdx_2/vsp/http%3A%2F%2F172.16.3.121%3A8080%2F/ HTTP/1.1\r\n"); */
     strcat(str1, "Accept: */*\r\n");
     strcat(str1, "User-Agent: Mozilla/5.0\r\n");
     strcat(str1, "Host: 172.16.3.121:8080\r\n");
     strcat(str1, "Connection: Keep-Alive\r\n\r\n");
 
-    printf("%s",str1);
+    printf("%s", str1);
 
-    ret = write(sockfd,str1,strlen(str1));
+    ret = write(sockfd, str1, strlen(str1));
     if (ret < 0) {
-        printf("发送失败！错误代码是%d，错误信息是'%s'\n",errno, strerror(errno));
-        exit(0);
-    }else{
-        printf("消息发送成功，共发送了%d个字节！\n\n", ret);
+	printf("发送失败！错误代码是%d，错误信息是'%s'\n",
+	       errno, strerror(errno));
+	exit(0);
+    } else {
+	printf("消息发送成功，共发送了%d个字节！\n\n", ret);
     }
 
     /*
@@ -133,8 +138,8 @@ int main(int argc, char **argv)
      * }
      */
 
-    while( read(sockfd, buf, 4095) != 0) {
-        printf("%s\n", buf);
+    while (read(sockfd, buf, 4095) != 0) {
+	printf("%s\n", buf);
     }
 
     close(sockfd);

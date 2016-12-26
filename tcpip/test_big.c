@@ -21,31 +21,30 @@
  *
  */
 #include <stdio.h>
-union T{
-        char c[2];
-        unsigned short i;
+union T {
+    char c[2];
+    unsigned short i;
 };
 
 struct Y {
-        unsigned char h:4,
-                l : 4;
+    unsigned char h:4, l:4;
 };
 
 int main(int argc, char *argv[])
 {
-        union T t;
-        t.c[0] = 0x0;
-        t.c[1] = 0x1;
-        printf("t: %u\n", t.i);
-        if (t.i == 256) {
-                printf("little\n");
-        } else {
-                printf("big\n");
-        }
+    union T t;
+    t.c[0] = 0x0;
+    t.c[1] = 0x1;
+    printf("t: %u\n", t.i);
+    if (t.i == 256) {
+	printf("little\n");
+    } else {
+	printf("big\n");
+    }
 
-        struct Y y;
-        y.h = 0x0;
-        y.l = 0x1;
-        printf("y: %u, sizeof: %lu\n", y, sizeof(y));
-        return 0;
+    struct Y y;
+    y.h = 0x0;
+    y.l = 0x1;
+    printf("y: %u, sizeof: %lu\n", y, sizeof(y));
+    return 0;
 }

@@ -19,49 +19,44 @@ static bool bstamp = true;
 
 void set_dbgstamp(bool stamp)
 {
-	bstamp = stamp;
+    bstamp = stamp;
 }
 
 bool get_dbgstamp()
 {
-	return bstamp;
+    return bstamp;
 }
 
-void __dbg_vprintf(
-		FILE *stream,
-		const char *file,
-		const char *func,
-		size_t line,
-		bool berr,
-		const char *fmt,
-		va_list ap)
+void __dbg_vprintf(FILE * stream,
+		   const char *file,
+		   const char *func,
+		   size_t line, bool berr, const char *fmt, va_list ap)
 {
-	char buf[32];
-	size_t i = 0;
-	static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+    char buf[32];
+    size_t i = 0;
+    static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
-	if (bstamp) {
-		time_t now = time(NULL);
-		struct tm now_tm;
-		i = strftime(buf, 31, "%h %e %T", localtime_r(&now, &now_tm));
-	}
+    if (bstamp) {
+	time_t now = time(NULL);
+	struct tm now_tm;
+	i = strftime(buf, 31, "%h %e %T", localtime_r(&now, &now_tm));
+    }
 
-	buf[i] = '\0';
+    buf[i] = '\0';
 
 
-	pthread_mutex_lock(&lock);
+    pthread_mutex_lock(&lock);
 
-	fprintf(stream, "%s %s, %zu, %s:", buf, file, line, func);
-	vprintf(stream, fmt, ap);
-	if (berr) {
-		fprintf(stream, ": %s\n", strerror(errno));
-	} else if (*fmt) {
-		i = strlen(fmt);
-		--i;
-		if (fmt[i] != '\n')
-			fprintf(stream, "\n");
-	}
+    fprintf(stream, "%s %s, %zu, %s:", buf, file, line, func);
+    vprintf(stream, fmt, ap);
+    if (berr) {
+	fprintf(stream, ": %s\n", strerror(errno));
+    } else if (*fmt) {
+	i = strlen(fmt);
+	--i;
+	if (fmt[i] != '\n')
+	    fprintf(stream, "\n");
+    }
 
-	pthread_mutex_unlock(&lock);
+    pthread_mutex_unlock(&lock);
 }
-

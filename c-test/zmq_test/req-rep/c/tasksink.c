@@ -30,37 +30,37 @@
 
 int main(void)
 {
-        void *context = zmq_ctx_new();
-        void *receiver = zmq_socket(context, ZMQ_PULL);
-        zmq_bind(receiver, "tcp://*:5558");
+    void *context = zmq_ctx_new();
+    void *receiver = zmq_socket(context, ZMQ_PULL);
+    zmq_bind(receiver, "tcp://*:5558");
 
 
-        char buf[16];
-        zmq_recv(receiver, buf, sizeof(buf), 0);
+    char buf[16];
+    zmq_recv(receiver, buf, sizeof(buf), 0);
 
-        struct timeval tv;
-        int ret;
-        ret = gettimeofday(&tv, NULL);
-        assert(ret == 0);
+    struct timeval tv;
+    int ret;
+    ret = gettimeofday(&tv, NULL);
+    assert(ret == 0);
 
-        int64_t start_time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+    int64_t start_time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 
-        int task_nbr;
-        for(task_nbr = 0; task_nbr != 100; task_nbr ++)  {
-                zmq_recv(receiver, buf, sizeof(buf), 0);
-                if (task_nbr % 10 == 0){
-                        printf(":");
-                } else
-                        printf(".");
-                fflush(stdout);
-        }
+    int task_nbr;
+    for (task_nbr = 0; task_nbr != 100; task_nbr++) {
+	zmq_recv(receiver, buf, sizeof(buf), 0);
+	if (task_nbr % 10 == 0) {
+	    printf(":");
+	} else
+	    printf(".");
+	fflush(stdout);
+    }
 
-        ret = gettimeofday(&tv, NULL);
-        assert(ret == 0);
-        printf("\nTotal elapsed time: %d msec\n",
-               (int)(tv.tv_sec * 1000 + tv.tv_usec / 1000 - start_time));
+    ret = gettimeofday(&tv, NULL);
+    assert(ret == 0);
+    printf("\nTotal elapsed time: %d msec\n",
+	   (int) (tv.tv_sec * 1000 + tv.tv_usec / 1000 - start_time));
 
-        zmq_close(receiver);
-        zmq_ctx_destroy(context);
-        return 0;
+    zmq_close(receiver);
+    zmq_ctx_destroy(context);
+    return 0;
 }

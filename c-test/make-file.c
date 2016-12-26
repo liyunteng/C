@@ -27,23 +27,24 @@
 int main(int argc, char *argv[])
 {
 
-        if (access("config.xml", F_OK)) {
-        const char *p = "<Config>\n\t<SDP ip=\"127.0.0.1\" port=\"30000\"/>\n\t<Cam url=\"rtsp://192.0.0.64:554/1\" bandwidth=\"4000\"/>\n</Config>\n";
-        FILE *fp= NULL;
-        if ((fp = fopen("config.xml", "w+")) == NULL) {
-                fprintf(stderr,"open config.xml failed");
-        } else {
-                if (fputs(p, fp) == EOF) {
-                        fprintf(stderr,"write config.xml failed");
-                } else {
-                        fclose(fp);
-                        fprintf(stderr,"generate config.xml success.");
-                }
-        }
-}
+    if (access("config.xml", F_OK)) {
+	const char *p =
+	    "<Config>\n\t<SDP ip=\"127.0.0.1\" port=\"30000\"/>\n\t<Cam url=\"rtsp://192.0.0.64:554/1\" bandwidth=\"4000\"/>\n</Config>\n";
+	FILE *fp = NULL;
+	if ((fp = fopen("config.xml", "w+")) == NULL) {
+	    fprintf(stderr, "open config.xml failed");
+	} else {
+	    if (fputs(p, fp) == EOF) {
+		fprintf(stderr, "write config.xml failed");
+	    } else {
+		fclose(fp);
+		fprintf(stderr, "generate config.xml success.");
+	    }
+	}
+    }
 
-if (access("test.xml", F_OK)) {
-        const char *p = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
+    if (access("test.xml", F_OK)) {
+	const char *p = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
 <root>\n\
         <dev_id>beijing-SO</dev_id>\n\
         <user_acount>beijing-SO</user_acount>\n\
@@ -65,18 +66,18 @@ if (access("test.xml", F_OK)) {
                 </msm>\n\
         </msms>\n\
 </root>\n";
-        FILE *fp = NULL;
-        if ((fp = fopen("test.xml", "w+")) == NULL) {
-                fprintf(stderr,"open test.xml failed");
-        } else {
-                if (fputs(p, fp) == EOF) {
-                        fprintf(stderr,"write test.xml failed.");
-                } else {
-                        fclose(fp);
-                        fprintf(stderr, "generate test.xml success.");
-                }
-        }
-}
+	FILE *fp = NULL;
+	if ((fp = fopen("test.xml", "w+")) == NULL) {
+	    fprintf(stderr, "open test.xml failed");
+	} else {
+	    if (fputs(p, fp) == EOF) {
+		fprintf(stderr, "write test.xml failed.");
+	    } else {
+		fclose(fp);
+		fprintf(stderr, "generate test.xml success.");
+	    }
+	}
+    }
 
-        return 0;
+    return 0;
 }

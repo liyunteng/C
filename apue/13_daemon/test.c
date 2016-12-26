@@ -19,7 +19,7 @@
  * this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
  * 
- */ 
+ */
 
 #include <stdio.h>
 #include <unistd.h>
@@ -28,10 +28,7 @@ void daemonize(const char *cmd);
 
 int main(int argc, char *argv[])
 {
-	daemonize("lyt");
+    daemonize("lyt");
 
-	return 0;
+    return 0;
 }
-
-
-

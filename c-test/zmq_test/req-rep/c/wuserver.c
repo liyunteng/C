@@ -31,28 +31,28 @@
 
 int main(int argc, char *argv[])
 {
-        void *context = zmq_ctx_new();
-        void *publisher = zmq_socket(context, ZMQ_PUB);
-        int rc = zmq_bind(publisher, "tcp://*:5556");
-        assert(rc == 0);
-        rc = zmq_bind(publisher, "ipc://weather.ipc");
-        assert(rc == 0);
+    void *context = zmq_ctx_new();
+    void *publisher = zmq_socket(context, ZMQ_PUB);
+    int rc = zmq_bind(publisher, "tcp://*:5556");
+    assert(rc == 0);
+    rc = zmq_bind(publisher, "ipc://weather.ipc");
+    assert(rc == 0);
 
-        srandom(time(NULL));
-        while(1) {
+    srandom(time(NULL));
+    while (1) {
 
-                int zipcode, temperature, rel;
-                zipcode = random() % 100000;
-                temperature = random() % 215 - 80;
-                rel = random() % 50 + 10;
+	int zipcode, temperature, rel;
+	zipcode = random() % 100000;
+	temperature = random() % 215 - 80;
+	rel = random() % 50 + 10;
 
 
-                char update[20];
-                sprintf(update, "%05d %d %d", zipcode, temperature, rel);
-                zmq_send(publisher, update, sizeof(update), 0);
-        }
+	char update[20];
+	sprintf(update, "%05d %d %d", zipcode, temperature, rel);
+	zmq_send(publisher, update, sizeof(update), 0);
+    }
 
-        zmq_close(publisher);
-        zmq_ctx_destroy(context);
-        return 0;
+    zmq_close(publisher);
+    zmq_ctx_destroy(context);
+    return 0;
 }

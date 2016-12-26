@@ -30,9 +30,9 @@
 /* 为每个线程malloc一个单独的buf，并使用pthread_key_t来保存，然后返回
  * 每个线程的私有数据，因此不会产生混乱 */
 
-static pthread_key_t	key;
-static pthread_once_t	init_done = PTHREAD_ONCE_INIT;
-pthread_mutex_t		env_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_key_t key;
+static pthread_once_t init_done = PTHREAD_ONCE_INIT;
+pthread_mutex_t env_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 extern char **environ;
 
@@ -43,30 +43,30 @@ static void thread_init(void)
 
 char *getenv(const char *name)
 {
-    int	i, len;
-    char	*envbuf;
+    int i, len;
+    char *envbuf;
 
     pthread_once(&init_done, thread_init);
     pthread_mutex_lock(&env_mutex);
-    envbuf = (char *)pthread_getspecific(key); /* 创建私有数据 */
+    envbuf = (char *) pthread_getspecific(key);	/* 创建私有数据 */
     if (envbuf == NULL) {
-        envbuf = malloc(ARG_MAX); /* 每个线程单独申请内存空间 */
-        if (envbuf == NULL) {
-                pthread_mutex_unlock(&env_mutex);
-            return(NULL);
-        }
-        pthread_setspecific(key, envbuf); /* 将每个线程的地址
-                           * 空间和key绑定，因
-                           * 此需要使用mutex */
+	envbuf = malloc(ARG_MAX);	/* 每个线程单独申请内存空间 */
+	if (envbuf == NULL) {
+	    pthread_mutex_unlock(&env_mutex);
+	    return (NULL);
+	}
+	pthread_setspecific(key, envbuf);	/* 将每个线程的地址
+						 * 空间和key绑定，因
+						 * 此需要使用mutex */
     }
     len = strlen(name);
     for (i = 0; environ[i] != NULL; i++) {
-        if ((strncmp(name, environ[i], len) == 0) &&
-            (environ[i][len] == '=')) {
-            strcpy(envbuf, &environ[i][len+1]);
-            pthread_mutex_unlock(&env_mutex);
-            return(envbuf);
-        }
+	if ((strncmp(name, environ[i], len) == 0) &&
+	    (environ[i][len] == '=')) {
+	    strcpy(envbuf, &environ[i][len + 1]);
+	    pthread_mutex_unlock(&env_mutex);
+	    return (envbuf);
+	}
     }
     pthread_mutex_unlock(&env_mutex);
 

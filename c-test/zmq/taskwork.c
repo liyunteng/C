@@ -32,13 +32,13 @@ int main(int argc, char *argv[])
     void *sender = zmq_socket(context, ZMQ_PUSH);
     zmq_connect(sender, "tcp://localhost:5558");
 
-    while(1) {
-        char *string = s_recv(receiver);
-        printf("%s.", string);
-        fflush(stdout);
-        s_sleep(atoi(string));
-        free(string);
-        s_send(sender, "");
+    while (1) {
+	char *string = s_recv(receiver);
+	printf("%s.", string);
+	fflush(stdout);
+	s_sleep(atoi(string));
+	free(string);
+	s_send(sender, "");
     }
     zmq_close(receiver);
     zmq_close(sender);

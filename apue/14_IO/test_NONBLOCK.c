@@ -19,7 +19,7 @@
  * this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
  * 
- */ 
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,69 +34,62 @@ char buf[500000];
 
 void set_fl(int fd, int flags)
 {
-	int val;
+    int val;
 
-	if ((val = fcntl(fd, F_GETFL, 0)) < 0) {
-		fprintf(stderr, "fcntl F_GETFL error: %s\n", strerror(errno));
-		exit(errno);
-	}
+    if ((val = fcntl(fd, F_GETFL, 0)) < 0) {
+	fprintf(stderr, "fcntl F_GETFL error: %s\n", strerror(errno));
+	exit(errno);
+    }
 
-	val |= flags;
+    val |= flags;
 
-	if (fcntl(fd, F_SETFL, val) < 0) {
-		fprintf(stderr, "fcntl F_SETFL error: %s\n", strerror(errno));
-		exit(errno);
-	}
-	return;
+    if (fcntl(fd, F_SETFL, val) < 0) {
+	fprintf(stderr, "fcntl F_SETFL error: %s\n", strerror(errno));
+	exit(errno);
+    }
+    return;
 }
 
 void clr_fl(int fd, int flags)
 {
-	int val;
+    int val;
 
-	if ((val = fcntl(fd, F_GETFL, 0)) < 0) {
-		fprintf(stderr, "fcntl F_GETFL error: %s\n", strerror(errno));
-		exit(errno);
-	}
+    if ((val = fcntl(fd, F_GETFL, 0)) < 0) {
+	fprintf(stderr, "fcntl F_GETFL error: %s\n", strerror(errno));
+	exit(errno);
+    }
 
-	val &= ~flags;
+    val &= ~flags;
 
-	if (fcntl(fd, F_SETFL, val) < 0) {
-		fprintf(stderr, "fcntl F_SETFL error: %s\n", strerror(errno));
-		exit(errno);
-	}
-	return;
+    if (fcntl(fd, F_SETFL, val) < 0) {
+	fprintf(stderr, "fcntl F_SETFL error: %s\n", strerror(errno));
+	exit(errno);
+    }
+    return;
 }
 
 int main(int argc, char *argv[])
 {
-	int	ntowrite, nwrite;
-	char	*ptr;
+    int ntowrite, nwrite;
+    char *ptr;
 
-	ntowrite = read(STDIN_FILENO, buf, sizeof(buf));
-	fprintf(stderr, "read %d bytes\n", ntowrite);
+    ntowrite = read(STDIN_FILENO, buf, sizeof(buf));
+    fprintf(stderr, "read %d bytes\n", ntowrite);
 
-	set_fl(STDOUT_FILENO, O_NONBLOCK);
+    set_fl(STDOUT_FILENO, O_NONBLOCK);
 
-	ptr = buf;
-	while(ntowrite > 0) {
-		errno = 0;
-		nwrite = write(STDOUT_FILENO, ptr, ntowrite);
-		fprintf(stderr, "nwrite = %d, errno = %d\n", nwrite, errno);
+    ptr = buf;
+    while (ntowrite > 0) {
+	errno = 0;
+	nwrite = write(STDOUT_FILENO, ptr, ntowrite);
+	fprintf(stderr, "nwrite = %d, errno = %d\n", nwrite, errno);
 
-		if (nwrite > 0) {
-			ptr += nwrite;
-			ntowrite -= nwrite;
-		}
+	if (nwrite > 0) {
+	    ptr += nwrite;
+	    ntowrite -= nwrite;
 	}
+    }
 
-	clr_fl(STDOUT_FILENO, O_NONBLOCK);
-	return 0;
+    clr_fl(STDOUT_FILENO, O_NONBLOCK);
+    return 0;
 }
-
-
-
-
-
-
-

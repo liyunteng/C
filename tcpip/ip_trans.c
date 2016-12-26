@@ -29,42 +29,50 @@
 
 int main(int argc, char *argv[])
 {
-	char *ip;
-	if (argc < 2) {
-		ip = "172.172.16.1";
-	} else {
-		ip = argv[1];
-	}
+    char *ip;
+    if (argc < 2) {
+	ip = "172.172.16.1";
+    } else {
+	ip = argv[1];
+    }
 
-	char c;
-	unsigned long val = 0;
-	unsigned long addr = 0x0;
-	unsigned long base = 10;
-	while (c = *ip++) {
-		switch (c) {
-			case '0': case '1': case '2': case '3': case '4':
-			case '5': case '6': case '7': case '8': case '9':
-				val = (val * base) + (c - '0');
-				break;
-			case '.':
-				addr = addr << 8 | val;
-				val = 0;
-				break;
-			default:
-				break;
-		}
+    char c;
+    unsigned long val = 0;
+    unsigned long addr = 0x0;
+    unsigned long base = 10;
+    while (c = *ip++) {
+	switch (c) {
+	case '0':
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
+	case '8':
+	case '9':
+	    val = (val * base) + (c - '0');
+	    break;
+	case '.':
+	    addr = addr << 8 | val;
+	    val = 0;
+	    break;
+	default:
+	    break;
 	}
-	addr = addr << 8 | val;
-	printf("0x%lX\n", addr);
+    }
+    addr = addr << 8 | val;
+    printf("0x%lX\n", addr);
 
-	unsigned long t;
-	t = addr >> 24 & 0xFF;
-	printf("%d.", (int)t);
-	t = (addr >> 16) & 0xFF;
-	printf("%d.", (int)t);
-	t = (addr >> 8)& 0xFF; 
-	printf("%d.", (int)t);
-	t = (addr >> 0) & 0xFF;
-	printf("%d\n", (int)t);
-	
+    unsigned long t;
+    t = addr >> 24 & 0xFF;
+    printf("%d.", (int) t);
+    t = (addr >> 16) & 0xFF;
+    printf("%d.", (int) t);
+    t = (addr >> 8) & 0xFF;
+    printf("%d.", (int) t);
+    t = (addr >> 0) & 0xFF;
+    printf("%d\n", (int) t);
+
 }

@@ -27,24 +27,24 @@
 
 
 
-square_out * squareproc_1_svc(square_in *inp, struct svc_req *rqstp)
+square_out *squareproc_1_svc(square_in * inp, struct svc_req *rqstp)
 {
-	static square_out	out;
-	out.resl = inp->argl * inp->argl;
-	return(&out);
+    static square_out out;
+    out.resl = inp->argl * inp->argl;
+    return (&out);
 }
 
 
-square_out * squareproc_2_svc(square_in *inp, struct svc_req *rqstp)
+square_out *squareproc_2_svc(square_in * inp, struct svc_req * rqstp)
 {
-	static square_out	out;
+    static square_out out;
 
-	printf("thread %ld started, arg = %ld\n",
-	       (long)pthread_self(), inp->argl);
-	sleep(5);
-	out.resl = inp->argl * inp->argl;
-	printf("thread %ld done\n", (long)pthread_self());
-	return(&out);
+    printf("thread %ld started, arg = %ld\n",
+	   (long) pthread_self(), inp->argl);
+    sleep(5);
+    out.resl = inp->argl * inp->argl;
+    printf("thread %ld done\n", (long) pthread_self());
+    return (&out);
 }
 
 

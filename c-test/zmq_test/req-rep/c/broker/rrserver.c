@@ -29,22 +29,22 @@
 
 int main(void)
 {
-        void *context = zmq_ctx_new();
+    void *context = zmq_ctx_new();
 
-        void *responder = zmq_socket(context, ZMQ_REP);
-        zmq_connect(responder, "tcp://localhost:5560");
+    void *responder = zmq_socket(context, ZMQ_REP);
+    zmq_connect(responder, "tcp://localhost:5560");
 
-        char buf[10];
-        while(1) {
-                zmq_recv(responder, buf, sizeof(buf), 0);
-                printf("recv: %s\n", buf);
+    char buf[10];
+    while (1) {
+	zmq_recv(responder, buf, sizeof(buf), 0);
+	printf("recv: %s\n", buf);
 
-                sleep(1);
+	sleep(1);
 
-                zmq_send(responder, "World", 6, 0);
-        }
+	zmq_send(responder, "World", 6, 0);
+    }
 
-        zmq_close(responder);
-        zmq_ctx_destroy(context);
-        return 0;
+    zmq_close(responder);
+    zmq_ctx_destroy(context);
+    return 0;
 }

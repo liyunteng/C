@@ -19,7 +19,7 @@
  * this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
  * 
- */ 
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,54 +31,50 @@
 
 pid_t lock_test(int fd, int type, off_t offset, int whence, off_t len)
 {
-	struct flock	lock;
+    struct flock lock;
 
-	lock.l_type = type;
-	lock.l_start = offset;
-	lock.l_whence = whence;
-	lock.l_len = len;
+    lock.l_type = type;
+    lock.l_start = offset;
+    lock.l_whence = whence;
+    lock.l_len = len;
 
-	if (fcntl(fd, F_GETLK, &lock) < 0)  {
-		fprintf(stderr, "fcntl error: %s\n", strerror(errno));
-		exit(-1);
-	}
+    if (fcntl(fd, F_GETLK, &lock) < 0) {
+	fprintf(stderr, "fcntl error: %s\n", strerror(errno));
+	exit(-1);
+    }
 
-	if (lock.l_type == F_UNLCK)
-		return (0);
-	return(lock.l_pid);
-} 
+    if (lock.l_type == F_UNLCK)
+	return (0);
+    return (lock.l_pid);
+}
 
 int main(int argc, char *argv[])
 {
-	int	fd;
-	struct flock	lock;
+    int fd;
+    struct flock lock;
 
-	lock.l_type = F_WRLCK;
-	lock.l_start = 0;
-	lock.l_whence = SEEK_SET;
-	lock.l_len = 0;
-	
-	/* 注意是5604 而不是2604 g+s,g-x, 设置T，S位的时候取掩码 */
-	/* 需要挂载时，指定 -o mand选项 */
-	if ((fd = open("./tmplock", O_RDWR|O_CREAT, 5604)) < 0) {
-		fprintf(stderr, "open file error: %s\n", strerror(errno));
-		return (errno);
-	}
-	if (lock_test(fd, F_WRLCK, 0, SEEK_SET, 0) != 0) {
-		fprintf(stderr, "lock_test faile\n");
-		return(errno);
-	}
+    lock.l_type = F_WRLCK;
+    lock.l_start = 0;
+    lock.l_whence = SEEK_SET;
+    lock.l_len = 0;
 
-	if (fcntl(fd, F_SETLK, &lock) != 0) {
-		fprintf(stderr, "lock file error: %s\n", strerror(errno));
-		return(errno);
-	}
+    /* 注意是5604 而不是2604 g+s,g-x, 设置T，S位的时候取掩码 */
+    /* 需要挂载时，指定 -o mand选项 */
+    if ((fd = open("./tmplock", O_RDWR | O_CREAT, 5604)) < 0) {
+	fprintf(stderr, "open file error: %s\n", strerror(errno));
+	return (errno);
+    }
+    if (lock_test(fd, F_WRLCK, 0, SEEK_SET, 0) != 0) {
+	fprintf(stderr, "lock_test faile\n");
+	return (errno);
+    }
 
-	pause();
-	
-	return 0;
+    if (fcntl(fd, F_SETLK, &lock) != 0) {
+	fprintf(stderr, "lock file error: %s\n", strerror(errno));
+	return (errno);
+    }
+
+    pause();
+
+    return 0;
 }
-
-
-
-

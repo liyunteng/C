@@ -32,15 +32,15 @@ int main(int argc, char *argv[])
     void *context = zmq_ctx_new();
     void *request = zmq_socket(context, ZMQ_REQ);
 
-    zmq_connect (request, "tcp://localhost:5555");
+    zmq_connect(request, "tcp://localhost:5555");
 
     int request_nbr;
     for (request_nbr = 0; request_nbr != 10; request_nbr++) {
-        char buffer[10];
-        printf("Sending Hello %d...\n", request_nbr);
-        zmq_send(request, buffer, sizeof(buffer)+1, 0);
-        zmq_recv(request, buffer, 10, 0);
-        printf ("Received %s %d\n", buffer, request_nbr);
+	char buffer[10];
+	printf("Sending Hello %d...\n", request_nbr);
+	zmq_send(request, buffer, sizeof(buffer) + 1, 0);
+	zmq_recv(request, buffer, 10, 0);
+	printf("Received %s %d\n", buffer, request_nbr);
     }
 
     zmq_close(request);

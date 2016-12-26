@@ -26,42 +26,42 @@
 
 int main(int argc, char *argv[])
 {
-	CLIENT	*cl;
-	square_in in;
-	square_out out;
-	square_out *outp;
+    CLIENT *cl;
+    square_in in;
+    square_out out;
+    square_out *outp;
 
-	if (argc != 3)
-		err_quit("usage: client <hostname> <integer-value>\n");
+    if (argc != 3)
+	err_quit("usage: client <hostname> <integer-value>\n");
 
-	cl = clnt_create(argv[1], SQUARE_PROG, SQUARE_VERS, "tcp");
-	if (cl == NULL)
-		err_sys("clnt_create error: ");
+    cl = clnt_create(argv[1], SQUARE_PROG, SQUARE_VERS, "tcp");
+    if (cl == NULL)
+	err_sys("clnt_create error: ");
 
-	in.argl = atol(argv[2]);
-	if ((outp = squareproc_1(&in, cl)) == NULL)
-		err_quit("%s", clnt_sperror(cl, argv[1]));
+    in.argl = atol(argv[2]);
+    if ((outp = squareproc_1(&in, cl)) == NULL)
+	err_quit("%s", clnt_sperror(cl, argv[1]));
 
-	printf("#1 result: %ld\n", outp->resl);
+    printf("#1 result: %ld\n", outp->resl);
 
-	cl = clnt_create(argv[1], SQUARE_PROG, SQUARE_VERS2, "tcp");
-	if (cl == NULL)
-		err_sys("clnt_create error: ");
+    cl = clnt_create(argv[1], SQUARE_PROG, SQUARE_VERS2, "tcp");
+    if (cl == NULL)
+	err_sys("clnt_create error: ");
 
-	in.argl = atol(argv[2]);
-	if ((outp = squareproc_2(&in, cl)) == NULL)
-		err_quit("%s", clnt_sperror(cl, argv[1]));
-	printf("#2 result: %ld\n", outp->resl);
-	/*
-	 * cl = clnt_create(argv[1], SQUARE_PROG, SQUARE_VERS3, "tcp");
-	 * if (cl == NULL)
-	 *	err_sys("clnt_create error: ");
-	 *
-	 * in.argl = atol(argv[2]);
-	 * if (squareproc_3(&in, &out, cl) != RPC_SUCCESS)
-	 *	err_quit("%s", clnt_sperror(cl, argv[1]));
-	 * printf("#3 result: %ld\n", out.resl);
-	 */
+    in.argl = atol(argv[2]);
+    if ((outp = squareproc_2(&in, cl)) == NULL)
+	err_quit("%s", clnt_sperror(cl, argv[1]));
+    printf("#2 result: %ld\n", outp->resl);
+    /*
+     * cl = clnt_create(argv[1], SQUARE_PROG, SQUARE_VERS3, "tcp");
+     * if (cl == NULL)
+     *      err_sys("clnt_create error: ");
+     *
+     * in.argl = atol(argv[2]);
+     * if (squareproc_3(&in, &out, cl) != RPC_SUCCESS)
+     *      err_quit("%s", clnt_sperror(cl, argv[1]));
+     * printf("#3 result: %ld\n", out.resl);
+     */
 
-	return 0;
+    return 0;
 }

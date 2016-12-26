@@ -26,10 +26,8 @@
 
 int main(int argc, char *argv[])
 {
-	if (argc != 2)
-		err_quit("usage: mqunlink <name>\n");
-	mq_unlink(argv[1]);
-	return 0;
+    if (argc != 2)
+	err_quit("usage: mqunlink <name>\n");
+    mq_unlink(argv[1]);
+    return 0;
 }
-
-

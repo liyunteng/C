@@ -29,20 +29,20 @@
 
 int main(void)
 {
-        void *context = zmq_ctx_new();
-        void *requester = zmq_socket(context, ZMQ_REQ);
-        zmq_setsockopt(requester, ZMQ_IDENTITY, "lyt", 4);
-        zmq_connect(requester, "tcp://localhost:5559");
+    void *context = zmq_ctx_new();
+    void *requester = zmq_socket(context, ZMQ_REQ);
+    zmq_setsockopt(requester, ZMQ_IDENTITY, "lyt", 4);
+    zmq_connect(requester, "tcp://localhost:5559");
 
-        int request_nbr;
-        char buf[10];
-        for (request_nbr = 0; request_nbr != 10; request_nbr ++) {
-                zmq_send(requester, "Hello", 6, 0);
-                zmq_recv(requester, buf, sizeof(buf), 0);
-                printf("recv: %d [%s]\n", request_nbr, buf);
-        }
+    int request_nbr;
+    char buf[10];
+    for (request_nbr = 0; request_nbr != 10; request_nbr++) {
+	zmq_send(requester, "Hello", 6, 0);
+	zmq_recv(requester, buf, sizeof(buf), 0);
+	printf("recv: %d [%s]\n", request_nbr, buf);
+    }
 
-        zmq_close(requester);
-        zmq_ctx_destroy(context);
-        return 0;
+    zmq_close(requester);
+    zmq_ctx_destroy(context);
+    return 0;
 }

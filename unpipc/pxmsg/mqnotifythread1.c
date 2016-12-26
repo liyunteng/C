@@ -26,61 +26,61 @@
 #include <pthread.h>
 #include "../unpipc.h"
 
-mqd_t	mqd;
+mqd_t mqd;
 struct mq_attr attr;
 struct sigevent sigev;
 
-static void notify_thread(sigval_t); /* our thread function */
+static void notify_thread(sigval_t);	/* our thread function */
 
 int main(int argc, char *argv[])
 {
-	if (argc != 2) {
-		err_quit("usage: mqnotifythread1 <name>\n");
-	}
+    if (argc != 2) {
+	err_quit("usage: mqnotifythread1 <name>\n");
+    }
 
-	if ((mqd = mq_open(argv[1], O_RDONLY|O_NONBLOCK)) < 0) {
-		err_sys("mq_open error: ");
-	}
-	if (mq_getattr(mqd, &attr) < 0) {
-		err_sys("mq_getattr error: ");
-	}
+    if ((mqd = mq_open(argv[1], O_RDONLY | O_NONBLOCK)) < 0) {
+	err_sys("mq_open error: ");
+    }
+    if (mq_getattr(mqd, &attr) < 0) {
+	err_sys("mq_getattr error: ");
+    }
 
-	sigev.sigev_notify = SIGEV_THREAD;
-	sigev._sigev_un._sigev_thread._function = notify_thread;
-	sigev._sigev_un._sigev_thread._attribute = NULL;
-	sigev.sigev_value.sival_ptr = NULL;
-	if (mq_notify(mqd, &sigev) < 0) {
-		err_sys("mq_notify error: ");
-	}
+    sigev.sigev_notify = SIGEV_THREAD;
+    sigev._sigev_un._sigev_thread._function = notify_thread;
+    sigev._sigev_un._sigev_thread._attribute = NULL;
+    sigev.sigev_value.sival_ptr = NULL;
+    if (mq_notify(mqd, &sigev) < 0) {
+	err_sys("mq_notify error: ");
+    }
 
-	for (;;)
-		pause();
-	return 0;
+    for (;;)
+	pause();
+    return 0;
 }
 
 static void notify_thread(sigval_t sigval)
 {
-	void	*buf;
-	ssize_t	n;
-	
-	printf("notify_thread start...\n");
-	buf = malloc(attr.mq_msgsize);
-	if (buf == NULL) {
-		err_sys("malloc error: ");
-	}
+    void *buf;
+    ssize_t n;
 
-	/* 不要忘记要重新注册 */
-	if (mq_notify(mqd, &sigev) < 0) {
-		err_sys("mq_notify error: ");
-	}
-	
-	while ( (n = mq_receive(mqd, buf, attr.mq_msgsize, NULL)) >= 0) {
-		printf("read %ld bytes\n", (long)n);
-	}
-	if (errno != EAGAIN) {
-		err_sys("mq_receive error: ");
-	}
+    printf("notify_thread start...\n");
+    buf = malloc(attr.mq_msgsize);
+    if (buf == NULL) {
+	err_sys("malloc error: ");
+    }
 
-	free(buf);
-	pthread_exit(NULL);
+    /* 不要忘记要重新注册 */
+    if (mq_notify(mqd, &sigev) < 0) {
+	err_sys("mq_notify error: ");
+    }
+
+    while ((n = mq_receive(mqd, buf, attr.mq_msgsize, NULL)) >= 0) {
+	printf("read %ld bytes\n", (long) n);
+    }
+    if (errno != EAGAIN) {
+	err_sys("mq_receive error: ");
+    }
+
+    free(buf);
+    pthread_exit(NULL);
 }

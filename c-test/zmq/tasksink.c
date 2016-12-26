@@ -36,17 +36,17 @@ int main(int argc, char *argv[])
 
     int task_nbr;
     for (task_nbr = 0; task_nbr < 100; task_nbr++) {
-        char *string = s_recv(receiver);
-        free(string);
-        if ((task_nbr / 10) * 10 == task_nbr)
-            printf(":");
-        else
-            printf(".");
-        fflush(stdout);
+	char *string = s_recv(receiver);
+	free(string);
+	if ((task_nbr / 10) * 10 == task_nbr)
+	    printf(":");
+	else
+	    printf(".");
+	fflush(stdout);
     }
 
     printf("Total elapsed time: %d msec\n",
-           (int) (s_clock() - start_time));
+	   (int) (s_clock() - start_time));
 
     zmq_close(receiver);
     zmq_ctx_destroy(context);
