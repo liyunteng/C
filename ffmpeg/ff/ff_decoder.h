@@ -6,7 +6,7 @@
  *
  * Author: liyunteng <liyunteng@streamocean.com>
  * License: StreamOcean
- * Last-Updated: 2017/09/03 04:24:27
+ * Last-Updated: 2017/09/03 19:07:16
  */
 #ifndef FF_DECODER_H
 #define FF_DECODER_H
@@ -29,16 +29,6 @@
 
 #include "ff_priv.h"
 
-typedef enum {
-    TYPE_VIDEO_STREAM,
-    TYPE_AUDIO_STREAM,
-    TYPE_VIDEO_VOD,
-    TYPE_AUDIO_VOD,
-    TYPE_PICTURE,
-    TYPE_SUBTITLE,
-    TYPE_UNKNOWN,
-} in_t;
-
 struct filter {
     AVFilterContext *ctx;
     AVFilter *f;
@@ -51,7 +41,6 @@ TAILQ_HEAD(filter_head, filter);
 
 struct picture {
     char url[URL_MAX_LEN];
-    in_t type;
     int x;
     int y;
     int w;
@@ -64,30 +53,31 @@ TAILQ_HEAD(picture_head, picture);
 
 struct stream_in {
     char url[URL_MAX_LEN];
-    in_t type;
 
     AVFormatContext *fctx;
-    AVCodecContext *cctx;
-    AVCodec *codec;
-    AVFrame *frame;
-    AVPacket *packet;
+    AVCodecContext **cctx;
 
     AVFilterGraph *gctx;
     struct filter *src;
     struct filter *sink;
     struct filter_head filters;
 
-    int index;
-    pthread_t pid;
+    struct filter *asrc;
+    struct filter *asink;
+
     bool running;
+    pthread_t pid;
 
     struct picture_head pics;
     FILE *fp;                   /* for debug */
+    FILE *afp;                  /* for debug */
 
     TAILQ_ENTRY(stream_in) l;
 };
 TAILQ_HEAD(stream_head, stream_in);
 
 struct stream_in * create_stream_in(const char *url);
+int start(struct stream_in *s);
+int stop(struct stream_in *s);
 
 #endif

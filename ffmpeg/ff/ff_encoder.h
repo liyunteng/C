@@ -6,7 +6,7 @@
  *
  * Author: liyunteng <liyunteng@streamocean.com>
  * License: StreamOcean
- * Last-Updated: 2017/09/02 23:20:03
+ * Last-Updated: 2017/09/03 18:47:58
  */
 #ifndef FF_ENCODER_H
 #define FF_ENCODER_H
@@ -16,20 +16,18 @@
 
 struct stream_out {
     AVFormatContext *fctx;
-    AVCodecContext *cctx;
-    AVCodec *codec;
-    AVFrame *frame;
-    AVPacket *packet;
+    AVCodecContext **cctx;
 
     AVFilterGraph *gctx;
     pthread_t pid;
 
     FILE *fp;                   /* for debug */
     uint64_t pts;
+    uint64_t apts;
 
     struct stream_in *current;
     struct stream_head ss;
 };
 
-struct stream_out * create_stream_out(struct stream_in *in);
+struct stream_out * create_stream_out(struct stream_head ss);
 #endif
