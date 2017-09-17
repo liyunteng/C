@@ -2,7 +2,7 @@
  * Description: ff decoder
  *
  * Copyright (C) 2017 StreamOcean
- * Last-Updated: <2017/09/17 06:46:50 liyunteng>
+ * Last-Updated: <2017/09/18 02:42:35 liyunteng>
  */
 
 #ifndef FF_DECODER_H
@@ -23,18 +23,7 @@
 #include <libavutil/opt.h>
 
 #include <sys/queue.h>
-
 #include "ff_priv.h"
-
-struct filter {
-    AVFilterContext *ctx;
-    AVFilter *f;
-    char cmd[CMD_MAX_LEN];
-    char name[32];
-    char fname[32];             /* filter name */
-    TAILQ_ENTRY(filter) l;
-};
-TAILQ_HEAD(filter_head, filter);
 
 struct picture {
     char url[URL_MAX_LEN];
@@ -47,39 +36,28 @@ struct picture {
 };
 TAILQ_HEAD(picture_head, picture);
 
-
+struct stream_out;
 struct stream_in {
-    char url[URL_MAX_LEN];
+    struct picture_head pics;
 
-    AVFormatContext *fctx;
-    AVCodecContext *vctx;
-    AVCodecContext *actx;
-
-    AVFilterGraph *gctx;
-    struct filter *src;
-    struct filter *sink;
+    struct stream_out *out;
+    struct ff_ctx *ff;
     struct filter_head filters;
-
-    struct filter *asrc;
-    struct filter *asink;
 
     bool running;
     pthread_t pid;
 
-    struct picture_head pics;
-    FILE *fp;                   /* for debug */
-    FILE *afp;                  /* for debug */
-
     bool use_audio;
-    int audio_id;
     bool use_video;
-    int video_id;
+
+    bool must_i_frame;
 
     TAILQ_ENTRY(stream_in) l;
 };
 TAILQ_HEAD(stream_head, stream_in);
 
-struct stream_in * create_stream_in(const char *url, bool video, bool audio);
+
+struct stream_in * create_stream_in(const char *url, struct stream_out *out, bool video, bool audio);
 int start(struct stream_in *s);
 int stop(struct stream_in *s);
 

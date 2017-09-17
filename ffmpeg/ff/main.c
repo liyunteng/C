@@ -3,7 +3,7 @@
  * Description: main
  *
  * Copyright (C) 2017 StreamOcean
- * Last-Updated: <2017/09/17 09:12:07 liyunteng>
+ * Last-Updated: <2017/09/18 03:12:48 liyunteng>
  */
 
 #include <unistd.h>
@@ -15,34 +15,30 @@ int main(void)
     av_register_all();
     avformat_network_init();
     avfilter_register_all();
-    struct stream_in *in1 = create_stream_in("http://172.16.1.238/live/hngqad1000", true, true);
-    struct stream_in *in2 = create_stream_in("http://172.16.1.238/live/hngq1000", true, true);
-    /* struct stream_in *music = create_stream_in("./qrsy.mp2", false, true); */
-    struct stream_head ss;
-    TAILQ_INIT(&ss);
-    TAILQ_INSERT_TAIL(&ss, in1, l);
-    TAILQ_INSERT_TAIL(&ss, in2, l);
-    /* TAILQ_INSERT_TAIL(&ss, music, l); */
 
+    struct stream_out *out = create_stream_out("udp://127.0.0.1:12345");
+    struct stream_in *in1 = create_stream_in("http://172.16.1.238/live/hngqad1000", out,  true, true);
+    struct stream_in *in2 = create_stream_in("http://172.16.1.238/live/hngq1000", out, true, true);
+    /* struct stream_in *music = create_stream_in("./qrsy.mp2", out, false, true); */
     /* start(music); */
-    struct stream_out *out = create_stream_out(ss);
-    /* out->current_audio = music; */
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 500 * 1000;
     while (1) {
-        start(in1);
-        out->current_video = in1;
-        out->current_audio = in1;
         stop(in2);
-        sleep(20);
+        select(0, NULL, NULL, NULL, &tv);
+        start(in1);
+        sleep(5);
 
-        start(in2);
-        out->current_video = in2;
-        out->current_audio = in2;
         stop(in1);
-        sleep(20);
+        select(0, NULL, NULL, NULL, &tv);
+        start(in2);
+        sleep(5);
     }
 
 
     pthread_join(in1->pid, NULL);
     pthread_join(in2->pid, NULL);
+
     return 0;
 }
