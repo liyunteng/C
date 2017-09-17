@@ -1,13 +1,10 @@
 /*
- * Filename: ff_decoder.h
  * Description: ff decoder
  *
  * Copyright (C) 2017 StreamOcean
- *
- * Author: liyunteng <liyunteng@streamocean.com>
- * License: StreamOcean
- * Last-Updated: 2017/09/03 19:07:16
+ * Last-Updated: <2017/09/17 06:46:50 liyunteng>
  */
+
 #ifndef FF_DECODER_H
 #define FF_DECODER_H
 
@@ -55,7 +52,8 @@ struct stream_in {
     char url[URL_MAX_LEN];
 
     AVFormatContext *fctx;
-    AVCodecContext **cctx;
+    AVCodecContext *vctx;
+    AVCodecContext *actx;
 
     AVFilterGraph *gctx;
     struct filter *src;
@@ -72,11 +70,16 @@ struct stream_in {
     FILE *fp;                   /* for debug */
     FILE *afp;                  /* for debug */
 
+    bool use_audio;
+    int audio_id;
+    bool use_video;
+    int video_id;
+
     TAILQ_ENTRY(stream_in) l;
 };
 TAILQ_HEAD(stream_head, stream_in);
 
-struct stream_in * create_stream_in(const char *url);
+struct stream_in * create_stream_in(const char *url, bool video, bool audio);
 int start(struct stream_in *s);
 int stop(struct stream_in *s);
 

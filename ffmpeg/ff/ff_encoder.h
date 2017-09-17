@@ -1,12 +1,8 @@
 /*
- * Filename: ff_encoder.h
  * Description: ff encoder
  *
  * Copyright (C) 2017 StreamOcean
- *
- * Author: liyunteng <liyunteng@streamocean.com>
- * License: StreamOcean
- * Last-Updated: 2017/09/03 18:47:58
+ * Last-Updated: <2017/09/17 06:09:33 liyunteng>
  */
 #ifndef FF_ENCODER_H
 #define FF_ENCODER_H
@@ -19,13 +15,21 @@ struct stream_out {
     AVCodecContext **cctx;
 
     AVFilterGraph *gctx;
+    struct filter *src;
+    struct filter *sink;
+    struct filter *asrc;
+    struct filter *asink;
+
     pthread_t pid;
+    pthread_t a_pid;
 
     FILE *fp;                   /* for debug */
+    FILE *afp;
     uint64_t pts;
     uint64_t apts;
 
-    struct stream_in *current;
+    struct stream_in *current_video;
+    struct stream_in *current_audio;
     struct stream_head ss;
 };
 
