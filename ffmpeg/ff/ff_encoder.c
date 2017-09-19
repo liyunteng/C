@@ -2,7 +2,7 @@
  * Description: ff encoder
  *
  * Copyright (C) 2017 StreamOcean
- * Last-Updated: <2017/09/18 03:02:06 liyunteng>
+ * Last-Updated: <2017/09/18 19:13:10 liyunteng>
  */
 
 #include "ff_encoder.h"
@@ -10,24 +10,6 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include <assert.h>
-#if 0
-static void
-print_packet(const AVFormatContext *fmt_ctx, const AVPacket *pkt, const char *tag)
-{
-    AVRational *time_base = &fmt_ctx->streams[pkt->stream_index]->time_base;
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-
-    DEBUG("%s: time %lums pts:%-9s pts_time:%-5s dts:%-9s dts_time:%-5s duration:%-5s duration_time:%-9s keyframe: %d stream_index:%d",
-          tag,
-          tv.tv_sec*1000 + tv.tv_usec/1000,
-          av_ts2str(pkt->pts), av_ts2timestr(pkt->pts, time_base),
-          av_ts2str(pkt->dts), av_ts2timestr(pkt->dts, time_base),
-          av_ts2str(pkt->duration), av_ts2timestr(pkt->duration, time_base),
-          pkt->flags & AV_PKT_FLAG_KEY,
-          pkt->stream_index);
-}
-#endif
 
 static struct filter *
 create_filter(const char *filter_name, const char *name, const char *cmd, struct ff_ctx *ff)
@@ -98,15 +80,15 @@ init_output(struct ff_ctx *ff)
     ff->ctx[0]->codec_tag = 0;
 
     /* ff->ctx[0]->thread_count = 1; */
-    /* ff->ctx[0]->flags |= AV_CODEC_FLAG_TRUNCATED; */
-    /* ff->ctx[0]->flags |= AV_CODEC_FLAG_LOW_DELAY; */
-    /* ff->ctx[0]->flags |= AV_CODEC_FLAG2_FAST; */
-    /* ff->ctx[0]->flags |= AV_CODEC_FLAG2_LOCAL_HEADER; */
+    ff->ctx[0]->flags |= AV_CODEC_FLAG_TRUNCATED;
+    ff->ctx[0]->flags |= AV_CODEC_FLAG_LOW_DELAY;
+    ff->ctx[0]->flags |= AV_CODEC_FLAG2_FAST;
+    ff->ctx[0]->flags |= AV_CODEC_FLAG2_LOCAL_HEADER;
 
     if (ff->codec[0]->id == AV_CODEC_ID_H264) {
-        av_opt_set(ff->ctx[0]->priv_data, "preset", "fast", 0);
+        av_opt_set(ff->ctx[0]->priv_data, "preset", "ultrafast", 0);
         av_opt_set(ff->ctx[0]->priv_data, "tune", "zerolatency", 0);
-        av_opt_set(ff->ctx[0]->priv_data, "forced-idr", "true", 0);
+        /* av_opt_set(ff->ctx[0]->priv_data, "forced-idr", "true", 0); */
     }
 
     rc = avcodec_open2(ff->ctx[0], ff->codec[0], NULL);
@@ -339,169 +321,187 @@ run(void *arg)
 
 
     while (1) {
-        if (out->current == NULL) {
+        if (TAILQ_EMPTY(&out->ins)) {
             struct timeval tv;
             tv.tv_sec = 0;
             tv.tv_usec = 50 * 1000;
             select(0, NULL, NULL, NULL, &tv);
             continue;
         }
-        struct stream_in *pin;
-        TAILQ_FOREACH(pin, &out->ins, l) {
-            if (pin != NULL && pin != out->current)  {
-                if (av_read_frame(pin->ff->fctx, packet) == 0) {
-                    av_packet_unref(packet);
-                }
-            }
-        }
 
-        struct stream_in *in = out->current;
-        ff = out->current->ff;
-        int rc;
-        unsigned int idx;
-        enum AVMediaType type;
-        if (av_read_frame(ff->fctx, packet) == 0) {
-            idx = packet->stream_index;
-            int which ;
-            type = ff->fctx->streams[idx]->codecpar->codec_type;
-            if (in->use_video && type == AVMEDIA_TYPE_VIDEO) {
-                which = 0;      /* video */
-            } else if (in->use_audio && type == AVMEDIA_TYPE_AUDIO) {
-                which = 1;      /* audio */
-            } else {
-                av_packet_unref(packet);
-                continue;
-            }
-            av_packet_rescale_ts(packet,
-                                 ff->fctx->streams[idx]->time_base,
-                                 ff->ctx[which]->time_base);
-            rc = avcodec_send_packet(ff->ctx[which], packet);
-            if (rc != 0) {
-                WARNING("%s send packet failed: %s", ff->url, av_err2str(rc));
-                av_packet_unref(packet);
-                continue;
-            }
+        struct stream_in *in = NULL;
+        /* pthread_mutex_lock(&out->mutex); */
+        TAILQ_FOREACH(in, &out->ins, l) {
+            if (in != NULL) {
+                ff = in->ff;
+                int rc;
+                unsigned int idx;
+                enum AVMediaType type;
+                if (av_read_frame(ff->fctx, packet) == 0) {
+                    idx = packet->stream_index;
+                    int which ;
+                    type = ff->fctx->streams[idx]->codecpar->codec_type;
+                    if (in->use_video && type == AVMEDIA_TYPE_VIDEO) {
+                        which = 0;      /* video */
+                    } else if (in->use_audio && type == AVMEDIA_TYPE_AUDIO) {
+                        which = 1;      /* audio */
+                    } else {
+                        av_packet_unref(packet);
+                        continue;
+                    }
+                    av_packet_rescale_ts(packet,
+                                         ff->fctx->streams[idx]->time_base,
+                                         ff->ctx[which]->time_base);
+                    rc = avcodec_send_packet(ff->ctx[which], packet);
+                    if (rc != 0) {
+                        WARNING("%s send packet failed: %s", ff->url, av_err2str(rc));
+                        av_packet_unref(packet);
+                        continue;
+                    }
 
-            while(avcodec_receive_frame(ff->ctx[which], frame) >= 0) {
+                    while(avcodec_receive_frame(ff->ctx[which], frame) >= 0) {
 #ifndef NDEBUG
-                /* for debug */
-                if (type == AVMEDIA_TYPE_VIDEO) {
-                    if (ff->fp[0]) {
-                        int size = ff->ctx[0]->width * ff->ctx[0]->height;
-                        fwrite(frame->data[0], 1, size, ff->fp[0]);
-                        fwrite(frame->data[1], 1, size/4, ff->fp[0]);
-                        fwrite(frame->data[2], 1, size/4, ff->fp[0]);
-                    }
-                } else if (type == AVMEDIA_TYPE_AUDIO) {
-                    if (ff->fp[1]) {
-                        swr_convert(a_convert_ctx, &a_out_buf, MAX_AUDIO_FRAME_SIZE,
-                                    (const uint8_t **)frame->data, frame->nb_samples);
-                        fwrite(a_out_buf, 1, a_out_buffer_size, ff->fp[1]);
-                    }
-                }
+                        /* for debug */
+                        if (type == AVMEDIA_TYPE_VIDEO) {
+                            if (ff->fp[0]) {
+                                int size = ff->ctx[0]->width * ff->ctx[0]->height;
+                                fwrite(frame->data[0], 1, size, ff->fp[0]);
+                                fwrite(frame->data[1], 1, size/4, ff->fp[0]);
+                                fwrite(frame->data[2], 1, size/4, ff->fp[0]);
+                            }
+                        } else if (type == AVMEDIA_TYPE_AUDIO) {
+                            if (ff->fp[1]) {
+                                swr_convert(a_convert_ctx, &a_out_buf, MAX_AUDIO_FRAME_SIZE,
+                                            (const uint8_t **)frame->data, frame->nb_samples);
+                                fwrite(a_out_buf, 1, a_out_buffer_size, ff->fp[1]);
+                            }
+                        }
 
 #endif
-                frame->pts = frame->best_effort_timestamp;
-                rc = av_buffersrc_add_frame_flags(ff->src[which]->ctx,frame, 0);
-                if (rc < 0) {
-                    WARNING("%s filter buffersrc add frame failed: %s", ff->url, av_err2str(rc));
-                }
+                        frame->pts = frame->best_effort_timestamp;
+                        rc = av_buffersrc_add_frame_flags(ff->src[which]->ctx,frame, 0);
+                        if (rc < 0) {
+                            WARNING("%s filter buffersrc add frame failed: %s", ff->url, av_err2str(rc));
+                        }
 
-                AVFrame *filter_frame = av_frame_alloc();
-                assert(filter_frame);
-                rc = av_buffersink_get_frame(ff->sink[which]->ctx, filter_frame);
-                if (rc < 0) {
-                    if (rc != AVERROR(EAGAIN))  {
-                        ERROR("%s buffersink get frame failed: %s", ff->url, av_err2str(rc));
-                    }
-                    av_frame_free(&filter_frame);
-                    break;
-                }
+                        AVFrame *filter_frame = av_frame_alloc();
+                        assert(filter_frame);
+                        rc = av_buffersink_get_frame(ff->sink[which]->ctx, filter_frame);
+                        if (rc < 0) {
+                            if (rc != AVERROR(EAGAIN))  {
+                                ERROR("%s buffersink get frame failed: %s", ff->url, av_err2str(rc));
+                            }
+                            av_frame_free(&filter_frame);
+                            break;
+                        }
 
-                filter_frame->pict_type =  AV_PICTURE_TYPE_NONE;
-                if (type == AVMEDIA_TYPE_VIDEO) {
-                    out->ff->pts[0] ++;
-                    filter_frame->pts = out->ff->pts[0];
-                    if (in->must_i_frame) {
-                        filter_frame->pict_type = AV_PICTURE_TYPE_I;
-                        filter_frame->key_frame = 1;
-                        in->must_i_frame = false;
-                    }
-                } else {
-                    out->ff->pts[1] += filter_frame->nb_samples;
-                    filter_frame->pts = out->ff->pts[1];
-                }
+                        filter_frame->pict_type =  AV_PICTURE_TYPE_NONE;
+                        if (type == AVMEDIA_TYPE_VIDEO) {
+                            out->ff->pts[0] ++;
+                            filter_frame->pts = out->ff->pts[0];
+                            if (in->must_i_frame) {
+                                filter_frame->pict_type = AV_PICTURE_TYPE_I;
+                                filter_frame->key_frame = 1;
+                                in->must_i_frame = false;
+                            }
+                        } else {
+                            out->ff->pts[1] += filter_frame->nb_samples;
+                            filter_frame->pts = out->ff->pts[1];
+                        }
 
 #if 0
-                AVPacket enc_pkt;
-                int got_pkt = 0;
-                int (*enc_func)(AVCodecContext *, AVPacket *, const AVFrame *, int *) =
-                    (type == AVMEDIA_TYPE_VIDEO) ? avcodec_encode_video2 : avcodec_encode_audio2;
+                        AVPacket enc_pkt;
+                        int got_pkt = 0;
+                        int (*enc_func)(AVCodecContext *, AVPacket *, const AVFrame *, int *) =
+                            (type == AVMEDIA_TYPE_VIDEO) ? avcodec_encode_video2 : avcodec_encode_audio2;
 
-                enc_pkt.data = NULL;
-                enc_pkt.size = 0;
-                av_init_packet(&enc_pkt);
-                rc = enc_func(in->out->ff->ctx[which], &enc_pkt, filter_frame, &got_pkt);
-                av_frame_free(&filter_frame);
-                if (rc < 0) {
-                    ERROR("%s encode failed: %s", in->out->ff->url, av_err2str(rc));
-                    break;
-                }
-                if (got_pkt) {
-                    enc_pkt.stream_index = which;
-                    av_packet_rescale_ts(&enc_pkt,
-                                         in->out->ff->ctx[which]->time_base,
-                                         in->out->ff->stream[which]->time_base);
-                    if (type == AVMEDIA_TYPE_VIDEO) {
-                        enc_pkt.duration = enc_pkt.pts - in->out->last_video_pts;
-                        in->out->last_video_pts = enc_pkt.pts;
-                        print_packet(in->out->ff->fctx, &enc_pkt, "video");
-                    } else {
-                        print_packet(in->out->ff->fctx, &enc_pkt, "audio");
-                    }
-                    av_interleaved_write_frame(in->out->ff->fctx, &enc_pkt);
-                }
+                        enc_pkt.data = NULL;
+                        enc_pkt.size = 0;
+                        av_init_packet(&enc_pkt);
+                        rc = enc_func(in->out->ff->ctx[which], &enc_pkt, filter_frame, &got_pkt);
+                        av_frame_free(&filter_frame);
+                        if (rc < 0) {
+                            ERROR("%s encode failed: %s", in->out->ff->url, av_err2str(rc));
+                            break;
+                        }
+                        if (got_pkt) {
+                            enc_pkt.stream_index = which;
+                            av_packet_rescale_ts(&enc_pkt,
+                                                 in->out->ff->ctx[which]->time_base,
+                                                 in->out->ff->stream[which]->time_base);
+                            if (type == AVMEDIA_TYPE_VIDEO) {
+                                enc_pkt.duration = enc_pkt.pts - in->out->last_video_pts;
+                                in->out->last_video_pts = enc_pkt.pts;
+                                print_packet(in->out->ff->fctx, &enc_pkt, "video");
+                            } else {
+                                print_packet(in->out->ff->fctx, &enc_pkt, "audio");
+                            }
+                            av_interleaved_write_frame(in->out->ff->fctx, &enc_pkt);
+                        }
 #endif
 
 
 #if 1
-                rc = avcodec_send_frame(out->ff->ctx[which], filter_frame);
-                if (rc < 0) {
-                    ERROR("%s send frame to encoder failed: %s", ff->url, av_err2str(rc));
-                } else {
-                    AVPacket pkt;
-                    pkt.data = NULL;
-                    pkt.size = 0;
-                    av_init_packet(&pkt);
-                    while (avcodec_receive_packet(out->ff->ctx[which], &pkt) >= 0) {
-                        pkt.stream_index = out->ff->stream[which]->index;
-                        av_packet_rescale_ts(&pkt,
-                                             out->ff->ctx[which]->time_base,
-                                             out->ff->stream[which]->time_base);
-                        if (type == AVMEDIA_TYPE_VIDEO) {
-                            pkt.duration = pkt.pts - out->last_video_pts;
-                            out->last_video_pts = pkt.pts;
-                            /* print_packet(out->ff->fctx, &pkt, "video"); */
-                            print_packet(out->ff->fctx, &pkt, ff->url);
+                        rc = avcodec_send_frame(out->ff->ctx[which], filter_frame);
+                        if (rc < 0) {
+                            ERROR("%s send frame to encoder failed: %s", ff->url, av_err2str(rc));
                         } else {
-                            /* print_packet(out->ff->fctx, &pkt, "audio"); */
+                            AVPacket pkt;
+                            pkt.data = NULL;
+                            pkt.size = 0;
+                            av_init_packet(&pkt);
+                            while (avcodec_receive_packet(out->ff->ctx[which], &pkt) >= 0) {
+                                pkt.stream_index = out->ff->stream[which]->index;
+                                av_packet_rescale_ts(&pkt,
+                                                     out->ff->ctx[which]->time_base,
+                                                     out->ff->stream[which]->time_base);
+                                if (type == AVMEDIA_TYPE_VIDEO) {
+                                    pkt.duration = pkt.pts - out->last_video_pts;
+                                    out->last_video_pts = pkt.pts;
+                                    print_packet(out->ff->fctx, &pkt, "video");
+                                    /* print_packet(out->ff->fctx, &pkt, ff->url); */
+                                } else {
+                                    print_packet(out->ff->fctx, &pkt, "audio");
+                                }
+                                if (out->ff->fp[which]) {
+                                    fwrite(pkt.data, 1, pkt.size, out->ff->fp[which]);
+                                }
+                                av_interleaved_write_frame(out->ff->fctx, &pkt);
+                                pkt.data = NULL;
+                                pkt.size = 0;
+                                av_init_packet(&pkt);
+                            }
                         }
-                        if (out->ff->fp[which]) {
-                            fwrite(pkt.data, 1, pkt.size, out->ff->fp[which]);
-                        }
-                        av_interleaved_write_frame(out->ff->fctx, &pkt);
-                        pkt.data = NULL;
-                        pkt.size = 0;
-                        av_init_packet(&pkt);
-                    }
-                }
-                av_frame_free(&filter_frame);
+                        av_frame_free(&filter_frame);
 #endif
-                av_frame_unref(frame);
+                        av_frame_unref(frame);
+                    }
+                    av_packet_unref(packet);
+                }
+
             }
-            av_packet_unref(packet);
         }
+        /* pthread_mutex_unlock(&out->mutex); */
     }
+}
+
+
+int
+add_to_out(struct stream_in*in, struct stream_out *out)
+{
+    pthread_mutex_lock(&out->mutex);
+    TAILQ_INSERT_TAIL(&out->ins, in, l);
+    pthread_mutex_unlock(&out->mutex);
+    return 0;
+}
+
+int
+remove_from_out(struct stream_in*in, struct stream_out*out)
+{
+    pthread_mutex_lock(&out->mutex);
+    TAILQ_REMOVE(&out->ins, in, l);
+    pthread_mutex_unlock(&out->mutex);
+    return 0;
 }
 #endif
 
@@ -513,6 +513,8 @@ create_stream_out(const char *url)
         ERROR("calloc failed");
         return NULL;
     }
+    /* TAILQ_INIT(&out->ins); */
+    pthread_mutex_init(&out->mutex, NULL);
 
     /* out->current = NULL; */
     out->ff = (struct ff_ctx *)calloc(1, sizeof(struct ff_ctx));
@@ -547,7 +549,6 @@ create_stream_out(const char *url)
     if (init_filter(out->ff) != 0) {
         goto clean;
     }
-
 #if 0
     if (pthread_create(&out->pid, NULL, run, (void *)out) != 0) {
         ERROR("create thread failed: %s", strerror(errno));

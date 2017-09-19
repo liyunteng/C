@@ -2,7 +2,7 @@
  * Description: ff decoder
  *
  * Copyright (C) 2017 StreamOcean
- * Last-Updated: <2017/09/18 03:12:34 liyunteng>
+ * Last-Updated: <2017/09/19 10:20:52 liyunteng>
  */
 
 #include <string.h>
@@ -38,7 +38,7 @@ int my_read(void *userp, uint8_t *buf, int buf_size)
     return size;
 }
 
-static void
+void
 print_packet(const AVFormatContext *fmt_ctx, const AVPacket *pkt, const char *tag)
 {
     AVRational *time_base = &fmt_ctx->streams[pkt->stream_index]->time_base;
@@ -63,14 +63,16 @@ init_input(struct ff_ctx *ff, bool use_video, bool use_audio)
     }
 
     int rc;
-    if (use_audio && !use_video) {
-        ff->fctx = avformat_alloc_context();
-        struct fileio *op = (struct fileio *)calloc(1, sizeof(struct fileio));
-        op->fp = fopen(ff->url, "rb");
-        unsigned char *buffer = (unsigned char *)av_malloc(1024*2);
-        AVIOContext *avio = avio_alloc_context(buffer, 1024*2, 0, op,  my_read, NULL, NULL);
-        ff->fctx->pb = avio;
-    }
+    /*
+     * if (use_audio && !use_video) {
+     *     ff->fctx = avformat_alloc_context();
+     *     struct fileio *op = (struct fileio *)calloc(1, sizeof(struct fileio));
+     *     op->fp = fopen(ff->url, "rb");
+     *     unsigned char *buffer = (unsigned char *)av_malloc(1024*2);
+     *     AVIOContext *avio = avio_alloc_context(buffer, 1024*2, 0, op,  my_read, NULL, NULL);
+     *     ff->fctx->pb = avio;
+     * }
+     */
 
     rc = avformat_open_input(&ff->fctx, ff->url, NULL, NULL);
     if (rc != 0) {
@@ -117,7 +119,10 @@ init_input(struct ff_ctx *ff, bool use_video, bool use_audio)
         }
         if (which == 0) {
             ff->ctx[which]->framerate = av_guess_frame_rate(ff->fctx, ff->stream[which], NULL);
+            /* ff->ctx[which]->thread_count = 1; */
         }
+
+
 
         rc = avcodec_open2(ff->ctx[which], ff->codec[which], NULL);
         if (rc < 0) {
@@ -218,7 +223,7 @@ init_filter(struct ff_ctx *ff)
         }
 
 #if 1
-        snprintf(cmd, CMD_MAX_LEN, "/home/lyt/Pictures/a.png");
+        snprintf(cmd, CMD_MAX_LEN, "/root/Pictures/a.png");
         struct filter *f1 = create_filter("movie", "m", cmd, ff);
         if (f1 != NULL) {
             /* TAILQ_INSERT_TAIL(&->filters, f1, l); */
@@ -235,7 +240,7 @@ init_filter(struct ff_ctx *ff)
         }
 
 
-        snprintf(cmd, CMD_MAX_LEN, "/home/lyt/Pictures/b.png");
+        snprintf(cmd, CMD_MAX_LEN, "/root/Pictures/b.png");
         struct filter *f4 = create_filter("movie", "m1", cmd, ff);
         if (f4 != NULL) {
             /* TAILQ_INSERT_TAIL(&in->filters, f4, l); */
@@ -356,7 +361,7 @@ in_run(void *arg)
     int rc;
 
 #ifndef NDEBUG
-/* for debug */
+    /* for debug */
     uint64_t a_out_channel_layout = AV_CH_LAYOUT_STEREO;
     int a_out_nb_samples = 0;
     enum AVSampleFormat a_out_sample_fmt = AV_SAMPLE_FMT_S16;
@@ -391,7 +396,7 @@ in_run(void *arg)
         return (void *)-1;
     }
 
-    while (1) {
+    while (in->stat != E_QUIT) {
         unsigned int idx;
         enum AVMediaType type;
         /* packet->data = NULL; */
@@ -408,6 +413,11 @@ in_run(void *arg)
             } else {
                 av_packet_unref(packet);
                 continue;
+            }
+
+            if (in->pre) {
+                destroy_stream_in(in->pre);
+                in->pre = NULL;
             }
 
             av_packet_rescale_ts(packet,
@@ -439,146 +449,168 @@ in_run(void *arg)
                 }
 
 #endif
-                if (in->running) {
-                    frame->pts = frame->best_effort_timestamp;
-                    rc = av_buffersrc_add_frame_flags(ff->src[which]->ctx,frame, 0);
-                    if (rc < 0) {
-                        WARNING("%s filter buffersrc add frame failed: %s", ff->url, av_err2str(rc));
-                    }
+                frame->pts = frame->best_effort_timestamp;
+                rc = av_buffersrc_add_frame_flags(ff->src[which]->ctx,frame, 0);
+                if (rc < 0) {
+                    WARNING("%s filter buffersrc add frame failed: %s", ff->url, av_err2str(rc));
+                }
 
-                    AVFrame *filter_frame = av_frame_alloc();
-                    assert(filter_frame);
-                    rc = av_buffersink_get_frame(ff->sink[which]->ctx, filter_frame);
-                    if (rc < 0) {
-                        if (rc != AVERROR(EAGAIN))  {
-                            ERROR("%s buffersink get frame failed: %s", ff->url, av_err2str(rc));
-                        }
-                        av_frame_free(&filter_frame);
-                        break;
+                AVFrame *filter_frame = av_frame_alloc();
+                assert(filter_frame);
+                rc = av_buffersink_get_frame(ff->sink[which]->ctx, filter_frame);
+                if (rc < 0) {
+                    if (rc != AVERROR(EAGAIN))  {
+                        ERROR("%s buffersink get frame failed: %s", ff->url, av_err2str(rc));
                     }
+                    av_frame_free(&filter_frame);
+                    break;
+                }
 
-                    filter_frame->pict_type =  AV_PICTURE_TYPE_NONE;
-                    if (type == AVMEDIA_TYPE_VIDEO) {
-                        in->out->ff->pts[0] ++;
-                        filter_frame->pts = in->out->ff->pts[0];
-                        if (in->must_i_frame) {
-                            filter_frame->pict_type = AV_PICTURE_TYPE_I;
-                            filter_frame->key_frame = 1;
-                            in->must_i_frame = false;
-                        }
-                    } else {
-                        in->out->ff->pts[1] += filter_frame->nb_samples;
-                        filter_frame->pts = in->out->ff->pts[1];
+                filter_frame->pict_type =  AV_PICTURE_TYPE_NONE;
+                if (type == AVMEDIA_TYPE_VIDEO) {
+                    in->out->ff->pts[0] ++;
+                    filter_frame->pts = in->out->ff->pts[0];
+                    if (in->must_i_frame) {
+                        filter_frame->pict_type = AV_PICTURE_TYPE_I;
+                        filter_frame->key_frame = 1;
+                        in->must_i_frame = false;
                     }
+                } else {
+                    in->out->ff->pts[1] += filter_frame->nb_samples;
+                    filter_frame->pts = in->out->ff->pts[1];
+                }
 
 #if 0
-                    AVPacket enc_pkt;
-                    int got_pkt = 0;
-                    int (*enc_func)(AVCodecContext *, AVPacket *, const AVFrame *, int *) =
-                        (type == AVMEDIA_TYPE_VIDEO) ? avcodec_encode_video2 : avcodec_encode_audio2;
+                AVPacket enc_pkt;
+                int got_pkt = 0;
+                int (*enc_func)(AVCodecContext *, AVPacket *, const AVFrame *, int *) =
+                    (type == AVMEDIA_TYPE_VIDEO) ? avcodec_encode_video2 : avcodec_encode_audio2;
 
-                    enc_pkt.data = NULL;
-                    enc_pkt.size = 0;
-                    av_init_packet(&enc_pkt);
-                    rc = enc_func(in->out->ff->ctx[which], &enc_pkt, filter_frame, &got_pkt);
-                    av_frame_free(&filter_frame);
-                    if (rc < 0) {
-                        ERROR("%s encode failed: %s", in->out->ff->url, av_err2str(rc));
-                        break;
+                enc_pkt.data = NULL;
+                enc_pkt.size = 0;
+                av_init_packet(&enc_pkt);
+                rc = enc_func(in->out->ff->ctx[which], &enc_pkt, filter_frame, &got_pkt);
+                av_frame_free(&filter_frame);
+                if (rc < 0) {
+                    ERROR("%s encode failed: %s", in->out->ff->url, av_err2str(rc));
+                    break;
+                }
+                if (got_pkt) {
+                    enc_pkt.stream_index = which;
+                    av_packet_rescale_ts(&enc_pkt,
+                                         in->out->ff->ctx[which]->time_base,
+                                         in->out->ff->stream[which]->time_base);
+                    if (type == AVMEDIA_TYPE_VIDEO) {
+                        enc_pkt.duration = enc_pkt.pts - in->out->last_video_pts;
+                        in->out->last_video_pts = enc_pkt.pts;
+                        print_packet(in->out->ff->fctx, &enc_pkt, "video");
+                    } else {
+                        print_packet(in->out->ff->fctx, &enc_pkt, "audio");
                     }
-                    if (got_pkt) {
-                        enc_pkt.stream_index = which;
-                        av_packet_rescale_ts(&enc_pkt,
-                                             in->out->ff->ctx[which]->time_base,
-                                             in->out->ff->stream[which]->time_base);
-                        if (type == AVMEDIA_TYPE_VIDEO) {
-                            enc_pkt.duration = enc_pkt.pts - in->out->last_video_pts;
-                            in->out->last_video_pts = enc_pkt.pts;
-                            print_packet(in->out->ff->fctx, &enc_pkt, "video");
-                        } else {
-                            print_packet(in->out->ff->fctx, &enc_pkt, "audio");
-                        }
-                        av_interleaved_write_frame(in->out->ff->fctx, &enc_pkt);
-                    }
+                    av_interleaved_write_frame(in->out->ff->fctx, &enc_pkt);
+                }
 #endif
 
 
 #if 1
-                    rc = avcodec_send_frame(in->out->ff->ctx[which], filter_frame);
-                    if (rc < 0) {
-                        ERROR("%s send frame to encoder failed: %s", ff->url, av_err2str(rc));
-                    } else {
-                        AVPacket pkt;
+                pthread_mutex_lock(&in->out->mutex);
+                rc = avcodec_send_frame(in->out->ff->ctx[which], filter_frame);
+                if (rc < 0) {
+                    ERROR("%s send frame to encoder failed: %s", ff->url, av_err2str(rc));
+                } else {
+                    AVPacket pkt;
+                    pkt.data = NULL;
+                    pkt.size = 0;
+                    av_init_packet(&pkt);
+                    while (avcodec_receive_packet(in->out->ff->ctx[which], &pkt) >= 0) {
+                        pkt.stream_index = in->out->ff->stream[which]->index;
+                        av_packet_rescale_ts(&pkt,
+                                             in->out->ff->ctx[which]->time_base,
+                                             in->out->ff->stream[which]->time_base);
+                        if (type == AVMEDIA_TYPE_VIDEO) {
+                            pkt.duration = pkt.pts - in->out->last_video_pts;
+                            in->out->last_video_pts = pkt.pts;
+                            /* print_packet(in->out->ff->fctx, &pkt, "video"); */
+                            /* print_packet(in->out->ff->fctx, &pkt, ff->url); */
+                        } else {
+                            /* print_packet(in->out->ff->fctx, &pkt, "audio"); */
+                        }
+                        if (in->out->ff->fp[which]) {
+                            fwrite(pkt.data, 1, pkt.size, in->out->ff->fp[which]);
+                        }
+                        av_interleaved_write_frame(in->out->ff->fctx, &pkt);
                         pkt.data = NULL;
                         pkt.size = 0;
                         av_init_packet(&pkt);
-                        while (avcodec_receive_packet(in->out->ff->ctx[which], &pkt) >= 0) {
-                            pkt.stream_index = in->out->ff->stream[which]->index;
-                            av_packet_rescale_ts(&pkt,
-                                                 in->out->ff->ctx[which]->time_base,
-                                                 in->out->ff->stream[which]->time_base);
-                            if (type == AVMEDIA_TYPE_VIDEO) {
-                                pkt.duration = pkt.pts - in->out->last_video_pts;
-                                in->out->last_video_pts = pkt.pts;
-                                /* print_packet(in->out->ff->fctx, &pkt, "video"); */
-                                print_packet(in->out->ff->fctx, &pkt, ff->url);
-                            } else {
-                                print_packet(in->out->ff->fctx, &pkt, "audio");
-                            }
-                            if (in->out->ff->fp[which]) {
-                                fwrite(pkt.data, 1, pkt.size, in->out->ff->fp[which]);
-                            }
-                            av_interleaved_write_frame(in->out->ff->fctx, &pkt);
-                            pkt.data = NULL;
-                            pkt.size = 0;
-                            av_init_packet(&pkt);
-                        }
                     }
-                    av_frame_free(&filter_frame);
-#endif
                 }
+                pthread_mutex_unlock(&in->out->mutex);
+                av_frame_free(&filter_frame);
+#endif
                 av_frame_unref(frame);
             }
             av_packet_unref(packet);
         }
     }
 
+#ifndef NDEBUG
+    av_free(a_out_buf);
+    swr_close(a_convert_ctx);
+    swr_free(&a_convert_ctx);
+#endif
+    av_frame_free(&frame);
+    av_packet_free(&packet);
     return (void *)0;
 }
 
-int
-start(struct stream_in *in)
+
+void
+destroy_stream_in(struct stream_in *in)
 {
     if (in == NULL) {
-        return -1;
+        return;
     }
-    /* avcodec_flush_buffers(in->ff->ctx[0]); */
-    /* avcodec_send_frame(in->out->ff->ctx[0], NULL); */
-    in->running = true;
-    in->must_i_frame = true;
+    in->stat = E_QUIT;
 
-    INFO("start %s", in->ff->url);
-    return 0;
-}
-
-
-int
-stop(struct stream_in *in)
-{
-    if (in == NULL) {
-        return -1;
+    if (in->pid != (pthread_t)-1) {
+        pthread_join(in->pid, NULL);
     }
-    in->running = false;
-    /*
-     * for (unsigned int i=0; i < 2; i++) {
-     *     avcodec_send_packet(in->ff->ctx[i], NULL);
-     *     avcodec_flush_buffers(in->ff->ctx[i]);
-     * }
-     */
-    INFO("stop %s", in->ff->url);
-    return 0;
-}
+    INFO("thread exit");
+    if (in->ff) {
+        if (in->ff->fctx) {
+            avformat_close_input(&in->ff->fctx);
+            avformat_free_context(in->ff->fctx);
+            in->ff->fctx = NULL;
+        }
+        if (in->ff->gctx) {
+            avfilter_graph_free(&in->ff->gctx);
+            in->ff->gctx = NULL;
+        }
 
+        for (int i=0 ;i<2; i++) {
+            if (in->ff->codec[i]) {
+                in->ff->codec[i] = NULL;
+            }
+            if (in->ff->stream[i]) {
+                in->ff->stream[i] = NULL;
+            }
+            if (in->ff->ctx[i]) {
+                avcodec_free_context(&in->ff->ctx[i]);
+                in->ff->ctx[i] = NULL;
+            }
+            if (in->ff->fp[i]) {
+                fclose(in->ff->fp[i]);
+                in->ff->fp[i] = NULL;
+            }
+        }
+
+        free(in->ff);
+        in->ff = NULL;
+    }
+    free(in);
+    in = NULL;
+    return;
+}
 
 struct stream_in *
 create_stream_in(const char *url, struct stream_out *out, bool video, bool audio)
@@ -592,11 +624,12 @@ create_stream_in(const char *url, struct stream_out *out, bool video, bool audio
 
     TAILQ_INIT(&in->filters);
     TAILQ_INIT(&in->pics);
-    in->running = false;
+    in->stat = E_INIT;
+    in->must_i_frame = true;
     in->pid = -1;
     in->use_video = video;
     in->use_audio = audio;
-    in->must_i_frame = true;
+    in->pre = NULL;
     in->out = out;
 
     in->ff = (struct ff_ctx *)calloc(1, sizeof(struct ff_ctx));
@@ -640,6 +673,8 @@ create_stream_in(const char *url, struct stream_out *out, bool video, bool audio
         goto clean;
     }
 
+    in->stat = E_FINDING_FRAME;
+
     if (pthread_create(&in->pid, NULL, in_run, (void *)in) != 0) {
         ERROR("create thread failed: %s", strerror(errno));
         free(in);
@@ -656,7 +691,6 @@ create_stream_in(const char *url, struct stream_out *out, bool video, bool audio
                 in->ff->codec[i] = NULL;
             }
             if (in->ff->stream[i]) {
-                av_free(in->ff->stream[i]);
                 in->ff->stream[i] = NULL;
             }
             if (in->ff->ctx[i]) {

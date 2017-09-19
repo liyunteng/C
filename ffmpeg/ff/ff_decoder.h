@@ -2,7 +2,7 @@
  * Description: ff decoder
  *
  * Copyright (C) 2017 StreamOcean
- * Last-Updated: <2017/09/18 02:42:35 liyunteng>
+ * Last-Updated: <2017/09/19 10:20:47 liyunteng>
  */
 
 #ifndef FF_DECODER_H
@@ -36,29 +36,36 @@ struct picture {
 };
 TAILQ_HEAD(picture_head, picture);
 
+enum stream_in_stat {
+    E_INIT,
+    E_FINDING_FRAME,
+    E_RUNNING,
+    E_WAITING_OTHER,
+    E_QUIT,
+};
 struct stream_out;
 struct stream_in {
     struct picture_head pics;
 
     struct stream_out *out;
+    struct stream_in *pre;
     struct ff_ctx *ff;
     struct filter_head filters;
 
-    bool running;
     pthread_t pid;
+    bool must_i_frame;
 
     bool use_audio;
     bool use_video;
 
-    bool must_i_frame;
+    enum stream_in_stat stat;
 
     TAILQ_ENTRY(stream_in) l;
 };
 TAILQ_HEAD(stream_head, stream_in);
 
-
+void print_packet(const AVFormatContext *fmt_ctx, const AVPacket *pkt, const char *tag);
 struct stream_in * create_stream_in(const char *url, struct stream_out *out, bool video, bool audio);
-int start(struct stream_in *s);
-int stop(struct stream_in *s);
+void destroy_stream_in(struct stream_in *in);
 
 #endif
