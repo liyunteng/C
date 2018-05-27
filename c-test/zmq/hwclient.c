@@ -1,10 +1,10 @@
 /*
- * hwclient.c -- hello world client
+ * hwclient.c -- hello world
  *
  * Copyright (C) 2015 liyunteng
  * Auther: liyunteng <li_yunteng@163.com>
  * License: GPL
- * Update time:  2015/05/28 11:10:49
+ * Update time:  2015/08/25 17:54:04
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -23,27 +23,46 @@
 
 #include <zmq.h>
 #include <string.h>
-#include <stdio.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <assert.h>
 
 int main(int argc, char *argv[])
 {
-    printf("Connecting to hello world server...\n");
     void *context = zmq_ctx_new();
-    void *request = zmq_socket(context, ZMQ_REQ);
 
-    zmq_connect(request, "tcp://localhost:5555");
+    /* Socket to talk to server */
+    printf("Connecting to hello world server...\n");
+    void *requester = zmq_socket(context, ZMQ_REQ);
+    zmq_connect(requester, "tcp://localhost:5555");
 
     int request_nbr;
     for (request_nbr = 0; request_nbr != 10; request_nbr++) {
-	char buffer[10];
-	printf("Sending Hello %d...\n", request_nbr);
-	zmq_send(request, buffer, sizeof(buffer) + 1, 0);
-	zmq_recv(request, buffer, 10, 0);
-	printf("Received %s %d\n", buffer, request_nbr);
+	/*
+	 * zmq_msg_t request;
+	 * zmq_msg_init_size(&request, 5);
+	 * memcpy(zmq_msg_data(&request), "Hello", 5);
+	 * printf("Sending Hello %d...\n", request_nbr);
+	 * zmq_msg_send(&request, requester, 0);
+	 * zmq_msg_close(&request);
+	 */
+
+	int ret = zmq_send(requester, "hello", 5, 0);
+	assert(ret == 5);
+
+	char buf[10];
+	zmq_msg_t reply;
+	zmq_msg_init(&reply);
+	zmq_msg_recv(&reply, requester, 0);
+	memset(buf, 0, sizeof(buf));
+	memcpy(buf, zmq_msg_data(&reply), zmq_msg_size(&reply));
+	printf("Received %s %d\n", buf, request_nbr);
+	zmq_msg_close(&reply);
     }
 
-    zmq_close(request);
+    sleep(2);
+    zmq_close(requester);
     zmq_ctx_destroy(context);
+
     return 0;
 }

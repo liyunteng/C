@@ -1,10 +1,10 @@
 /*
- * taskvent.c -- task ventilator
+ * taskvent.c -- task vent
  *
  * Copyright (C) 2015 liyunteng
  * Auther: liyunteng <li_yunteng@163.com>
  * License: GPL
- * Update time:  2015/05/28 14:28:35
+ * Update time:  2015/08/26 10:23:15
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -21,9 +21,15 @@
  *
  */
 
-#include "zhelpers.h"
+#include <zmq.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <assert.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
-int main(int argc, char *argv[])
+int main(void)
 {
     void *context = zmq_ctx_new();
 
@@ -37,22 +43,26 @@ int main(int argc, char *argv[])
     getchar();
     printf("Sending tasks to workers...\n");
 
-    s_send(sink, "0");
 
-    srandom((unsigned) time(NULL));
+    int ret = zmq_send(sink, "0", sizeof("0"), 0);
+    assert(ret == 2);
 
+    srandom(time(NULL));
     int task_nbr;
     int total_msec = 0;
-    for (task_nbr = 0; task_nbr < 100; task_nbr++) {
+    for (task_nbr = 0; task_nbr != 100; ++task_nbr) {
 	int workload;
-	workload = randof(100) + 1;
+
+	workload = random() % 100 + 1;
 	total_msec += workload;
 	char string[10];
 	sprintf(string, "%d", workload);
-	s_send(sender, string);
+	ret = zmq_send(sender, string, strlen(string) + 1, 0);
+	assert(ret == strlen(string) + 1);
     }
 
-    printf("Total expected cost: %d msec\n", total_msec);
+    printf("Total expencted cost: %d msec", total_msec);
+    sleep(1);
 
     zmq_close(sink);
     zmq_close(sender);

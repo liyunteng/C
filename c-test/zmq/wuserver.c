@@ -1,10 +1,10 @@
 /*
- * wuserver.c -- weather update server
+ * wuserver.c -- weather update
  *
  * Copyright (C) 2015 liyunteng
  * Auther: liyunteng <li_yunteng@163.com>
  * License: GPL
- * Update time:  2015/05/28 12:40:34
+ * Update time:  2015/08/25 18:36:30
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -20,7 +20,14 @@
  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
  *
  */
-#include "zhelpers.h"
+
+#include <zmq.h>
+#include <stdio.h>
+#include <assert.h>
+#include <string.h>
+#include <unistd.h>
+#include <time.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[])
 {
@@ -28,18 +35,21 @@ int main(int argc, char *argv[])
     void *publisher = zmq_socket(context, ZMQ_PUB);
     int rc = zmq_bind(publisher, "tcp://*:5556");
     assert(rc == 0);
+    rc = zmq_bind(publisher, "ipc://weather.ipc");
+    assert(rc == 0);
 
-
-    srandom((unsigned) time(NULL));
+    srandom(time(NULL));
     while (1) {
-	int zipcode, temperature, relhumidity;
-	zipcode = randof(100000);
-	temperature = randof(215) - 80;
-	relhumidity = randof(50) + 10;
+
+	int zipcode, temperature, rel;
+	zipcode = random() % 100000;
+	temperature = random() % 215 - 80;
+	rel = random() % 50 + 10;
+
 
 	char update[20];
-	sprintf(update, "%05d %d %d", zipcode, temperature, relhumidity);
-	s_send(publisher, update);
+	sprintf(update, "%05d %d %d", zipcode, temperature, rel);
+	zmq_send(publisher, update, sizeof(update), 0);
     }
 
     zmq_close(publisher);

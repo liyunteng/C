@@ -1,10 +1,10 @@
 /*
- * wuclient.c -- weather update client
+ * wuclient.c -- weather update
  *
  * Copyright (C) 2015 liyunteng
  * Auther: liyunteng <li_yunteng@163.com>
  * License: GPL
- * Update time:  2015/05/28 12:50:05
+ * Update time:  2015/08/26 09:44:15
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU General Public License,
@@ -21,32 +21,43 @@
  *
  */
 
-#include "zhelpers.h"
+#include <zmq.h>
+#include <string.h>
+#include <unistd.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 int main(int argc, char *argv[])
 {
-    printf("Collecting updates from weather server ...\n");
     void *context = zmq_ctx_new();
+
+    printf("Collecting updates from weather server...\n");
     void *subscriber = zmq_socket(context, ZMQ_SUB);
     int rc = zmq_connect(subscriber, "tcp://localhost:5556");
     assert(rc == 0);
 
-    char *filter = (argc > 1) ? argv[1] : "00100 ";
+
+    char *filter = (argc > 1) ? argv[1] : "10001 ";
     rc = zmq_setsockopt(subscriber, ZMQ_SUBSCRIBE, filter, strlen(filter));
     assert(rc == 0);
 
+
     int update_nbr;
     long total_temp = 0;
+    char buf[36];
     for (update_nbr = 0; update_nbr < 100; update_nbr++) {
-	char *string = s_recv(subscriber);
+	memset(buf, 0, sizeof(buf));
+	zmq_recv(subscriber, buf, sizeof(buf), 0);
+	printf("receive %s\n", buf);
 
-	int zipcode, temperature, relhumidity;
-	sscanf(string, "%d %d %d", &zipcode, &temperature, &relhumidity);
-	total_temp += temperature;
-	free(string);
+	int zipcode, temp, rel;
+	sscanf(buf, "%d %d %d", &zipcode, &temp, &rel);
+	total_temp += temp;
     }
 
-    printf("Average temperature for zipcode '%s' was %dF\n",
+
+    printf("Average temp for zipcode %s is %dF\n",
 	   filter, (int) (total_temp / update_nbr));
 
     zmq_close(subscriber);
