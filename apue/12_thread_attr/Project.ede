@@ -1,7 +1,0 @@
-;; Object test
-;; EDE Project Files are auto generated: Do Not Edit
-(ede-proj-project "test"
-  :file "Project.ede"
-  :name "test"
-  :targets 'nil
-  )
