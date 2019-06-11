@@ -2,7 +2,7 @@
  * Description: ls
  *
  * Copyright (C) 2019 liyunteng
- * Last-Updated: <2019/06/08 14:44:01 liyunteng>
+ * Last-Updated: <2019/06/10 23:36:07 liyunteng>
  */
 #include <stdio.h>
 #include <sys/types.h>
@@ -25,8 +25,9 @@ int main(int argc, char *argv[])
     while ( (dirp = readdir(dp)) != NULL) {
         printf("%s\n", dirp->d_name);
     }
+}
 
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -g -o ls ls.c -I../include -L../lib -lourhdr" */
+/* compile-command: "clang -Wall -o ls ls.c -g -I../include -L../lib -lourhdr" */
 /* End: */

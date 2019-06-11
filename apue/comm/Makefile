@@ -6,9 +6,10 @@ LDFLAGS =
 SRC=$(wildcard *.c)
 OBJECTS=$(SRC:%.c=%.o)
 DEP = $(SRC:%.c=%.d)
-TARGET = libusrhdr.so
+TARGET = libourhdr.so
 
 all: $(TARGET)
+	@mv $(TARGET) ../lib
 
 $(filter %.so,$(TARGET)): $(OBJECTS)
 	$(CC) $(CFLAGS) -shared $(CFLAGS) -o $@ $^
@@ -21,7 +22,7 @@ $(filter %.so,$(TARGET)): $(OBJECTS)
 
 -include $(DEP)
 
-.PHONY: clean
+.PHONY: clean all
 clean:
 	rm -rf $(OBJECTS) $(DEP)
 	rm -rf $(TARGET)
