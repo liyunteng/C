@@ -14,4 +14,4 @@ all: $(TARGET)
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf $(TARGET)
-	rm -rf file.hole
+	rm -rf foo bar

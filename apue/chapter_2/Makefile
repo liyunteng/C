@@ -1,7 +1,7 @@
 CC := clang
 CPPFLAGS = -I../include
 CFLAGS =
-LDFLAGS = -L../lib -lourhdr
+LDFLAGS = -L../lib -lourhdr -Wl,-rpath=../lib
 
 SRC=$(wildcard *.c)
 OBJECTS=$(SRC:%.c=%.o)
