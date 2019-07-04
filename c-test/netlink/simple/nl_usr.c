@@ -1,10 +1,10 @@
 /*******************************************************************************
-* Author : liyunteng
-* Email : li_yunteng@163.com
-* Created Time : 2014-01-17 10:19
-* Filename : nl_usr.c
-* Description : 
-* *****************************************************************************/
+ * Author : liyunteng
+ * Email : li_yunteng@163.com
+ * Created Time : 2014-01-17 10:19
+ * Filename : nl_usr.c
+ * Description :
+ * *****************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -16,11 +16,14 @@
 #include <linux/netlink.h>
 #include <linux/socket.h>
 
+#define NETLINK_TEST 23
+
 struct netlink_info {
     struct nlmsghdr nlhdr;
     char buf[20];
 };
-int main(int argc, char *argv[])
+
+int main(void)
 {
 
     int fd, len1, len2;
@@ -31,8 +34,8 @@ int main(int argc, char *argv[])
 
     fd = socket(PF_NETLINK, SOCK_RAW, NETLINK_TEST);
     if (fd < 0) {
-	printf("create netlink socket failed!\n");
-	return -1;
+        printf("create netlink socket failed!\n");
+        return -1;
     }
 
     memset(&src_addr, 0, sizeof(src_addr));
@@ -46,8 +49,8 @@ int main(int argc, char *argv[])
     src_addr.nl_groups = 0;
 
     if (bind(fd, (struct sockaddr *) &src_addr, sizeof(src_addr)) != 0) {
-	perror("bind error!\n");
-	return -1;
+        perror("bind error!\n");
+        return -1;
     }
 
     nlhdr = (struct nlmsghdr *) malloc(NLMSG_SPACE(20));
@@ -59,25 +62,25 @@ int main(int argc, char *argv[])
 
     memset(&hdr, 0, sizeof(hdr));
     sendto(fd, nlhdr, nlhdr->nlmsg_len, 0, (struct sockaddr *) &dst_addr,
-	   sizeof(dst_addr));
+           sizeof(dst_addr));
 
     free(nlhdr);
 
     info = (struct netlink_info *) malloc(sizeof(struct netlink_info));
     if (info == NULL) {
-	perror("info malloc failed!\n");
-	return -1;
+        perror("info malloc failed!\n");
+        return -1;
     }
 
     while (1) {
-	len1 = sizeof(struct sockaddr_nl);
-	len2 = recvfrom(fd, info, sizeof(struct netlink_info), 0,
-			(struct sockaddr *) &dst_addr,
-			(socklen_t *) & len1);
-	if (len2 > 0) {
-	    printf("process %d received %s\n", info->nlhdr.nlmsg_pid,
-		   info->buf);
-	    return 0;
-	}
+        len1 = sizeof(struct sockaddr_nl);
+        len2 = recvfrom(fd, info, sizeof(struct netlink_info), 0,
+                        (struct sockaddr *) &dst_addr,
+                        (socklen_t *) & len1);
+        if (len2 > 0) {
+            printf("process %d received %s\n", info->nlhdr.nlmsg_pid,
+                   info->buf);
+            return 0;
+        }
     }
 }

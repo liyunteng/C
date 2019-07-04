@@ -27,17 +27,17 @@ static int init_hotplug_sock()
 
     int s = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_KOBJECT_UEVENT);
     if (s < 0) {
-	perror("socket");
-	return -1;
+        perror("socket");
+        return -1;
     }
 
     setsockopt(s, SOL_SOCKET, SO_RCVBUF, &buffersize, sizeof(buffersize));
 
     ret = bind(s, (struct sockaddr *) &snl, sizeof(struct sockaddr_nl));
     if (ret < 0) {
-	perror("bind");
-	close(s);
-	return -1;
+        perror("bind");
+        close(s);
+        return -1;
     }
     return s;
 }
@@ -47,9 +47,9 @@ int main(int argc, char *argv[])
     int hotplug_sock = init_hotplug_sock();
 
     while (1) {
-	char buf[UEVENT_BUFFER_SIZE * 2] = { 0 };
-	recv(hotplug_sock, &buf, sizeof(buf), 0);
-	printf("%s\n", buf);
+        char buf[UEVENT_BUFFER_SIZE * 2] = { 0 };
+        recv(hotplug_sock, &buf, sizeof(buf), 0);
+        printf("%s\n", buf);
     }
     return 0;
 }

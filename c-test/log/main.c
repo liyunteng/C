@@ -36,7 +36,7 @@ int64_t count = 0;
 void handler(int signo)
 {
     if (signo == SIGALRM) {
-	quit = 0;
+        quit = 0;
     }
 }
 
@@ -54,25 +54,25 @@ void *run(void *arg)
 
     signal(SIGALRM, handler);
     if (setitimer(ITIMER_REAL, &itv, NULL) != 0) {
-	fprintf(stderr, "setitimer failed.");
-	return (void *) -1;
+        fprintf(stderr, "setitimer failed.");
+        return (void *) -1;
     }
 #if 1
     while (quit) {
-	DEBUG(loger, "%lu: this is debug", (unsigned long) pthread_self());
-	INFO(loger, "%lu: this is info", (unsigned long) pthread_self());
-	WARNING(loger, "%lu: this is a warn",
-		(unsigned long) pthread_self());
-	ERROR(loger, "%lu: this is error", (unsigned long) pthread_self());
-	FATAL(loger, "%lu: this is fatal", (unsigned long) pthread_self());
+        DEBUG(loger, "%lu: this is debug", (unsigned long) pthread_self());
+        INFO(loger, "%lu: this is info", (unsigned long) pthread_self());
+        WARNING(loger, "%lu: this is a warn",
+                (unsigned long) pthread_self());
+        ERROR(loger, "%lu: this is error", (unsigned long) pthread_self());
+        FATAL(loger, "%lu: this is fatal", (unsigned long) pthread_self());
 
-	/*
-	 * LOG(LOG_DEBUG, "%lu: this is debug", (unsigned long)pthread_self());
-	 * LOG(LOG_INFO, "%lu: this is info", (unsigned long)pthread_self());
-	 * LOG(LOG_WARNING, "%lu: this is warning", (unsigned long)pthread_self());
-	 * LOG(LOG_ERROR, "%lu: this is error", (unsigned long)pthread_self());
-	 * LOG(LOG_FATAL, "%lu: this is fatal", (unsigned long)pthread_self());
-	 */
+        /*
+         * LOG(LOG_DEBUG, "%lu: this is debug", (unsigned long)pthread_self());
+         * LOG(LOG_INFO, "%lu: this is info", (unsigned long)pthread_self());
+         * LOG(LOG_WARNING, "%lu: this is warning", (unsigned long)pthread_self());
+         * LOG(LOG_ERROR, "%lu: this is error", (unsigned long)pthread_self());
+         * LOG(LOG_FATAL, "%lu: this is fatal", (unsigned long)pthread_self());
+         */
 
     }
     printf("%lu: done\n", (unsigned long) pthread_self());
@@ -102,37 +102,37 @@ int main(int argc, char *argv[])
 
     signal(SIGALRM, handler);
     if (setitimer(ITIMER_REAL, &itv, NULL) != 0) {
-	fprintf(stderr, "setitimer failed.");
-	return -1;
+        fprintf(stderr, "setitimer failed.");
+        return -1;
     }
 
     int count = 0;
     while (quit) {
-	DEBUG(loger, "%lu: this is debug", (unsigned long) pthread_self());
-	INFO(loger, "%lu: this is info", (unsigned long) pthread_self());
-	WARNING(loger, "%lu: this is a warn",
-		(unsigned long) pthread_self());
-	ERROR(loger, "%lu: this is error", (unsigned long) pthread_self());
-	FATAL(loger, "%lu: this is fatal", (unsigned long) pthread_self());
-	ALERT(loger, "%lu: this is alert", (unsigned long) pthread_self());
-	EMERG(loger, "%Lu: this is emerg", (unsigned long) pthread_self());
+        DEBUG(loger, "%lu: this is debug", (unsigned long) pthread_self());
+        INFO(loger, "%lu: this is info", (unsigned long) pthread_self());
+        WARNING(loger, "%lu: this is a warn",
+                (unsigned long) pthread_self());
+        ERROR(loger, "%lu: this is error", (unsigned long) pthread_self());
+        FATAL(loger, "%lu: this is fatal", (unsigned long) pthread_self());
+        ALERT(loger, "%lu: this is alert", (unsigned long) pthread_self());
+        EMERG(loger, "%Lu: this is emerg", (unsigned long) pthread_self());
 
-	/*
-	 * LOG(LOG_DEBUG, "%s", buf);
-	 * LOG(LOG_INFO, "%s", buf);
-	 * LOG(LOG_ERROR, "%s", buf);
-	 */
-	/*
-	 * LOG(LOG_DEBUG, "%lu: this is debug", (unsigned long)pthread_self());
-	 * LOG(LOG_INFO, "%lu: this is info", (unsigned long)pthread_self());
-	 * LOG(LOG_WARNING, "%lu: this is warning", (unsigned long)pthread_self());
-	 * LOG(LOG_ERROR, "%lu: this is error", (unsigned long)pthread_self());
-	 * LOG(LOG_FATAL, "%lu: this is fatal", (unsigned long)pthread_self());
-	 * LOG(LOG_ALERT, "%lu: this is alert", (unsigned long)pthread_self());
-	 * LOG(LOG_EMERG, "%lu: this is emerg", (unsigned long)pthread_self());
-	 */
+        /*
+         * LOG(LOG_DEBUG, "%s", buf);
+         * LOG(LOG_INFO, "%s", buf);
+         * LOG(LOG_ERROR, "%s", buf);
+         */
+        /*
+         * LOG(LOG_DEBUG, "%lu: this is debug", (unsigned long)pthread_self());
+         * LOG(LOG_INFO, "%lu: this is info", (unsigned long)pthread_self());
+         * LOG(LOG_WARNING, "%lu: this is warning", (unsigned long)pthread_self());
+         * LOG(LOG_ERROR, "%lu: this is error", (unsigned long)pthread_self());
+         * LOG(LOG_FATAL, "%lu: this is fatal", (unsigned long)pthread_self());
+         * LOG(LOG_ALERT, "%lu: this is alert", (unsigned long)pthread_self());
+         * LOG(LOG_EMERG, "%lu: this is emerg", (unsigned long)pthread_self());
+         */
 
-	count++;
+        count++;
     }
 
     printf("count: %d\n", count);
@@ -148,10 +148,10 @@ int main(int argc, char *argv[])
     LOG_INIT("test.log", LOGLEVEL_INFO);
 
     for (i = 0; i < 4; i++) {
-	if (pthread_create(&pids[i], NULL, run, NULL) != 0) {
-	    perror("pthread_create");
-	    return -1;
-	}
+        if (pthread_create(&pids[i], NULL, run, NULL) != 0) {
+            perror("pthread_create");
+            return -1;
+        }
     }
 
     struct itimerval itv;
@@ -163,28 +163,28 @@ int main(int argc, char *argv[])
 
     signal(SIGALRM, handler);
     if (setitimer(ITIMER_REAL, &itv, NULL) != 0) {
-	fprintf(stderr, "setitimer failed.");
-	return -1;
+        fprintf(stderr, "setitimer failed.");
+        return -1;
     }
 #if 1
     while (quit) {
-	/*
-	 * DEBUG(loger, "%lu: this is debug", (unsigned long)pthread_self());
-	 * INFO(loger, "%lu: this is info", (unsigned long)pthread_self());
-	 * WARNING(loger, "%lu: this is a warn", (unsigned long)pthread_self());
-	 * ERROR(loger, "%lu: this is error", (unsigned long)pthread_self());
-	 * FATAL(loger, "%lu: this is fatal", (unsigned long)pthread_self());
-	 */
+        /*
+         * DEBUG(loger, "%lu: this is debug", (unsigned long)pthread_self());
+         * INFO(loger, "%lu: this is info", (unsigned long)pthread_self());
+         * WARNING(loger, "%lu: this is a warn", (unsigned long)pthread_self());
+         * ERROR(loger, "%lu: this is error", (unsigned long)pthread_self());
+         * FATAL(loger, "%lu: this is fatal", (unsigned long)pthread_self());
+         */
 
-	LOG(LOG_DEBUG, "%lu: this is debug",
-	    (unsigned long) pthread_self());
-	LOG(LOG_INFO, "%lu: this is info", (unsigned long) pthread_self());
-	LOG(LOG_WARNING, "%lu: this is warning",
-	    (unsigned long) pthread_self());
-	LOG(LOG_ERROR, "%lu: this is error",
-	    (unsigned long) pthread_self());
-	LOG(LOG_FATAL, "%lu: this is fatal",
-	    (unsigned long) pthread_self());
+        LOG(LOG_DEBUG, "%lu: this is debug",
+            (unsigned long) pthread_self());
+        LOG(LOG_INFO, "%lu: this is info", (unsigned long) pthread_self());
+        LOG(LOG_WARNING, "%lu: this is warning",
+            (unsigned long) pthread_self());
+        LOG(LOG_ERROR, "%lu: this is error",
+            (unsigned long) pthread_self());
+        LOG(LOG_FATAL, "%lu: this is fatal",
+            (unsigned long) pthread_self());
 
     }
     printf("%lu: done\n", (unsigned long) pthread_self());
@@ -192,19 +192,23 @@ int main(int argc, char *argv[])
 
 #if 0
     while (quit) {
-	time_t t = time(NULL);
-	struct tm tm;
-	localtime_r(&t, &tm);
-	// asctime(gmtime(&t));
-	count++;
+        time_t t = time(NULL);
+        struct tm tm;
+        localtime_r(&t, &tm);
+        // asctime(gmtime(&t));
+        count++;
     }
     fprintf(stderr, "count: %lu", count);
 #endif
     for (i = 0; i < 4; i++)
-	pthread_join(pids[i], NULL);
+        pthread_join(pids[i], NULL);
 
     log_dump();
     return 0;
 
 }
 #endif
+
+/* Local Variables: */
+/* compile-command: "clang -Wall -o main main.c -g log.c -lpthread" */
+/* End: */

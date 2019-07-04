@@ -3,7 +3,7 @@
  *
  *       Filename:  a.h
  *
- *    Description:  
+ *    Description:
  *
  *        Version:  1.0
  *        Created:  05/14/2015 07:02:41 AM
@@ -11,7 +11,7 @@
  *       Compiler:  gcc
  *
  *         Author:  liyunteng (), li_yunteng@163.com
- *   Organization:  
+ *   Organization:
  *
  * =====================================================================================
  */
@@ -21,17 +21,17 @@ typedef enum {
 	STATE3,
 	STATE4,
 	STATE5,	 //password pass
-}STATE;
+} STATE;
 
 typedef enum {
 	INPUT1 = '1',
 	INPUT2 = '2',
 	INPUT3 = '3',
 	INPUT4 = '4',
-}INPUT;
+} INPUT;
 
 typedef struct {
 	STATE cur_state;
 	INPUT input;
 	STATE next_state;
-}STATE_TRANS;
+} STATE_TRANS;

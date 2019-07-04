@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
-#include <json/json.h>
+#include <json-c/json.h>
+/* #include <json/json.h> */
 
 int n = 0;
 int create(json_object * obj, json_object * arr, char *name, int age,
@@ -17,10 +18,10 @@ int create(json_object * obj, json_object * arr, char *name, int age,
 
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
     int i;
-    json_object *root, *new, *tmp;
+    json_object *root =  NULL, *new = NULL, *tmp = NULL;
     setlocale(LC_ALL, "");
 
 
@@ -42,7 +43,7 @@ int main(int argc, char *argv[])
 	   json_object_to_json_string(json_object_array_get_idx(new, 0)));
 
     json_object_object_foreach(root, key, val) {
-	printf("\t%s:%s\n", key, json_object_to_json_string(val));
+	printf("%s:%s\n", key, json_object_to_json_string(val));
     }
 
     for (i = 0; i < json_object_array_length(new); i++) {
@@ -52,3 +53,7 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
+
+/* Local Variables: */
+/* compile-command: "clang -Wall -o test4 test4.c -g -ljson-c" */
+/* End: */

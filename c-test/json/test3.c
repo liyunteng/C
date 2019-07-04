@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
-#include <json/json.h>
+#include <json-c/json.h>
+/* #include <json/json.h> */
 
 int main(int argc, char *argv[])
 {
@@ -24,3 +25,7 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
+/* Local Variables: */
+/* compile-command: "clang -Wall -o test3 test3.c -g -ljson-c" */
+/* End: */

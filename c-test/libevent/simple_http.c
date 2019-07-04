@@ -3,7 +3,7 @@
 * Email : li_yunteng@163.com
 * Created Time : 2014-01-14 16:44
 * Filename : simple_http.c
-* Description : 
+* Description :
 * *****************************************************************************/
 #include <stdio.h>
 #include <sys/types.h>
@@ -25,7 +25,7 @@ void generic_request_handler(struct evhttp_request *req, void *arg)
 int main(int argc, char *argv[])
 {
     short http_port = 8081;
-    char *http_addr = "192.168.70.150";
+    char *http_addr = "192.168.1.104";
     struct evhttp *http_server = NULL;
 
     event_init();
@@ -38,3 +38,7 @@ int main(int argc, char *argv[])
     return 0;
 
 }
+
+/* Local Variables: */
+/* compile-command: "clang -Wall -o simple_http simple_http.c -g -levent" */
+/* End: */

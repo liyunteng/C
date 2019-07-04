@@ -9,8 +9,8 @@ int main(int argc, char **argv)
     xmlNodePtr rootnode;
     char *encoding = "ISO-8859-1";
     if (argc <= 1) {
-	printf("Usage: %s content\n", argv[0]);
-	return (0);
+        printf("Usage: %s content\n", argv[0]);
+        return (0);
     }
     content = argv[1];
     out = convert(content, encoding);
@@ -27,16 +27,16 @@ char *convert(char *instr, char *encoding)
     xmlBufferPtr in, out;
     handler = xmlFindCharEncodingHandler(encoding);
     if (NULL != handler) {
-	in = xmlBufferCreate();
-	xmlBufferWriteChar(in, instr);
-	out = xmlBufferCreate();
-	if (xmlCharEncInFunc(handler, out, in) < 0) {
-	    xmlBufferFree(in);
-	    xmlBufferFree(out);
-	    return NULL;
-	} else {
-	    xmlBufferFree(in);
-	    return (char *) out->content;
-	}
+        in = xmlBufferCreate();
+        xmlBufferWriteChar(in, instr);
+        out = xmlBufferCreate();
+        if (xmlCharEncInFunc(handler, out, in) < 0) {
+            xmlBufferFree(in);
+            xmlBufferFree(out);
+            return NULL;
+        } else {
+            xmlBufferFree(in);
+            return (char *) out->content;
+        }
     }
 }

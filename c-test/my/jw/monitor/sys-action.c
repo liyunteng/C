@@ -1,10 +1,10 @@
 /*******************************************************************************
-* Author : liyunteng
-* Email : li_yunteng@163.com
-* Created Time : 2014-02-19 11:10
-* Filename : sys-action.c
-* Description : 
-* *****************************************************************************/
+ * Author : liyunteng
+ * Email : li_yunteng@163.com
+ * Created Time : 2014-02-19 11:10
+ * Filename : sys-action.c
+ * Description :
+ * *****************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include "sys-action.h"
@@ -24,8 +24,8 @@ void _action_alarm_release(sys_action_t * a)
 
 
     list_iterate_safe(n, nt, &a->alarm_list) {
-	list_del(&alr->alarm_list);
-	free(alr);
+        list_del(&alr->alarm_list);
+        free(alr);
     }
 }
 
@@ -36,12 +36,12 @@ void sys_action_release()
 
     list_iterate_safe(n, nt, &_gaction_list) {
 
-	a = list_struct_base(n, sys_action_t, list);
+        a = list_struct_base(n, sys_action_t, list);
 
-	_action_alarm_release(a);
+        _action_alarm_release(a);
 
-	list_del(&a->list);
-	free(a);
+        list_del(&a->list);
+        free(a);
     }
 }
 
@@ -50,10 +50,10 @@ sys_action_t *sys_action_alloc()
     sys_action_t *action;
 
     if ((action = (sys_action_t *) malloc(sizeof(*action))) != NULL) {
-	list_init(&action->list);
-	list_init(&action->alarm_list);
-	action->name[0] = '\0';
-	return action;
+        list_init(&action->list);
+        list_init(&action->alarm_list);
+        action->name[0] = '\0';
+        return action;
     }
 
     syslog(LOG_NOTICE, "sys_actino_alloc(): fail to alloc!");
@@ -63,34 +63,34 @@ sys_action_t *sys_action_alloc()
 void _sys_action_default_alarm_add(const char *action)
 {
     if (action) {
-	sys_alarm_t *alarm;
-	if ((alarm = sys_alarm_alloc()) != NULL) {
+        sys_alarm_t *alarm;
+        if ((alarm = sys_alarm_alloc()) != NULL) {
 
-	    strcpy(alarm->name, "default");
-	    sys_alarm_set_handler(alarm, "default");
-	    sys_action_alarm_add(action, alarm);
-	    return;
-	}
+            strcpy(alarm->name, "default");
+            sys_alarm_set_handler(alarm, "default");
+            sys_action_alarm_add(action, alarm);
+            return;
+        }
 
     }
     syslog(LOG_NOTICE,
-	   "_sys_action_default_alarm_add('%s'): add default alarm fail",
-	   action);
+           "_sys_action_default_alarm_add('%s'): add default alarm fail",
+           action);
 
 }
 
 bool sys_action_add(const char *name)
 {
     if (sys_action_get(name))
-	return false;
+        return false;
 
     sys_action_t *action;
 
     if ((action = sys_action_alloc()) != NULL) {
-	strcpy(action->name, name);
-	list_add(&_gaction_list, &action->list);
-	_sys_action_default_alarm_add(name);
-	return true;
+        strcpy(action->name, name);
+        list_add(&_gaction_list, &action->list);
+        _sys_action_default_alarm_add(name);
+        return true;
     }
 
     syslog(LOG_NOTICE, "sys_action_add('%s'): add fail!", name);
@@ -103,10 +103,10 @@ sys_action_t *sys_action_get(const char *name)
     sys_action_t *action;
 
     list_iterate_safe(n, nt, &_gaction_list) {
-	action = list_struct_base(n, sys_action_t, list);
-	if (!strcmp(action->name, name)) {
-	    return action;
-	}
+        action = list_struct_base(n, sys_action_t, list);
+        if (!strcmp(action->name, name)) {
+            return action;
+        }
     }
 
     return NULL;
@@ -118,10 +118,10 @@ sys_alarm_t *sys_alarm_alloc()
     sys_alarm_t *alarm;
 
     if ((alarm = (sys_alarm_t *) malloc(sizeof(*alarm))) != NULL) {
-	list_init(&alarm->alarm_list);
-	alarm->name[0] = '\0';
-	alarm->handler = NULL;
-	return alarm;
+        list_init(&alarm->alarm_list);
+        alarm->name[0] = '\0';
+        alarm->handler = NULL;
+        return alarm;
     }
 
     syslog(LOG_NOTICE, "sys_alarm_alloc(): fail, no more memory");
@@ -133,12 +133,12 @@ bool sys_action_alarm_add(const char *name, sys_alarm_t * alarm)
     sys_action_t *action;
 
     if ((action = sys_action_get(name)) != NULL) {
-	list_add(&action->alarm_list, &alarm->alarm_list);
-	return true;
+        list_add(&action->alarm_list, &alarm->alarm_list);
+        return true;
     }
 
     syslog(LOG_NOTICE, "sys_action_alarm_add('%s', '%s'): fail",
-	   name, alarm->name);
+           name, alarm->name);
     return false;
 }
 
@@ -149,16 +149,16 @@ sys_alarm_t *sys_action_alarm_get(const char *action, const char *alarm)
     struct list *n, *nt;
 
     if ((ac = sys_action_get(action)) == NULL)
-	return NULL;
+        return NULL;
 
     list_iterate_safe(n, nt, &ac->alarm_list) {
-	al = list_struct_base(n, sys_alarm_t, alarm_list);
-	if (!strcmp(al->name, alarm))
-	    return al;
+        al = list_struct_base(n, sys_alarm_t, alarm_list);
+        if (!strcmp(al->name, alarm))
+            return al;
     }
 
     syslog(LOG_NOTICE, "sys_action_alarm_get('%s', '%s'): not found",
-	   action, alarm);
+           action, alarm);
     return NULL;
 }
 
@@ -168,12 +168,12 @@ void do_sys_action(sys_action_t * action, void *event)
     sys_alarm_t *alarm;
 
     if (!action)
-	return;
+        return;
 
     list_iterate_safe(n, nt, &action->alarm_list) {
-	alarm = list_struct_base(n, sys_alarm_t, alarm_list);
-	if (alarm->handler)
-	    alarm->handler(event);
+        alarm = list_struct_base(n, sys_alarm_t, alarm_list);
+        if (alarm->handler)
+            alarm->handler(event);
     }
 }
 
@@ -181,14 +181,14 @@ void do_sys_action(sys_action_t * action, void *event)
 void _dump_alarm(sys_action_t * action)
 {
     if (action) {
-	struct list *n, *nt;
-	sys_alarm_t *alarm;
+        struct list *n, *nt;
+        sys_alarm_t *alarm;
 
-	list_iterate_safe(n, nt, &action->alarm_list) {
-	    alarm = list_struct_base(n, sys_alarm_t, alarm_list);
-	    printf("\talarm: %s, handler: %p\n", alarm->name,
-		   alarm->handler);
-	}
+        list_iterate_safe(n, nt, &action->alarm_list) {
+            alarm = list_struct_base(n, sys_alarm_t, alarm_list);
+            printf("\talarm: %s, handler: %p\n", alarm->name,
+                   alarm->handler);
+        }
     }
 }
 
@@ -201,8 +201,8 @@ void dump_action_alarm()
 
     list_iterate_safe(n, nt, &_gaction_list) {
 
-	action = list_struct_base(n, sys_action_t, list);
-	printf("action: %s\n", action->name);
-	_dump_alarm(action);
+        action = list_struct_base(n, sys_action_t, list);
+        printf("action: %s\n", action->name);
+        _dump_alarm(action);
     }
 }

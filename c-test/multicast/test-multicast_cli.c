@@ -45,15 +45,15 @@ int main(int argc, char *argv[])
 
     s = socket(AF_INET, SOCK_DGRAM, 0);
     if (s == -1) {
-	perror("socket()");
-	return -1;
+        perror("socket()");
+        return -1;
     }
 
 
     err = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
     if (err < 0) {
-	perror("setsockopt: SO_REUSEADDR");
-	return -1;
+        perror("setsockopt: SO_REUSEADDR");
+        return -1;
     }
     memset(&local_addr, 0, sizeof(local_addr));
     local_addr.sin_family = AF_INET;
@@ -62,16 +62,16 @@ int main(int argc, char *argv[])
 
     err = bind(s, (struct sockaddr *) &local_addr, sizeof(local_addr));
     if (err < 0) {
-	perror("bind()");
-	return -2;
+        perror("bind()");
+        return -2;
     }
 
     int loop = 1;
     err =
-	setsockopt(s, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
+        setsockopt(s, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
     if (err < 0) {
-	perror("setsockopt(): IP_MULTICAST_LOOP");
-	return -3;
+        perror("setsockopt(): IP_MULTICAST_LOOP");
+        return -3;
     }
 
     struct ip_mreq mreq;
@@ -79,10 +79,10 @@ int main(int argc, char *argv[])
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
     err =
-	setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+        setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
     if (err < 0) {
-	perror("setsockopt(): IP_ADDR_MEMBERSHIP");
-	return -4;
+        perror("setsockopt(): IP_ADDR_MEMBERSHIP");
+        return -4;
     }
 
     int times = 0;
@@ -90,21 +90,20 @@ int main(int argc, char *argv[])
     char buf[BUFF_SIZE];
     int n = 0;
     for (times = 0; times < 5; times++) {
-	addr_len = sizeof(local_addr);
-	memset(buf, 0, BUFF_SIZE);
+        addr_len = sizeof(local_addr);
+        memset(buf, 0, BUFF_SIZE);
 
-	n = recvfrom(s, buf, BUFF_SIZE, 0, (struct sockaddr *) &local_addr,
-		     &addr_len);
-	if (n == -1) {
-	    perror("recvfrom()");
-	}
+        n = recvfrom(s, buf, BUFF_SIZE, 0, (struct sockaddr *) &local_addr,
+                     &addr_len);
+        if (n == -1) {
+            perror("recvfrom()");
+        }
 
-	printf("Recv %dst message from server: %s\n", times, buf);
-	sleep(MCAST_INTERVAL);
+        printf("Recv %dst message from server: %s\n", times, buf);
+        sleep(MCAST_INTERVAL);
     }
 
-    err =
-	setsockopt(s, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
+    err = setsockopt(s, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
 
     close(s);
     return 0;

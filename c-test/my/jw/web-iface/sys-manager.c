@@ -27,7 +27,7 @@ int g_debug = 0;
 void usage()
 {
     printf
-	("Usage: [--debug] 子命令 用于调试子命令参数输出\n");
+        ("Usage: [--debug] 子命令 用于调试子命令参数输出\n");
     printf("请输入子命令!\n");
     printf("      disk      - 磁盘接口\n");
     printf("      vg        - 卷组接口\n");
@@ -43,7 +43,7 @@ void usage()
     printf("      usermanage - NAS用户管理\n");
     printf("      sysconfig  - 配置系统参数\n");
     printf
-	("      system    - 系统信息、系统状态、系统参数、告警\n");
+        ("      system    - 系统信息、系统状态、系统参数、告警\n");
     printf("      configbak - 配置文件自动备份接口\n");
     printf("      web	- WEB站点设置\n");
     printf("      shareacl	- 共享目录权限配置\n");
@@ -54,7 +54,7 @@ void usage()
 void input_wrong()
 {
     fprintf(stdout,
-	    "{\"status\":false, \"msg\":\"输入的子命令不正确!\"}'n");
+            "{\"status\":false, \"msg\":\"输入的子命令不正确!\"}'n");
 }
 
 int main(int argc, char *argv[])
@@ -63,17 +63,17 @@ int main(int argc, char *argv[])
     struct cmd_map *p = &cmd_map[0];
 
     if (argc < 2)
-	usage();
+        usage();
 
     if (!strcmp(argv[1], "--debug")) {
-	g_debug = 1;
-	offset = 2;
+        g_debug = 1;
+        offset = 2;
     }
 
     while (p->cmd) {
-	if (!strcmp(argv[offset], p->name))
-	    return p->cmd(argc - offset, &argv[offset]);
-	p++;
+        if (!strcmp(argv[offset], p->name))
+            return p->cmd(argc - offset, &argv[offset]);
+        p++;
     }
 
     input_wrong();

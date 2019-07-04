@@ -48,3 +48,7 @@ static void __exit my_bus_exit(void)
 
 module_init(my_bus_init);
 module_exit(my_bus_exit);
+
+/* Local Variables: */
+/* compile-command: "make -k " */
+/* End: */

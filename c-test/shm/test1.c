@@ -11,8 +11,8 @@ void p()
     sem_p.sem_num = 0;
     sem_p.sem_op = 1;
     if (semop(semid, &sem_p, 1) == -1) {
-	printf("p operation failed.\n");
-	return -1;
+        printf("p operation failed.\n");
+        return -1;
     }
 }
 
@@ -23,8 +23,8 @@ void v()
     sem_v.sem_op = 1;
 
     if (semop(semid, &sem_v, 1) == -1) {
-	printf("v operation failed.\n");
-	return -1;
+        printf("v operation failed.\n");
+        return -1;
     }
 }
 
@@ -47,20 +47,20 @@ int main(int argc, char *argv[])
     /* 创建共享内存和信号量的IPC */
     semid = semget(semkey, 1, 0666 | IPC_CREAT);
     if (semid == -1) {
-	printf("create sem failed.\n");
-	return -1;
+        printf("create sem failed.\n");
+        return -1;
     }
     shmid = shmget(shmkey, 1024, 0666 | IPC_CREAT);
     if (shmid == -1) {
-	printf("create shm failed.\n");
-	return -1;
+        printf("create shm failed.\n");
+        return -1;
     }
 
     /* 设置信号量的初始值 */
     union semum {
-	int val;
-	struct semid_ds *buf;
-	ushort *array;
+        int val;
+        struct semid_ds *buf;
+        ushort *array;
     } sem_u;
 
     sem_u.val = 1;
@@ -72,8 +72,8 @@ int main(int argc, char *argv[])
     struct People *addr;
     addr = (struct People *) shmat(shmid, 0, 0);
     if (addr == (struct People *) -1) {
-	printf("shm shmat failed.\n");
-	return -1;
+        printf("shm shmat failed.\n");
+        return -1;
     }
 
     p();
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
     /* 将共享内存与当前进程断开 */
     if (shmdt(addr) == -1) {
-	printf("shmdt failed.\n");
-	return -1;
+        printf("shmdt failed.\n");
+        return -1;
     }
 }

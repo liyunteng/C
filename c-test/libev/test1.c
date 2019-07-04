@@ -1,10 +1,10 @@
 /*******************************************************************************
-* Author : liyunteng
-* Email : li_yunteng@163.com
-* Created Time : 2014-02-14 12:10
-* Filename : test1.c
-* Description : 
-* *****************************************************************************/
+ * Author : liyunteng
+ * Email : li_yunteng@163.com
+ * Created Time : 2014-02-14 12:10
+ * Filename : test1.c
+ * Description :
+ * *****************************************************************************/
 #include <stdio.h>
 #include <ev.h>
 #include <stdlib.h>
@@ -25,13 +25,13 @@ ev_stat file;
 static void file_cb(struct ev_loop *loop, ev_stat * w, int revents)
 {
     if (w->attr.st_nlink) {
-	printf("test current size %ld\n", (long) w->attr.st_size);
-	printf("test current atime %ld\n", (long) w->attr.st_atime);
-	printf("test current mtime %ld\n", (long) w->attr.st_mtime);
+        printf("test current size %ld\n", (long) w->attr.st_size);
+        printf("test current atime %ld\n", (long) w->attr.st_atime);
+        printf("test current mtime %ld\n", (long) w->attr.st_mtime);
     } else {
 
-	puts("wow, /root/libev/test is not there, expect problems."
-	     "if this is windows, they already arrived\n");
+        puts("wow, /root/libev/test is not there, expect problems."
+             "if this is windows, they already arrived\n");
     }
 }
 
@@ -53,7 +53,7 @@ static void stdin_cb(EV_P_ ev_io * w, int revents)
     struct test_ev *t = (struct test_ev *) w;
     printf("ev_io: %p test_io:%p\n", w, t_ev);
     printf("t->fd: %d t->ev.fd:%d t->ev.events:%d\n", t->fd, t->ev.fd,
-	   t->ev.events);
+           t->ev.events);
     printf("ev.fd : %d, ev.events: %d\n", w->fd, w->events);
     printf("ev_io: %p test_io:%p\n", w, t_ev);
     ev_io_stop(EV_A_ w);
@@ -74,13 +74,13 @@ int main(int argc, char *argv[])
 
 
     if ((pid = fork()) < 0) {
-	fprintf(stderr, "fork error.\n");
+        fprintf(stderr, "fork error.\n");
     } else if (pid == 0) {
-	printf("children processing\n");
-	exit(1);
+        printf("children processing\n");
+        exit(1);
     } else {
-	ev_child_init(&cw, child_cb, pid, 0);
-	ev_child_start(loop, &cw);
+        ev_child_init(&cw, child_cb, pid, 0);
+        ev_child_start(loop, &cw);
     }
     t_ev.fd = 999;
     ev_io_init(&t_ev.ev, stdin_cb, 0, EV_READ);
@@ -101,3 +101,7 @@ int main(int argc, char *argv[])
     return 0;
 
 }
+
+/* Local Variables: */
+/* compile-command: "clang -Wall -o test1 test1.c -g -lev" */
+/* End: */

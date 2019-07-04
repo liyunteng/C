@@ -48,8 +48,8 @@ int main(int argc, char *argv[])
 
     listen_fd = socket(PF_UNIX, SOCK_DGRAM, 0);
     if (listen_fd < 0) {
-	perror("can't create communication socket");
-	return -1;
+        perror("can't create communication socket");
+        return -1;
     }
 
 
@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
 
     ret = bind(listen_fd, (struct sockaddr *) &srv_addr, sizeof(srv_addr));
     if (ret == -1) {
-	perror("bind server socket");
-	close(listen_fd);
-	return -1;
+        perror("bind server socket");
+        close(listen_fd);
+        return -1;
     }
 
     mon_io.sockfd = listen_fd;

@@ -15,7 +15,7 @@ void p(int semid)
     sem_p.sem_num = 0;
     sem_p.sem_op = -1;
     if (semop(semid, &sem_p, 1) == -1) {
-	printf("p operation failed.\n");
+        printf("p operation failed.\n");
     }
 }
 
@@ -25,7 +25,7 @@ void v(int semid)
     sem_v.sem_num = 0;
     sem_v.sem_op = 1;
     if (semop(semid, &sem_v, 1) == -1) {
-	printf("v operation failed.\n");
+        printf("v operation failed.\n");
     }
 }
 
@@ -42,20 +42,20 @@ int main(int argc, char *argv[])
 
     semid = semget(semkey, 0, 0666);
     if (semid == -1) {
-	printf("create sem failed.\n");
-	return -1;
+        printf("create sem failed.\n");
+        return -1;
     }
     shmid = shmget(shmkey, 0, 0666);
     if (shmid == -1) {
-	printf("create shm failed.\n");
-	return -1;
+        printf("create shm failed.\n");
+        return -1;
     }
 
     struct People *addr;
     addr = (struct People *) shmat(shmid, 0, 0);
     if (addr == (struct People *) -1) {
-	printf("shm shmat failed.\n");
-	return -1;
+        printf("shm shmat failed.\n");
+        return -1;
     }
 
     p(semid);
@@ -64,14 +64,14 @@ int main(int argc, char *argv[])
     v(semid);
 
     if (shmdt(addr) == -1) {
-	printf("shmdt failed.\n");
+        printf("shmdt failed.\n");
     }
 
     if (semctl(semid, 0, IPC_RMID, 0) == -1) {
-	printf("semctl delete error.\n");
+        printf("semctl delete error.\n");
     }
     if (shmctl(shmid, IPC_RMID, NULL) == -1) {
-	printf("shmctl delete error.\n");
+        printf("shmctl delete error.\n");
     }
 
     return 0;

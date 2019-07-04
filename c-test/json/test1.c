@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <json/json.h>
+#include <json-c/json.h>
+/* #include <json/json.h> */
 
 int main(int argc, char *argv[])
 {
@@ -12,3 +13,7 @@ int main(int argc, char *argv[])
     printf("%s\n", json_object_to_json_string(jmsg));
     return 0;
 }
+
+/* Local Variables: */
+/* compile-command: "clang -Wall -o test1 test1.c -g -ljson-c" */
+/* End: */

@@ -13,20 +13,20 @@ xmlDocPtr parseDoc(char *docname, char *uri)
 
     doc = xmlParseFile(docname);
     if (doc == NULL) {
-	fprintf(stderr, "Document not parsed successfully.\n");
-	return NULL;
+        fprintf(stderr, "Document not parsed successfully.\n");
+        return NULL;
     }
 
     cur = xmlDocGetRootElement(doc);
     if (cur == NULL) {
-	fprintf(stderr, "empty documents\n");
-	xmlFreeDoc(doc);
-	return NULL;
+        fprintf(stderr, "empty documents\n");
+        xmlFreeDoc(doc);
+        return NULL;
     }
     if (xmlStrcmp(cur->name, (const xmlChar *) "story")) {
-	fprintf(stderr, "document of the wrong type, root node!=story");
-	xmlFreeDoc(doc);
-	return NULL;
+        fprintf(stderr, "document of the wrong type, root node!=story");
+        xmlFreeDoc(doc);
+        return NULL;
     }
 
     newnode = xmlNewTextChild(cur, NULL, "reference", NULL);
@@ -42,8 +42,8 @@ int main(int argc, char *argv[])
     xmlDocPtr doc;
 
     if (argc <= 2) {
-	printf("Usage: %s docname uri\n", argv[0]);
-	return 0;
+        printf("Usage: %s docname uri\n", argv[0]);
+        return 0;
     }
 
     docname = argv[1];
@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
 
     doc = parseDoc(docname, uri);
     if (doc != NULL) {
-	xmlSaveFormatFile(docname, doc, 1);
-	xmlFreeDoc(doc);
+        xmlSaveFormatFile(docname, doc, 1);
+        xmlFreeDoc(doc);
     }
 
     return 0;

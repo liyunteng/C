@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
     t.c[1] = 0x1;
     printf("t: %u\n", t.i);
     if (t.i == 256) {
-	printf("little\n");
+        printf("little\n");
     } else {
-	printf("big\n");
+        printf("big\n");
     }
 
     struct Y y;

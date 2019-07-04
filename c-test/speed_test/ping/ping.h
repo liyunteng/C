@@ -40,21 +40,21 @@ typedef unsigned int u32;
 
 
 struct icmphdr {
-        u8 type;
-        u8 code;
-        u16 checksum;
-        union {
-                struct {
-                        u16 id;
-                        u16 sequence;
-                }echo;
-                u32 gateway;
-                struct {
-                        u16 unused;
-                        u16 mtu;
-                }frag;
-        }un;
-        u8 data[0];
+    u8 type;
+    u8 code;
+    u16 checksum;
+    union {
+        struct {
+            u16 id;
+            u16 sequence;
+        }echo;
+        u32 gateway;
+        struct {
+            u16 unused;
+            u16 mtu;
+        }frag;
+    }un;
+    u8 data[0];
 #define icmp_id un.echo.id
 #define icmp_seq un.echo.sequence
 };
@@ -62,16 +62,16 @@ struct icmphdr {
 #define ICMP_HSIZE sizeof(struct icmphdr)
 
 struct iphdr {
-        u8 hlen:4, ver:4;
-        u8 tos;
-        u16 tot_len;
-        u16 id;
-        u16 frag_off;
-        u8 ttl;
-        u8 protocol;
-        u16 check;
-        u32 saddr;
-        u32 daddr;
+    u8 hlen:4, ver:4;
+    u8 tos;
+    u16 tot_len;
+    u16 id;
+    u16 frag_off;
+    u8 ttl;
+    u8 protocol;
+    u16 check;
+    u32 saddr;
+    u32 daddr;
 };
 
 char *hostname;

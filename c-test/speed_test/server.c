@@ -56,71 +56,71 @@ void *thread(void *a)
     struct timeval tv1, tv2;
 
     fprintf(stderr, "connection from: %s:%d\n",
-	    inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port));
+            inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port));
     gettimeofday(&tv1, NULL);
     while ((n = recv(arg.connfd, buf, sizeof(buf), 0)) > 0) {
-	count += n;
-	nrecv++;
+        count += n;
+        nrecv++;
     }
     while (1) {
-	int n = recv(arg.connfd, buf, sizeof(buf), 0);
-	if (n > 0) {
-	    count += n;
-	    nrecv++;
-	} else if (n == 0) {
-	    //fprintf(stderr, "%s:%d closed\n", inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port));
-	    break;
-	} else {
-	    fprintf(stderr, "recv failed: %s\n", strerror(errno));
-	}
+        int n = recv(arg.connfd, buf, sizeof(buf), 0);
+        if (n > 0) {
+            count += n;
+            nrecv++;
+        } else if (n == 0) {
+            //fprintf(stderr, "%s:%d closed\n", inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port));
+            break;
+        } else {
+            fprintf(stderr, "recv failed: %s\n", strerror(errno));
+        }
     }
 
     gettimeofday(&tv2, NULL);
     unsigned long long t =
-	(tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec -
-					    tv1.tv_usec) / 1000;
+        (tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec -
+                                            tv1.tv_usec) / 1000;
     if (t == 0)
-	t = 1;
+        t = 1;
     fprintf(stderr,
-	    "%s:%d Upload size: %llu nrecv: %llu time: %llu speed: %llu kB/s\n",
-	    inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port), count,
-	    nrecv, t, count / t * 1000 / 1024);
+            "%s:%d Upload size: %llu nrecv: %llu time: %llu speed: %llu kB/s\n",
+            inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port), count,
+            nrecv, t, count / t * 1000 / 1024);
 
     count = 0;
     unsigned long long nsent = 0;
     gettimeofday(&tv1, NULL);
     while (1) {
-	memset(buf, 0xff, sizeof(buf));
-	struct myhdr *hdr = (struct myhdr *) buf;
-	hdr->type = MSG_SEND;
-	hdr->seq = nsent;
-	hdr->id = getpid();
-	gettimeofday((struct timeval *) hdr->data, NULL);
-	int n = sendto(arg.connfd, buf, sizeof(buf), 0, NULL, 0);
-	if (n != sizeof(buf)) {
-	    if (errno == ECONNRESET || errno == EPIPE) {
-		nsent--;
-		break;
-	    } else if (errno == 0) {
-		break;
-	    }
-	    fprintf(stderr, "send failed: %s\n", strerror(errno));
-	} else {
-	    count += sizeof(buf);
-	    nsent++;
-	}
+        memset(buf, 0xff, sizeof(buf));
+        struct myhdr *hdr = (struct myhdr *) buf;
+        hdr->type = MSG_SEND;
+        hdr->seq = nsent;
+        hdr->id = getpid();
+        gettimeofday((struct timeval *) hdr->data, NULL);
+        int n = sendto(arg.connfd, buf, sizeof(buf), 0, NULL, 0);
+        if (n != sizeof(buf)) {
+            if (errno == ECONNRESET || errno == EPIPE) {
+                nsent--;
+                break;
+            } else if (errno == 0) {
+                break;
+            }
+            fprintf(stderr, "send failed: %s\n", strerror(errno));
+        } else {
+            count += sizeof(buf);
+            nsent++;
+        }
     }
     gettimeofday(&tv2, NULL);
     t = (tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec -
-					    tv1.tv_usec) / 1000;
+                                            tv1.tv_usec) / 1000;
     if (t == 0)
-	t = 1;
+        t = 1;
     if (nsent == 0)
-	count = 0;
+        count = 0;
     fprintf(stderr,
-	    "%s:%d Download size: %llu  nsent %llu time: %llu speed: %llu kB/s\n",
-	    inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port), count,
-	    nsent, t, count / t * 1000 / 1024);
+            "%s:%d Download size: %llu  nsent %llu time: %llu speed: %llu kB/s\n",
+            inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port), count,
+            nsent, t, count / t * 1000 / 1024);
 
     close(arg.connfd);
     tids[arg.id] = 0;
@@ -135,8 +135,8 @@ int tcp_speed_test(int port)
     sa.sa_handler = SIG_IGN;
     sa.sa_flags = 0;
     if (sigaction(SIGPIPE, &sa, 0) == -1) {
-	fprintf(stderr, "sigaction failed: %s\n", strerror(errno));
-	return -1;
+        fprintf(stderr, "sigaction failed: %s\n", strerror(errno));
+        return -1;
     }
 
 
@@ -144,8 +144,8 @@ int tcp_speed_test(int port)
     struct sockaddr_in serveraddr;
 
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-	fprintf(stderr, "create socket failed: %s\n", strerror(errno));
-	return -1;
+        fprintf(stderr, "create socket failed: %s\n", strerror(errno));
+        return -1;
     }
 
     memset(&serveraddr, 0, sizeof(serveraddr));
@@ -154,46 +154,46 @@ int tcp_speed_test(int port)
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if (bind(listenfd, (struct sockaddr *) &serveraddr, sizeof(serveraddr))
-	== -1) {
-	fprintf(stderr, "bind failed: %s\n", strerror(errno));
-	return -1;
+        == -1) {
+        fprintf(stderr, "bind failed: %s\n", strerror(errno));
+        return -1;
     }
 
     if (listen(listenfd, 10) == -1) {
-	fprintf(stderr, "listen failed: %s\n", strerror(errno));
-	return -1;
+        fprintf(stderr, "listen failed: %s\n", strerror(errno));
+        return -1;
     }
 
     while (1) {
-	struct sockaddr_in cliaddr;
-	socklen_t cliaddr_len = sizeof(cliaddr);
-	if ((connfd =
-	     accept(listenfd, (struct sockaddr *) &cliaddr,
-		    &cliaddr_len)) == -1) {
-	    fprintf(stderr, "accept failed: %s\n", strerror(errno));
-	    continue;
-	}
+        struct sockaddr_in cliaddr;
+        socklen_t cliaddr_len = sizeof(cliaddr);
+        if ((connfd =
+             accept(listenfd, (struct sockaddr *) &cliaddr,
+                    &cliaddr_len)) == -1) {
+            fprintf(stderr, "accept failed: %s\n", strerror(errno));
+            continue;
+        }
 
-	int i;
-	for (i = 0; i < MAX_THREAD; i++) {
-	    if (tids[i] == 0)
-		break;
-	}
-	args[i].id = i;
-	args[i].connfd = connfd;
-	args[i].addr = cliaddr;
+        int i;
+        for (i = 0; i < MAX_THREAD; i++) {
+            if (tids[i] == 0)
+                break;
+        }
+        args[i].id = i;
+        args[i].connfd = connfd;
+        args[i].addr = cliaddr;
 
-	if (pthread_create(&tids[i], NULL, thread, (void *) &args[i]) != 0) {
-	    perror("pthread_create failed");
-	    close(connfd);
-	    continue;
-	}
+        if (pthread_create(&tids[i], NULL, thread, (void *) &args[i]) != 0) {
+            perror("pthread_create failed");
+            close(connfd);
+            continue;
+        }
     }
 
     int i;
     for (i = 0; i < MAX_THREAD; i++) {
-	if (tids[i] != 0)
-	    pthread_join(tids[i], NULL);
+        if (tids[i] != 0)
+            pthread_join(tids[i], NULL);
     }
 
     close(listenfd);
@@ -205,8 +205,12 @@ int main(int argc, char *argv[])
 {
     int port = PORT;
     if (argc == 2)
-	port = atoi(argv[1]);
+        port = atoi(argv[1]);
 
     tcp_speed_test(port);
     return 0;
 }
+
+/* Local Variables: */
+/* compile-command: "clang -Wall -o server server.c -g -lpthread" */
+/* End: */

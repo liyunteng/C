@@ -11,7 +11,7 @@
  *       Compiler:  gcc
  *
  *         Author:  liyunteng (), li_yunteng@163.com
- *   Organization:  
+ *   Organization:
  *
  * =====================================================================================
  */
@@ -42,3 +42,7 @@ int main(int argc, char *argv[])
     return tcp_speed_test(argv[1], port, interval);
 
 }
+
+/* Local Variables: */
+/* compile-command: "clang -Wall -o main main.c -g speed.c" */
+/* End: */

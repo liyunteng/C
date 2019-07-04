@@ -1,10 +1,10 @@
 /*******************************************************************************
-* Author : liyunteng
-* Email : li_yunteng@163.com
-* Created Time : 2014-01-14 16:56
-* Filename : simple_refresh.c
-* Description : 
-* *****************************************************************************/
+ * Author : liyunteng
+ * Email : li_yunteng@163.com
+ * Created Time : 2014-01-14 16:56
+ * Filename : simple_refresh.c
+ * Description :
+ * *****************************************************************************/
 #include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
@@ -31,28 +31,28 @@ void read_file()
     stat(filename, &buf);
 
     if (buf.st_mtime > lasttime) {
-	if (counter++)
-	    fprintf(stderr, "Reloading file: %s", filename);
-	else
-	    fprintf(stderr, "Loading file : %s", filename);
+        if (counter++)
+            fprintf(stderr, "Reloading file: %s", filename);
+        else
+            fprintf(stderr, "Loading file : %s", filename);
 
-	FILE *f = fopen(filename, "rb");
-	if (f == NULL) {
-	    fprintf(stderr, "Couldn't open file\n");
-	    exit(1);
-	}
+        FILE *f = fopen(filename, "rb");
+        if (f == NULL) {
+            fprintf(stderr, "Couldn't open file\n");
+            exit(1);
+        }
 
-	fseek(f, 0, SEEK_END);
-	size = ftell(f);
-	fseek(f, 0, SEEK_SET);
-	data = (char *) malloc(size + 1);
-	fread(data, sizeof(char), size, f);
-	filedata = (char *) malloc(size + 1);
-	strcpy(filedata, data);
-	fclose(f);
+        fseek(f, 0, SEEK_END);
+        size = ftell(f);
+        fseek(f, 0, SEEK_SET);
+        data = (char *) malloc(size + 1);
+        fread(data, sizeof(char), size, f);
+        filedata = (char *) malloc(size + 1);
+        strcpy(filedata, data);
+        fclose(f);
 
-	fprintf(stderr, " (%d bytes)\n", size);
-	lasttime = buf.st_mtime;
+        fprintf(stderr, " (%d bytes)\n", size);
+        lasttime = buf.st_mtime;
 
     }
 }
@@ -86,14 +86,14 @@ void generic_request_handler(struct evhttp_request *req, void *arg)
 int main(int argc, char *argv[])
 {
     short http_port = 8081;
-    char *http_addr = "192.168.19.128";
+    char *http_addr = "192.168.1.104";
     struct evhttp *http_server = NULL;
 
     if (argc > 1) {
-	strcpy(filename, argv[1]);
-	printf("Using %s\n", filename);
+        strcpy(filename, argv[1]);
+        printf("Using %s\n", filename);
     } else {
-	strcpy(filename, DEFAULT_FILE);
+        strcpy(filename, DEFAULT_FILE);
     }
 
     event_init();
@@ -105,3 +105,7 @@ int main(int argc, char *argv[])
     fprintf(stderr, "Server started on port %d\n", http_port);
     event_dispatch();
 }
+
+/* Local Variables: */
+/* compile-command: "clang -Wall -o simple_refresh simple_refresh.c -g -levent" */
+/* End: */

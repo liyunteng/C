@@ -20,3 +20,7 @@ static void __exit jiffies_exit(void)
 
 module_init(jiffies_init);
 module_exit(jiffies_exit);
+
+/* Local Variables: */
+/* compile-command: "make -k " */
+/* End: */

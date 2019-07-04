@@ -13,9 +13,9 @@
 #define WEB_USER_NAME	"www-data"
 
 /* 调试显示输入参数 */
-#define DUMP_PARM(argc, argv) {					\
-		int i;						\
-		for (i = 0; i < argc; i++)			\
+#define DUMP_PARM(argc, argv) {                     \
+		int i;                                      \
+		for (i = 0; i < argc; i++)                  \
 			printf("argv[%d] = %s\n", i, argv[i]);	\
 	}
 

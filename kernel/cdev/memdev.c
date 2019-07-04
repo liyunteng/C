@@ -216,3 +216,7 @@ MODULE_AUTHOR("liyunteng");
 MODULE_LICENSE("GPL");
 module_init(memdev_init);
 module_exit(memdev_exit);
+
+/* Local Variables: */
+/* compile-command: "make -k " */
+/* End: */

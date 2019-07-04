@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
     int n;
 
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-	fprintf(stderr, "create socket failed: %s\n", strerror(errno));
-	return -1;
+        fprintf(stderr, "create socket failed: %s\n", strerror(errno));
+        return -1;
     }
 
     memset(&servaddr1, 0, sizeof(servaddr1));
@@ -38,27 +38,27 @@ int main(int argc, char *argv[])
     /*      return -1; */
     /* } */
     if (bind(listenfd, (struct sockaddr *) &servaddr2, sizeof(servaddr2))
-	== -1) {
-	fprintf(stderr, "bind servaddr2 failed: %s\n", strerror(errno));
-	return -1;
+        == -1) {
+        fprintf(stderr, "bind servaddr2 failed: %s\n", strerror(errno));
+        return -1;
     }
 
     if (listen(listenfd, 10) == -1) {
-	fprintf(stderr, "listen failed: %s\n", strerror(errno));
-	return -1;
+        fprintf(stderr, "listen failed: %s\n", strerror(errno));
+        return -1;
     }
 
     while (1) {
-	if ((connfd =
-	     accept(listenfd, (struct sockaddr *) NULL, NULL)) == -1) {
-	    fprintf(stderr, "accept failed : %s\n", strerror(errno));
-	    continue;
-	}
+        if ((connfd =
+             accept(listenfd, (struct sockaddr *) NULL, NULL)) == -1) {
+            fprintf(stderr, "accept failed : %s\n", strerror(errno));
+            continue;
+        }
 
-	n = recv(connfd, buf, 1024, 0);
-	buf[n] = '\0';
-	printf("data:: %s\n", buf);
-	close(connfd);
+        n = recv(connfd, buf, 1024, 0);
+        buf[n] = '\0';
+        printf("data:: %s\n", buf);
+        close(connfd);
     }
     close(listenfd);
     return 0;

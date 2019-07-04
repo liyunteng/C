@@ -47,13 +47,13 @@ int main(int argc, char *argv[])
     struct hostent *host;
 
     if (argc < 2) {
-	printf("Usage: %s hostname\n", argv[0]);
-	exit(1);
+        printf("Usage: %s hostname\n", argv[0]);
+        exit(1);
     }
 
     if ((host = gethostbyname(argv[1])) == NULL) {
-	perror("can not understand the host name");
-	exit(1);
+        perror("can not understand the host name");
+        exit(1);
     }
 
     hostname = argv[1];
@@ -64,8 +64,8 @@ int main(int argc, char *argv[])
     dest.sin_addr = *(struct in_addr *) host->h_addr_list[0];
 
     if ((sockfd = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0) {
-	perror("raw socket created error");
-	exit(1);
+        perror("raw socket created error");
+        exit(1);
     }
 
     setuid(getuid());
@@ -74,10 +74,10 @@ int main(int argc, char *argv[])
     set_sighandler();
 
     printf("Ping %s(%s): %d bytes data in ICMP packets.\n",
-	   argv[1], inet_ntoa(dest.sin_addr), datalen);
+           argv[1], inet_ntoa(dest.sin_addr), datalen);
 
     if ((setitimer(ITIMER_REAL, &val_alarm, NULL)) == -1)
-	bail("setitimer fail.");
+        bail("setitimer fail.");
 
     recv_reply();
 
@@ -104,7 +104,7 @@ void send_ping(void)
     icmp_hdr->checksum = checksum((u8 *) icmp_hdr, len);
 
     sendto(sockfd, sendbuf, len, 0, (struct sockaddr *) &dest,
-	   sizeof(dest));
+           sizeof(dest));
 }
 
 void recv_reply()
@@ -117,18 +117,18 @@ void recv_reply()
     len = sizeof(from);
 
     while (nrecv < COUNT) {
-	if ((n = recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0,
-			  (struct sockaddr *) &from, &len)) < 0) {
-	    if (errno == EINTR)
-		continue;
-	    bail("recvfrom error");
-	}
+        if ((n = recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0,
+                          (struct sockaddr *) &from, &len)) < 0) {
+            if (errno == EINTR)
+                continue;
+            bail("recvfrom error");
+        }
 
-	gettimeofday(&recvtime, NULL);
+        gettimeofday(&recvtime, NULL);
 
-	if (handle_pkt())
-	    continue;
-	nrecv++;
+        if (handle_pkt())
+            continue;
+        nrecv++;
     }
 
     get_statistics(nsent, nrecv);
@@ -142,12 +142,12 @@ u16 checksum(u8 * buf, int len)
     cbuf = (u16 *) buf;
 
     while (len > 1) {
-	sum += *cbuf++;
-	len -= 2;
+        sum += *cbuf++;
+        len -= 2;
     }
 
     if (len)
-	sum += *(u8 *) cbuf;
+        sum += *(u8 *) cbuf;
 
     sum = (sum >> 16) + (sum & 0xffff);
     sum += (sum >> 16);
@@ -172,21 +172,21 @@ int handle_pkt()
 
     icmp = (struct icmphdr *) (recvbuf + ip_hlen);
     if (checksum((u8 *) icmp, ip_datalen)) {
-	perror("checksum fail");
-	return -1;
+        perror("checksum fail");
+        return -1;
     }
 
     if (icmp->icmp_id != pid) {
-	perror("error id");
-	return -1;
+        perror("error id");
+        return -1;
     }
 
     sendtime = (struct timeval *) icmp->data;
     rtt = ((&recvtime)->tv_sec - sendtime->tv_sec) * 1000 +
-	((&recvtime)->tv_usec - sendtime->tv_usec) / 1000.0;
+        ((&recvtime)->tv_usec - sendtime->tv_usec) / 1000.0;
     printf("%d bytes from %s: icmp_seq = %u ttl=%d rtt=%.3f ms\n",
-	   ip_datalen,
-	   inet_ntoa(from.sin_addr), icmp->icmp_seq, ip->ttl, rtt);
+           ip_datalen,
+           inet_ntoa(from.sin_addr), icmp->icmp_seq, ip->ttl, rtt);
 
     return 0;
 }
@@ -195,11 +195,11 @@ void set_sighandler()
 {
     act_alarm.sa_handler = alarm_handler;
     if (sigaction(SIGALRM, &act_alarm, NULL) == -1)
-	bail("SIGALRM handler setting fail.");
+        bail("SIGALRM handler setting fail.");
 
     act_int.sa_handler = int_handler;
     if (sigaction(SIGINT, &act_int, NULL) == -1)
-	bail("SIGINT handler setting fail.");
+        bail("SIGINT handler setting fail.");
 }
 
 
@@ -207,7 +207,7 @@ void get_statistics(int nsent, int nrecv)
 {
     printf("---%s ping statistics ---\n", inet_ntoa(dest.sin_addr));
     printf("%d packets transmitted, %d received, %0.0f%%" "packet loss\n",
-	   nsent, nrecv, 1.0 * (nsent - nrecv) / nsent * 100);
+           nsent, nrecv, 1.0 * (nsent - nrecv) / nsent * 100);
 }
 
 void bail(const char *on_what)

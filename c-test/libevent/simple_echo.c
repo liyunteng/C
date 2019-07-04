@@ -1,10 +1,10 @@
 /*******************************************************************************
-* Author : liyunteng
-* Email : li_yunteng@163.com
-* Created Time : 2014-01-14 14:46
-* Filename : simple_echo.c
-* Description : 
-* *****************************************************************************/
+ * Author : liyunteng
+ * Email : li_yunteng@163.com
+ * Created Time : 2014-01-14 14:46
+ * Filename : simple_echo.c
+ * Description :
+ * *****************************************************************************/
 #include <stdio.h>
 #include <event.h>
 #include <sys/types.h>
@@ -40,7 +40,7 @@ void buf_read_callback(struct bufferevent *incoming, void *arg)
 
     req = evbuffer_readline(incoming->input);
     if (req == NULL)
-	return;
+        return;
 
     evreturn = evbuffer_new();
     evbuffer_add_printf(evreturn, "You said %s\n", req);
@@ -71,19 +71,19 @@ void accept_callback(int fd, short ev, void *arg)
 
     client_fd = accept(fd, (struct sockaddr *) &client_addr, &client_len);
     if (client_fd < 0) {
-	warn("Client: accept() failed");
-	return;
+        warn("Client: accept() failed");
+        return;
     }
     setnonblock(client_fd);
 
     client = calloc(1, sizeof(*client));
     if (client == NULL)
-	err(1, "malloc failed");
+        err(1, "malloc failed");
     client->fd = client_fd;
 
     client->buf_ev = bufferevent_new(client_fd, buf_read_callback,
-				     buf_write_callback,
-				     buf_error_callback, client);
+                                     buf_write_callback,
+                                     buf_error_callback, client);
 
     bufferevent_enable(client->buf_ev, EV_READ);
 }
@@ -100,8 +100,8 @@ int main(int argc, char *argv[])
     socketlisten = socket(AF_INET, SOCK_STREAM, 0);
 
     if (socketlisten < 0) {
-	fprintf(stderr, "Failed to create listen socket");
-	return 1;
+        fprintf(stderr, "Failed to create listen socket");
+        return 1;
     }
 
     memset(&addresslisten, 0, sizeof(addresslisten));
@@ -111,22 +111,22 @@ int main(int argc, char *argv[])
     addresslisten.sin_port = htons(SERVER_PORT);
 
     if (bind(socketlisten, (struct sockaddr *) &addresslisten,
-	     sizeof(addresslisten)) < 0) {
-	fprintf(stderr, "Failed to bind");
-	return 1;
+             sizeof(addresslisten)) < 0) {
+        fprintf(stderr, "Failed to bind");
+        return 1;
     }
 
     if (listen(socketlisten, 5) < 0) {
-	fprintf(stderr, "Failed to listen to socket");
-	return 1;
+        fprintf(stderr, "Failed to listen to socket");
+        return 1;
     }
 
     setsockopt(socketlisten, SOL_SOCKET, SO_REUSEADDR, &reuse,
-	       sizeof(reuse));
+               sizeof(reuse));
     setnonblock(socketlisten);
 
     event_set(&accept_event, socketlisten, EV_READ | EV_PERSIST,
-	      accept_callback, NULL);
+              accept_callback, NULL);
 
     event_add(&accept_event, NULL);
 
@@ -136,3 +136,7 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
+/* Local Variables: */
+/* compile-command: "clang -Wall -o simple_echo simple_echo.c -g -levent" */
+/* End: */
