@@ -45,6 +45,6 @@ int main(int argc, char *argv[])
     struct Y y;
     y.h = 0x0;
     y.l = 0x1;
-    printf("y: %u, sizeof: %lu\n", y, sizeof(y));
+    printf("y: 0x%x, sizeof: %lu\n", y, sizeof(y));
     return 0;
 }

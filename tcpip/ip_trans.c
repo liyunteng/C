@@ -1,21 +1,3 @@
-/*
- * =====================================================================================
- *
- *       Filename:  test.c
- *
- *    Description:
- *
- *        Version:  1.0
- *        Created:  12/10/2015 05:33:38 PM
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  liyunteng (), li_yunteng@163.com
- *   Organization:
- *
- * =====================================================================================
- */
-
 /*******************************************************************************
  * Author : liyunteng
  * Email : li_yunteng@163.com
@@ -40,7 +22,7 @@ int main(int argc, char *argv[])
     unsigned long val = 0;
     unsigned long addr = 0x0;
     unsigned long base = 10;
-    while (c = *ip++) {
+    while ((c = *ip++)) {
         switch (c) {
         case '0':
         case '1':
