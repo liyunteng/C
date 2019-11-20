@@ -17,7 +17,8 @@
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
-        fprintf(stderr, "Usage: %s <IPaddress> <Port>", argv[0]);
+        fprintf(stderr, "Usage: %s <IPaddress> <Port>\n", argv[0]);
+        return -1;
     }
 
     struct sockaddr_in servaddr;
@@ -63,7 +64,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     while (1) {
-#if 0
+#if 1
         char buf[] = "hello\n";
         int n = send(sockfd, buf, strlen(buf), 0);
         if (n <= 0) {
