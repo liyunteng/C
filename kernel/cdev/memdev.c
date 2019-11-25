@@ -10,7 +10,6 @@
 #include <linux/types.h>
 #include <linux/uaccess.h>
 
-
 #define MEMDEV_MAJOR 110
 #define MEMDEV_NR_DEVS 4
 #define MEMDEV_SIZE 4096

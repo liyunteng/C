@@ -7,7 +7,7 @@
 MODULE_AUTHOR("liyunteng");
 MODULE_LICENSE("GPL");
 
-extern struct bus_type my_bus_type;
+extern struct bus_type      my_bus_type;
 extern struct device_driver my_driver;
 
 static void
@@ -39,12 +39,12 @@ my_dev_store(struct device *dev, struct device_attribute *attr, const char *buf,
 static struct device_attribute my_att = {
     .attr.name = "info",
     .attr.mode = S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR,
-    .show = my_dev_show,
-    .store = my_dev_store,
+    .show      = my_dev_show,
+    .store     = my_dev_store,
 };
 
 static int __init
-my_device_init(void)
+           my_device_init(void)
 {
     int ret = 0;
 

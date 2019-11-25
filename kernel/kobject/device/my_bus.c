@@ -57,15 +57,13 @@ my_bus_uevent(struct device *dev, struct kobj_uevent_env *env)
     return 0;
 }
 
-struct bus_type my_bus_type = {
-    .name  = "my_bus",
-    .match = my_bus_match,
-    .uevent = my_bus_uevent,
-    .probe = my_bus_probe,
-    .remove = my_bus_remove,
-    .online = my_bus_online,
-    .offline = my_bus_offline
-};
+struct bus_type my_bus_type = {.name    = "my_bus",
+                               .match   = my_bus_match,
+                               .uevent  = my_bus_uevent,
+                               .probe   = my_bus_probe,
+                               .remove  = my_bus_remove,
+                               .online  = my_bus_online,
+                               .offline = my_bus_offline};
 
 static ssize_t
 my_bus_attr_show_version(struct bus_type *bus, char *buf)
@@ -77,11 +75,11 @@ my_bus_attr_show_version(struct bus_type *bus, char *buf)
 static struct bus_attribute my_attr = {
     .attr.name = "version",
     .attr.mode = S_IRUSR | S_IRGRP | S_IROTH,
-    .show = my_bus_attr_show_version,
+    .show      = my_bus_attr_show_version,
 };
 
 static int __init
-my_bus_init(void)
+           my_bus_init(void)
 {
     int ret;
 
@@ -96,7 +94,7 @@ my_bus_init(void)
 }
 
 static void __exit
-my_bus_exit(void)
+            my_bus_exit(void)
 {
     bus_unregister(&my_bus_type);
 }

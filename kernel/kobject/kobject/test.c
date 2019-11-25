@@ -63,7 +63,7 @@ kobj_test_store(struct kobject *kobject, struct attribute *attr, const char *buf
 struct kobject kobj;
 
 static int __init
-kobj_test_init(void)
+           kobj_test_init(void)
 {
     printk("kobject test init.\n");
     kobject_init_and_add(&kobj, &ktype, NULL, "kobject_test");
@@ -71,7 +71,7 @@ kobj_test_init(void)
 }
 
 static void __exit
-kobj_test_exit(void)
+            kobj_test_exit(void)
 {
     printk("kobject test exit.\n");
     kobject_del(&kobj);

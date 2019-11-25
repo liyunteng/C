@@ -47,12 +47,12 @@ my_driver_store(struct device_driver *driver, const char *buf, size_t count)
 static struct driver_attribute my_attr = {
     .attr.name = "info",
     .attr.mode = S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR,
-    .show = my_driver_show,
-    .store = my_driver_store,
+    .show      = my_driver_show,
+    .store     = my_driver_store,
 };
 
 static int __init
-my_driver_init(void)
+           my_driver_init(void)
 {
     int ret = 0;
 
@@ -63,7 +63,7 @@ my_driver_init(void)
 }
 
 static void __exit
-my_driver_exit(void)
+            my_driver_exit(void)
 {
     driver_unregister(&my_driver);
 }

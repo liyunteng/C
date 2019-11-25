@@ -6,12 +6,11 @@
 #include <linux/module.h>
 #include <linux/uaccess.h>
 
-
 static struct class * cdev_class;
 static struct device *cdev_class_dev;
 
-static char info_buf[4096] = {0};
-static const char* msg = "This is a cdev.";
+static char        info_buf[4096] = {0};
+static const char *msg            = "This is a cdev.";
 
 static int
 cdev_open(struct inode *inode, struct file *file)
@@ -66,9 +65,9 @@ cdev_write(struct file *file, const char __user *buf, size_t count, loff_t *offs
 static struct file_operations cdev_fops = {
     .owner = THIS_MODULE, /* 宏， 指向编译模块时自动创建
                            * 的__this_module变量 */
-    .open  = cdev_open,
-    .write = cdev_write,
-    .read = cdev_read,
+    .open    = cdev_open,
+    .write   = cdev_write,
+    .read    = cdev_read,
     .release = cdev_release,
 };
 

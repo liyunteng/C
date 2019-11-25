@@ -44,7 +44,7 @@ kernel_fuc(struct sk_buff *skb)
 }
 
 static int __init
-nl_test_init(void)
+           nl_test_init(void)
 {
     nlcfg.groups = 0;
     nlcfg.flags  = 0;
@@ -60,7 +60,7 @@ nl_test_init(void)
 }
 
 static void __exit
-nl_test_exit(void)
+            nl_test_exit(void)
 {
     if (nl_sk != NULL) {
         netlink_kernel_release(nl_sk);

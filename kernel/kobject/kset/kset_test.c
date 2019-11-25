@@ -94,13 +94,13 @@ kset_uevent(struct kset *kset, struct kobject *kobj, struct kobj_uevent_env *env
 }
 
 static struct kset_uevent_ops uevent_ops = {
-	.filter = kset_filter,
-    .name = kset_name,
+    .filter = kset_filter,
+    .name   = kset_name,
     .uevent = kset_uevent,
 };
 
 static int __init
-kset_test_init(void)
+           kset_test_init(void)
 {
     int ret = 0;
 
@@ -120,7 +120,7 @@ kset_test_init(void)
     return 0;
 }
 static void __exit
-kset_test_exit(void)
+            kset_test_exit(void)
 {
     printk("kset test exit.\n");
     kset_unregister(kset_p);
