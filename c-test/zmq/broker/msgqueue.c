@@ -21,23 +21,23 @@
  *
  */
 
-#include <zmq.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
 #include <assert.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <zmq.h>
 
-
-int main(void)
+int
+main(void)
 {
     void *context = zmq_ctx_new();
 
     void *frontend = zmq_socket(context, ZMQ_ROUTER);
-    int rc = zmq_bind(frontend, "tcp://*:5559");
+    int   rc       = zmq_bind(frontend, "tcp://*:5559");
     assert(rc == 0);
 
     void *backend = zmq_socket(context, ZMQ_DEALER);
-    rc = zmq_bind(backend, "tcp://*:5560");
+    rc            = zmq_bind(backend, "tcp://*:5560");
     assert(rc == 0);
 
     zmq_proxy(frontend, backend, NULL);

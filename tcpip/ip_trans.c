@@ -6,10 +6,11 @@
  * Description :
  * *****************************************************************************/
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     char *ip;
     if (argc < 2) {
@@ -18,8 +19,8 @@ int main(int argc, char *argv[])
         ip = argv[1];
     }
 
-    char c;
-    unsigned long val = 0;
+    char          c;
+    unsigned long val  = 0;
     unsigned long addr = 0x0;
     unsigned long base = 10;
     while ((c = *ip++)) {
@@ -38,7 +39,7 @@ int main(int argc, char *argv[])
             break;
         case '.':
             addr = addr << 8 | val;
-            val = 0;
+            val  = 0;
             break;
         default:
             break;
@@ -49,12 +50,11 @@ int main(int argc, char *argv[])
 
     unsigned long t;
     t = addr >> 24 & 0xFF;
-    printf("%d.", (int) t);
+    printf("%d.", (int)t);
     t = (addr >> 16) & 0xFF;
-    printf("%d.", (int) t);
+    printf("%d.", (int)t);
     t = (addr >> 8) & 0xFF;
-    printf("%d.", (int) t);
+    printf("%d.", (int)t);
     t = (addr >> 0) & 0xFF;
-    printf("%d\n", (int) t);
-
+    printf("%d\n", (int)t);
 }

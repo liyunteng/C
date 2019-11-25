@@ -7,27 +7,27 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
+#include "ourhdr.h"
 #include <signal.h>
 #include <stddef.h>
-#include "ourhdr.h"
 
-
-static void sig_alrm(int signo)
+static void
+sig_alrm(int signo)
 {
     return;
 }
 
-unsigned int sleep_1(unsigned int nsecs)
+unsigned int
+sleep_1(unsigned int nsecs)
 {
     struct sigaction newact, oldact;
-    sigset_t newmask, oldmask, suspmask;
-    unsigned int unslept;
+    sigset_t         newmask, oldmask, suspmask;
+    unsigned int     unslept;
 
     newact.sa_handler = sig_alrm;
     sigemptyset(&newact.sa_mask);
     newact.sa_flags = 0;
     sigaction(SIGALRM, &newact, &oldact);
-
 
     sigemptyset(&newmask);
     sigaddset(&newmask, SIGALRM);
@@ -45,7 +45,8 @@ unsigned int sleep_1(unsigned int nsecs)
     return (unslept);
 }
 
-int main(void)
+int
+main(void)
 {
     sleep_1(3);
     return 0;

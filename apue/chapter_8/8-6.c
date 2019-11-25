@@ -7,18 +7,19 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/types.h>
 #include "ourhdr.h"
+#include <sys/types.h>
 
 static void charatatime(char *);
 
-int main(void)
+int
+main(void)
 {
     pid_t pid;
 
     TELL_WAIT();
 
-    if((pid = fork()) < 0) {
+    if ((pid = fork()) < 0) {
         err_sys("fork error");
     } else if (pid == 0) {
         WAIT_PARENT();
@@ -30,12 +31,13 @@ int main(void)
     return 0;
 }
 
-static void charatatime(char *str)
+static void
+charatatime(char *str)
 {
     char *ptr;
-    int c;
+    int   c;
 
     setbuf(stdout, NULL);
-    for(ptr = str; c = *ptr++; )
+    for (ptr = str; c = *ptr++;)
         putc(c, stdout);
 }

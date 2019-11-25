@@ -4,12 +4,12 @@
  * Copyright (C) 2019 liyunteng
  * Last-Updated: <2019/06/13 22:27:48 liyunteng>
  */
-#include <sys/types.h>
-#include <sys/stat.h>
 #include "ourhdr.h"
+#include <sys/stat.h>
+#include <sys/types.h>
 
-
-int main(void)
+int
+main(void)
 {
     struct stat statbuf;
 

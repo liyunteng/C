@@ -22,15 +22,16 @@
  */
 #include <stdio.h>
 union T {
-    char c[2];
+    char           c[2];
     unsigned short i;
 };
 
 struct Y {
-    unsigned char h:4, l:4;
+    unsigned char h : 4, l : 4;
 };
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     union T t;
     t.c[0] = 0x0;

@@ -3,18 +3,18 @@
  *
  * Date   : 2019/11/13
  */
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <arpa/inet.h>
-#include <string.h>
 #include <errno.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <netinet/tcp.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <IPaddress> <Port>\n", argv[0]);
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     }
 
     struct sockaddr_in servaddr;
-    int sockfd;
+    int                sockfd;
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
         perror("socket");
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     struct timeval tv;
-    tv.tv_sec = 0;
+    tv.tv_sec  = 0;
     tv.tv_usec = 0;
     if (setsockopt(sockfd, IPPROTO_TCP, TCP_USER_TIMEOUT, &tv, sizeof(tv)) < 0) {
         perror("setsockopt");
@@ -55,18 +55,18 @@ int main(int argc, char *argv[])
     }
 
     memset(&servaddr, 0, sizeof(servaddr));
-    servaddr.sin_family = AF_INET;
+    servaddr.sin_family      = AF_INET;
     servaddr.sin_addr.s_addr = inet_addr(argv[1]);
-    servaddr.sin_port = htons((short)atoi(argv[2]));
+    servaddr.sin_port        = htons((short)atoi(argv[2]));
 
-    if (connect(sockfd, (struct sockaddr*)&servaddr, (socklen_t)sizeof(servaddr)) < 0 ) {
+    if (connect(sockfd, (struct sockaddr *)&servaddr, (socklen_t)sizeof(servaddr)) < 0) {
         perror("connect");
         return -1;
     }
     while (1) {
 #if 1
         char buf[] = "hello\n";
-        int n = send(sockfd, buf, strlen(buf), 0);
+        int  n     = send(sockfd, buf, strlen(buf), 0);
         if (n <= 0) {
             perror("send");
             return errno;

@@ -7,15 +7,16 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
+#include "ourhdr.h"
 #include <sys/types.h>
 #include <sys/wait.h>
-#include "ourhdr.h"
 
-int main(void)
+int
+main(void)
 {
     pid_t pid;
 
-    if((pid = fork()) < 0)  {
+    if ((pid = fork()) < 0) {
         err_sys("fork error");
     } else if (pid == 0) {
         if ((pid = fork()) < 0) {

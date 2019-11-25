@@ -5,7 +5,7 @@
  * Last-Updated: <2018/12/28 06:58:33 liyunteng>
  */
 
-int myAtoi(char *str)
+int
+myAtoi(char *str)
 {
-
 }

@@ -4,22 +4,24 @@
  * Copyright (C) 2019 liyunteng
  * Last-Updated: <2019/06/08 10:38:11 liyunteng>
  */
+#include "ourhdr.h"
 #include <errno.h>
 #include <stdarg.h>
 #include <syslog.h>
-#include "ourhdr.h"
 
 static void log_doit(int, int, const char *, va_list ap);
-int debug = 0;
+int         debug = 0;
 
-void log_open(const char *ident, int option, int facility)
+void
+log_open(const char *ident, int option, int facility)
 {
     if (debug == 0) {
         openlog(ident, option, facility);
     }
 }
 
-void log_ret(const char *fmt, ...)
+void
+log_ret(const char *fmt, ...)
 {
     va_list ap;
 
@@ -29,7 +31,8 @@ void log_ret(const char *fmt, ...)
     return;
 }
 
-void log_sys(const char *fmt, ...)
+void
+log_sys(const char *fmt, ...)
 {
     va_list ap;
 
@@ -39,7 +42,8 @@ void log_sys(const char *fmt, ...)
     exit(2);
 }
 
-void log_msg(const char *fmt, ...)
+void
+log_msg(const char *fmt, ...)
 {
     va_list ap;
 
@@ -48,7 +52,8 @@ void log_msg(const char *fmt, ...)
     return;
 }
 
-void log_quit(const char *fmt, ...)
+void
+log_quit(const char *fmt, ...)
 {
     va_list ap;
 
@@ -58,15 +63,16 @@ void log_quit(const char *fmt, ...)
     exit(2);
 }
 
-static void log_doit(int errnoflag, int priority, const char *fmt, va_list ap)
+static void
+log_doit(int errnoflag, int priority, const char *fmt, va_list ap)
 {
-    int errno_save;
+    int  errno_save;
     char buf[MAXLINE];
 
     errno_save = errno;
     vsprintf(buf, fmt, ap);
     if (errnoflag) {
-        sprintf(buf+strlen(buf), ": %s", strerror(errno_save));
+        sprintf(buf + strlen(buf), ": %s", strerror(errno_save));
     }
     strcat(buf, "\n");
     if (debug) {

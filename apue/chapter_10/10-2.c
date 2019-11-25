@@ -8,19 +8,20 @@
  * All rights reserved.
  */
 
+#include "ourhdr.h"
 #include <pwd.h>
 #include <signal.h>
-#include "ourhdr.h"
 
 static void my_alarm(int);
 
-int main(void)
+int
+main(void)
 {
     struct passwd *ptr;
     signal(SIGALRM, my_alarm);
     alarm(1);
 
-    for(;;) {
+    for (;;) {
         if ((ptr = getpwnam("lyt")) == NULL)
             err_sys("getpwnam error");
         if (strcmp(ptr->pw_name, "lyt") != 0)
@@ -29,8 +30,8 @@ int main(void)
     return 0;
 }
 
-
-static void my_alarm(int signo)
+static void
+my_alarm(int signo)
 {
     struct passwd *rootptr;
 

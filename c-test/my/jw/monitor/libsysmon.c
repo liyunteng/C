@@ -1,24 +1,24 @@
+#include <json/json.h>
 #include <stdio.h>
 #include <sys/socket.h>
-#include <sys/un.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <json/json.h>
+#include <sys/types.h>
+#include <sys/un.h>
 
 #define SYSMON_ADDR "/root/soket/unix/test.domain"
 
-int sysmon_event(const char *module,
-		 const char *event, const char *param, const char *msg)
+int
+sysmon_event(const char *module, const char *event, const char *param, const char *msg)
 {
     struct sockaddr_un servaddr;
-    socklen_t addr_len;
-    size_t msg_len;
-    int sockfd, ret;
-    char msg_buf[1024];
-    json_object *jmsg;
+    socklen_t          addr_len;
+    size_t             msg_len;
+    int                sockfd, ret;
+    char               msg_buf[1024];
+    json_object *      jmsg;
 
     if ((sockfd = socket(PF_UNIX, SOCK_DGRAM, 0)) < 0) {
-	return -1;
+        return -1;
     }
 
     servaddr.sun_family = AF_UNIX;
@@ -41,19 +41,17 @@ int sysmon_event(const char *module,
     /* } */
 
     /* send(sockfd, msg_buf, msg_len, 0); */
-    sendto(sockfd, msg_buf, msg_len, 0, (struct sockaddr *) &servaddr,
-	   addr_len);
+    sendto(sockfd, msg_buf, msg_len, 0, (struct sockaddr *)&servaddr, addr_len);
 
     close(sockfd);
     return 0;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     while (1) {
-	sysmon_event("abc", "def", "ghi", "adfaadjfkadljfakdjfadfad");
-	sleep(1);
+        sysmon_event("abc", "def", "ghi", "adfaadjfkadljfakdjfadfad");
+        sleep(1);
     }
-
-
 }

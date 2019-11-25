@@ -9,7 +9,8 @@
 
 void pr_stdio(const char *, FILE *);
 
-int main(void)
+int
+main(void)
 {
     FILE *fp;
 
@@ -33,11 +34,15 @@ int main(void)
     return 0;
 }
 
-void pr_stdio(const char *name, FILE *fp)
+void
+pr_stdio(const char *name, FILE *fp)
 {
     printf("stream = %s, ", name);
-    if (fp->_flags & _IONBF) printf ("unbuffered");
-    if (fp->_flags & _IOLBF) printf("line buffered");
-    else printf("fully buffered");
+    if (fp->_flags & _IONBF)
+        printf("unbuffered");
+    if (fp->_flags & _IOLBF)
+        printf("line buffered");
+    else
+        printf("fully buffered");
     printf(", buffer size = %d\n", __fbufsize(fp));
 }

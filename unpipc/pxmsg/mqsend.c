@@ -20,33 +20,34 @@
  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
  *
  */
-#include <stdint.h>
-#include <mqueue.h>
 #include "../unpipc.h"
+#include <mqueue.h>
+#include <stdint.h>
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    mqd_t mqd;
-    void *ptr;
-    size_t len;
+    mqd_t    mqd;
+    void *   ptr;
+    size_t   len;
     uint32_t prio;
 
     if (argc != 4) {
-	err_quit("usage: mqsend <name> <#bytes> <priority>\n");
+        err_quit("usage: mqsend <name> <#bytes> <priority>\n");
     }
 
-    len = atoi(argv[2]);
+    len  = atoi(argv[2]);
     prio = atoi(argv[3]);
-    mqd = mq_open(argv[1], O_WRONLY);
+    mqd  = mq_open(argv[1], O_WRONLY);
     if (mqd < 0) {
-	err_sys("mq_open error:");
+        err_sys("mq_open error:");
     }
     ptr = calloc(len, sizeof(char));
     if (ptr == NULL)
-	err_sys("calloc error:");
+        err_sys("calloc error:");
 
     if (mq_send(mqd, ptr, len, prio) < 0) {
-	err_sys("mq_send error:");
+        err_sys("mq_send error:");
     }
 
     return 0;

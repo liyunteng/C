@@ -10,13 +10,14 @@
 
 // a.out cd /usr/include; grep _POSIX_SOURCE */*.h > /dev/null
 
-#include <sys/times.h>
 #include "ourhdr.h"
+#include <sys/times.h>
 
-static void pr_times(clock_t, struct tms*, struct tms*);
+static void pr_times(clock_t, struct tms *, struct tms *);
 static void do_cmd(char *);
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     int i;
     for (i = 1; i < argc; i++) {
@@ -25,7 +26,8 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-static void do_cmd(char *cmd)
+static void
+do_cmd(char *cmd)
 {
     struct tms tmsstart, tmsend;
     clock_t    start, end;
@@ -45,7 +47,8 @@ static void do_cmd(char *cmd)
     pr_exit(status);
 }
 
-static void pr_times(clock_t real, struct tms*tmsstart, struct tms*tmsend)
+static void
+pr_times(clock_t real, struct tms *tmsstart, struct tms *tmsend)
 {
     static long clktck = 0;
     if (clktck == 0) {
@@ -54,10 +57,8 @@ static void pr_times(clock_t real, struct tms*tmsstart, struct tms*tmsend)
     }
 
     fprintf(stderr, "  real:  %7.2f\n", real / (double)clktck);
-    fprintf(stderr, "  user:  %7.2f\n",
-            (tmsend->tms_utime - tmsstart->tms_utime) / (double)clktck);
-    fprintf(stderr, "  sys:   %7.f\n",
-            (tmsend->tms_stime - tmsstart->tms_stime) / (double)clktck);
+    fprintf(stderr, "  user:  %7.2f\n", (tmsend->tms_utime - tmsstart->tms_utime) / (double)clktck);
+    fprintf(stderr, "  sys:   %7.f\n", (tmsend->tms_stime - tmsstart->tms_stime) / (double)clktck);
     fprintf(stderr, "  child user: %7.2f\n",
             (tmsend->tms_cutime - tmsstart->tms_cutime) / (double)clktck);
     fprintf(stderr, "  child sys:  %7.2f\n",

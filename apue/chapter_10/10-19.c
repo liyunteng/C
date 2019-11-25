@@ -7,13 +7,14 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/types.h>
-#include <signal.h>
 #include "ourhdr.h"
+#include <signal.h>
+#include <sys/types.h>
 
 static void sig_int(int), sig_chld(int);
 
-int main(void)
+int
+main(void)
 {
     int status;
 
@@ -27,13 +28,15 @@ int main(void)
     return 0;
 }
 
-static void sig_int(int signo)
+static void
+sig_int(int signo)
 {
     printf("caught SIGINT\n");
     return;
 }
 
-static void sig_chld(int signo)
+static void
+sig_chld(int signo)
 {
     printf("caught SIGCHLD\n");
     return;

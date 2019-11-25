@@ -7,19 +7,21 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <signal.h>
-#include <setjmp.h>
-#include <unistd.h>
 #include "ourhdr.h"
+#include <setjmp.h>
+#include <signal.h>
+#include <unistd.h>
 
 static jmp_buf env_alrm;
 
-static void sig_alrm(int signo)
+static void
+sig_alrm(int signo)
 {
     longjmp(env_alrm, 1);
 }
 
-unsigned int sleep2(unsigned int nsecs)
+unsigned int
+sleep2(unsigned int nsecs)
 {
     if (signal(SIGALRM, sig_alrm) == SIG_ERR)
         return (nsecs);
@@ -32,9 +34,10 @@ unsigned int sleep2(unsigned int nsecs)
     return (alarm(0));
 }
 
-static void sig_int(int signo)
+static void
+sig_int(int signo)
 {
-    int i;
+    int          i;
     volatile int j;
 
     printf("\n sig_int stating\n");
@@ -45,7 +48,8 @@ static void sig_int(int signo)
     return;
 }
 
-int main(void)
+int
+main(void)
 {
     unsigned int unslept;
 

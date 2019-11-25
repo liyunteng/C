@@ -5,29 +5,30 @@
  * Filename : test1.c
  * Description :
  * *****************************************************************************/
-#include <stdio.h>
 #include <ev.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
 struct test_ev {
     ev_io ev;
-    int fd;
+    int   fd;
 };
 
 struct test_ev t_ev;
-ev_io stdin_watcher;
-ev_timer timeout_watcher;
-ev_signal signal_watcher;
-ev_child cw;
-ev_stat file;
+ev_io          stdin_watcher;
+ev_timer       timeout_watcher;
+ev_signal      signal_watcher;
+ev_child       cw;
+ev_stat        file;
 
-static void file_cb(struct ev_loop *loop, ev_stat * w, int revents)
+static void
+file_cb(struct ev_loop *loop, ev_stat *w, int revents)
 {
     if (w->attr.st_nlink) {
-        printf("test current size %ld\n", (long) w->attr.st_size);
-        printf("test current atime %ld\n", (long) w->attr.st_atime);
-        printf("test current mtime %ld\n", (long) w->attr.st_mtime);
+        printf("test current size %ld\n", (long)w->attr.st_size);
+        printf("test current atime %ld\n", (long)w->attr.st_atime);
+        printf("test current mtime %ld\n", (long)w->attr.st_mtime);
     } else {
 
         puts("wow, /root/libev/test is not there, expect problems."
@@ -35,43 +36,44 @@ static void file_cb(struct ev_loop *loop, ev_stat * w, int revents)
     }
 }
 
-static void child_cb(struct ev_loop *loop, ev_child * cw, int revents)
+static void
+child_cb(struct ev_loop *loop, ev_child *cw, int revents)
 {
     ev_child_stop(loop, cw);
     printf("process %d exited with status %x\n", cw->rpid, cw->rstatus);
-
 }
 
-static void sigint_cb(struct ev_loop *loop, ev_signal * w, int revents)
+static void
+sigint_cb(struct ev_loop *loop, ev_signal *w, int revents)
 {
     puts("catch SIGINT\n");
     ev_break(loop, EVBREAK_ALL);
 }
 
-static void stdin_cb(EV_P_ ev_io * w, int revents)
+static void
+stdin_cb(EV_P_ ev_io *w, int revents)
 {
-    struct test_ev *t = (struct test_ev *) w;
+    struct test_ev *t = (struct test_ev *)w;
     printf("ev_io: %p test_io:%p\n", w, t_ev);
-    printf("t->fd: %d t->ev.fd:%d t->ev.events:%d\n", t->fd, t->ev.fd,
-           t->ev.events);
+    printf("t->fd: %d t->ev.fd:%d t->ev.events:%d\n", t->fd, t->ev.fd, t->ev.events);
     printf("ev.fd : %d, ev.events: %d\n", w->fd, w->events);
     printf("ev_io: %p test_io:%p\n", w, t_ev);
     ev_io_stop(EV_A_ w);
-    //ev_break(EV_A_ EVBREAK_ONE);
+    // ev_break(EV_A_ EVBREAK_ONE);
 }
 
-static void timeout_cb(EV_P_ ev_timer * w, int revents)
+static void
+timeout_cb(EV_P_ ev_timer *w, int revents)
 {
     puts("timeout");
-    //ev_break(EV_A_ EVBREAK_ALL);
+    // ev_break(EV_A_ EVBREAK_ALL);
 }
 
-
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    pid_t pid;
+    pid_t           pid;
     struct ev_loop *loop = EV_DEFAULT;
-
 
     if ((pid = fork()) < 0) {
         fprintf(stderr, "fork error.\n");
@@ -99,7 +101,6 @@ int main(int argc, char *argv[])
     ev_run(loop, 0);
 
     return 0;
-
 }
 
 /* Local Variables: */

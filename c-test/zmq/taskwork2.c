@@ -21,14 +21,15 @@
  *
  */
 
-#include <zmq.h>
-#include <stdio.h>
-#include <string.h>
 #include <assert.h>
-#include <unistd.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <zmq.h>
 
-int main(void)
+int
+main(void)
 {
     void *context = zmq_ctx_new();
 
@@ -42,32 +43,31 @@ int main(void)
     zmq_connect(controller, "tcp://localhost:5559");
     zmq_setsockopt(controller, ZMQ_SUBSCRIBE, "", 0);
 
-
     zmq_pollitem_t items[] = {
-	{receiver, 0, ZMQ_POLLIN, 0},
-	{controller, 0, ZMQ_POLLIN, 0},
+        {receiver, 0, ZMQ_POLLIN, 0},
+        {controller, 0, ZMQ_POLLIN, 0},
     };
 
     while (1) {
-	zmq_msg_t message;
-	zmq_poll(items, 2, -1);
-	if (items[0].revents & ZMQ_POLLIN) {
-	    zmq_msg_init(&message);
-	    zmq_msg_recv(&message, receiver, 0);
+        zmq_msg_t message;
+        zmq_poll(items, 2, -1);
+        if (items[0].revents & ZMQ_POLLIN) {
+            zmq_msg_init(&message);
+            zmq_msg_recv(&message, receiver, 0);
 
-	    usleep(atoi((char *) zmq_msg_data(&message)));
+            usleep(atoi((char *)zmq_msg_data(&message)));
 
-	    zmq_msg_init(&message);
-	    zmq_msg_send(&message, sender, 0);
+            zmq_msg_init(&message);
+            zmq_msg_send(&message, sender, 0);
 
-	    printf(".");
-	    fflush(stdout);
+            printf(".");
+            fflush(stdout);
 
-	    zmq_msg_close(&message);
-	}
-	if (items[1].revents & ZMQ_POLLIN) {
-	    break;
-	}
+            zmq_msg_close(&message);
+        }
+        if (items[1].revents & ZMQ_POLLIN) {
+            break;
+        }
     }
 
     zmq_close(receiver);

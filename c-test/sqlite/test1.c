@@ -1,9 +1,9 @@
+#include <sqlite3.h>
 #include <stdio.h>
 #include <string.h>
-#include <sqlite3.h>
 
-int print_record(void *params, int n_column, char **column_value,
-                 char **column_name)
+int
+print_record(void *params, int n_column, char **column_value, char **column_name)
 {
     int i;
     for (i = 0; i < n_column; i++) {
@@ -13,27 +13,26 @@ int print_record(void *params, int n_column, char **column_value,
     return 0;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    const char *sql_create_table =
-        "create table t(id int primary key, msg varchar(128));";
-    char *errmsg, **result;
-    int ret = 0;
-    int col, row, i, j;
-    sqlite3 *db = NULL;
+    const char *  sql_create_table = "create table t(id int primary key, msg varchar(128));";
+    char *        errmsg, **result;
+    int           ret = 0;
+    int           col, row, i, j;
+    sqlite3 *     db = NULL;
     sqlite3_stmt *stmt;
-    char cmd[256];
+    char          cmd[256];
 
-    ret = sqlite3_open_v2("./test.db", &db,
-                          SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    ret = sqlite3_open_v2("./test.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
     if (ret != SQLITE_OK) {
         fprintf(stderr, "Can't open db: %s\n", sqlite3_errmsg(db));
         return ret;
     }
     printf("Open database\n");
 
-    //ret = sqlite3_exec(db, "drop table if exists t", NULL, NULL, &errmsg);
-    //if (ret != SQLITE_OK) {
+    // ret = sqlite3_exec(db, "drop table if exists t", NULL, NULL, &errmsg);
+    // if (ret != SQLITE_OK) {
     //      goto quit;
     //}
 
@@ -42,15 +41,11 @@ int main(int argc, char *argv[])
         fprintf(stderr, "create table error:%s\n", errmsg);
         goto quit;
     }
-    ret = sqlite3_exec(db, "insert into t(id, msg) values(0, 'test0')", NULL,
-                     NULL, &errmsg);
+    ret = sqlite3_exec(db, "insert into t(id, msg) values(0, 'test0')", NULL, NULL, &errmsg);
     if (ret != SQLITE_OK)
         goto quit;
 
-
-
-    sqlite3_prepare_v2(db, "insert into t(id, msg) values(?, ?)", -1,
-                       &stmt, 0);
+    sqlite3_prepare_v2(db, "insert into t(id, msg) values(?, ?)", -1, &stmt, 0);
     for (i = 1; i < 20; i++) {
         sprintf(cmd, "test%d", i);
         sqlite3_bind_int(stmt, 1, i);
@@ -60,14 +55,11 @@ int main(int argc, char *argv[])
     }
     sqlite3_finalize(stmt);
 
-
     ret = sqlite3_exec(db, "select * from t", print_record, NULL, &errmsg);
     if (ret != SQLITE_OK)
         goto quit;
 
-    ret =
-        sqlite3_get_table(db, "select * from t;", &result, &row, &col,
-                          &errmsg);
+    ret = sqlite3_get_table(db, "select * from t;", &result, &row, &col, &errmsg);
     if (ret != SQLITE_OK)
         goto quit;
 
@@ -85,8 +77,6 @@ quit:
     sqlite3_close(db);
 
     return 0;
-
-
 }
 
 /* Local Variables: */

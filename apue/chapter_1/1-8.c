@@ -5,18 +5,19 @@
  * Last-Updated: <2019/06/11 22:20:25 liyunteng>
  */
 
+#include "ourhdr.h"
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <signal.h>
-#include "ourhdr.h"
 
-static void sig_int(int);       /* our signal-catching function */
+static void sig_int(int); /* our signal-catching function */
 
-int main(void)
+int
+main(void)
 {
-    char buf[MAXLINE];
+    char  buf[MAXLINE];
     pid_t pid;
-    int status;
+    int   status;
 
     if (signal(SIGINT, sig_int) == SIG_ERR)
         err_sys("signal error");
@@ -34,7 +35,7 @@ int main(void)
             exit(127);
         }
 
-        if ( (pid = waitpid(pid, &status, 0)) < 0)
+        if ((pid = waitpid(pid, &status, 0)) < 0)
             err_sys("waitpid, error");
 
         printf("%% ");
@@ -42,11 +43,11 @@ int main(void)
     return 0;
 }
 
-void sig_int(int signo)
+void
+sig_int(int signo)
 {
     printf("interrupt\n%% ");
 }
-
 
 /* Local Variables: */
 /* compile-command: "clang -Wall -o 1-8 1-8.c -g -I../include -L../lib -lourhdr" */

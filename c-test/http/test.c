@@ -21,34 +21,35 @@
  *
  */
 
-#include <stdio.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <time.h>
+#include <arpa/inet.h>
 #include <errno.h>
+#include <netdb.h>
+#include <netinet/in.h>
 #include <signal.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#include <sys/socket.h>
 #include <sys/time.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <unistd.h>
 
 #define PORT 80
 #define BUFSIZE 1024
 
-int main(void)
+int
+main(void)
 {
-    int sockfd, ret, i, h;
+    int                sockfd, ret, i, h;
     struct sockaddr_in servaddr;
-    char str1[4096], buf[BUFSIZE];
-    fd_set t_set1;
-    struct timeval tv;
-    struct hostent *host;
-    struct in_addr addr;
-    char *ip = NULL;
+    char               str1[4096], buf[BUFSIZE];
+    fd_set             t_set1;
+    struct timeval     tv;
+    struct hostent *   host;
+    struct in_addr     addr;
+    char *             ip = NULL;
 
     if ((host = gethostbyname("www.streamocean.com"))) {
         char *p = host->h_addr_list[0];
@@ -60,19 +61,19 @@ int main(void)
     }
 
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        printf ("创建网络连接失败,本线程即将终止---socket error!\n");
+        printf("创建网络连接失败,本线程即将终止---socket error!\n");
         exit(0);
     };
 
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(PORT);
+    servaddr.sin_port   = htons(PORT);
     if (inet_pton(AF_INET, ip, &servaddr.sin_addr) <= 0) {
-        printf ("创建网络连接失败,本线程即将终止--inet_pton error!\n");
+        printf("创建网络连接失败,本线程即将终止--inet_pton error!\n");
         exit(0);
     };
 
-    if (connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0) {
+    if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
         printf("连接到服务器失败,connect error!\n");
         exit(0);
     }
@@ -80,8 +81,11 @@ int main(void)
 
     //发送数据
     memset(str1, 0, 4096);
-    strcat(str1, "GET /SOTP/index.php/Interface/estimate/estimate/dev/dtest20150326-3/user/bjdx_2 HTTP/1.1\r\n");
-    /* strcat(str1, "GET /SOTP/index.php/Interface/content/content/dev/dtest20150326-3/user/bjdx_2/vsp/http%3A%2F%2F172.16.3.121%3A8080%2F/ HTTP/1.1\r\n"); */
+    strcat(str1, "GET /SOTP/index.php/Interface/estimate/estimate/dev/dtest20150326-3/user/bjdx_2 "
+                 "HTTP/1.1\r\n");
+    /* strcat(str1, "GET
+     * /SOTP/index.php/Interface/content/content/dev/dtest20150326-3/user/bjdx_2/vsp/http%3A%2F%2F172.16.3.121%3A8080%2F/
+     * HTTP/1.1\r\n"); */
     strcat(str1, "Accept: */*\r\n");
     strcat(str1, "User-Agent: Mozilla/5.0\r\n");
     strcat(str1, "Host: ");
@@ -138,7 +142,6 @@ int main(void)
     }
 
     close(sockfd);
-
 
     return 0;
 }

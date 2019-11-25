@@ -1,22 +1,23 @@
+#include <errno.h>
+#include <libudev.h>
+#include <linux/netlink.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
-#include <string.h>
-#include <linux/netlink.h>
-#include <libudev.h>
-#include <errno.h>
 
 #define UEVNET_BUFFER_SIZE 2048
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    struct udev *udev;
+    struct udev *        udev;
     struct udev_monitor *mon;
-    struct udev_device *dev;
-    const char *path;
-    const char *dev_node;
-    const char *action;
+    struct udev_device * dev;
+    const char *         path;
+    const char *         dev_node;
+    const char *         action;
 
     udev = udev_new();
     if (udev == NULL) {
@@ -30,9 +31,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if (udev_monitor_filter_add_match_subsystem_devtype(mon,
-                                                        "block",
-                                                        "disk") < 0) {
+    if (udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk") < 0) {
         printf("udev monitor add match failed!\n");
         udev_unref(udev);
         return -1;
@@ -46,7 +45,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    struct udev_enumerate *uenum;
+    struct udev_enumerate * uenum;
     struct udev_list_entry *devs, *dev_list;
     uenum = udev_enumerate_new(udev);
     if (uenum == NULL) {
@@ -65,7 +64,8 @@ int main(int argc, char *argv[])
     }
 
     devs = udev_enumerate_get_list_entry(uenum);
-    udev_list_entry_foreach(dev_list, devs) {
+    udev_list_entry_foreach(dev_list, devs)
+    {
 
         path = udev_list_entry_get_name(dev_list);
         if (path == NULL)
@@ -81,17 +81,15 @@ int main(int argc, char *argv[])
         printf("====enume path:%s, node:%s\n", path, dev_node);
     }
 
-
     while (1) {
         dev = NULL;
         dev = udev_monitor_receive_device(mon);
         if (dev == NULL)
             continue;
-        path = udev_device_get_devpath(dev);
+        path     = udev_device_get_devpath(dev);
         dev_node = udev_device_get_devnode(dev);
-        action = udev_device_get_action(dev);
-        printf("path: %s, devnode:%s, event: %s\n",
-               path, dev_node, action);
+        action   = udev_device_get_action(dev);
+        printf("path: %s, devnode:%s, event: %s\n", path, dev_node, action);
     }
     return 0;
 }

@@ -21,15 +21,16 @@
  *
  */
 
-#include <zmq.h>
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
-#include <assert.h>
-#include <sys/types.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <zmq.h>
 
-int main(void)
+int
+main(void)
 {
     void *context = zmq_ctx_new();
 
@@ -48,18 +49,18 @@ int main(void)
 
     int task_nbr;
     for (task_nbr = 0; task_nbr < 100; task_nbr++) {
-	zmq_recv(receiver, buf, sizeof(buf), 0);
-	if (task_nbr % 10 == 0) {
-	    printf(":");
-	} else {
-	    printf(".");
-	}
-	fflush(stdout);
+        zmq_recv(receiver, buf, sizeof(buf), 0);
+        if (task_nbr % 10 == 0) {
+            printf(":");
+        } else {
+            printf(".");
+        }
+        fflush(stdout);
     }
 
     gettimeofday(&tv, NULL);
     printf("Total elapsed time: %d msec\n",
-	   (int) ((tv.tv_sec * 1000 + tv.tv_usec / 1000) - start_time));
+           (int)((tv.tv_sec * 1000 + tv.tv_usec / 1000) - start_time));
 
     zmq_send(controller, "KILL", 5, 0);
 

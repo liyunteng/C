@@ -21,13 +21,14 @@
  *
  */
 
-#include <zmq.h>
+#include <assert.h>
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <assert.h>
+#include <zmq.h>
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     void *context = zmq_ctx_new();
 
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
         int ret = zmq_send(requester, "hello", 5, 0);
         assert(ret == 5);
 
-        char buf[10];
+        char      buf[10];
         zmq_msg_t reply;
         zmq_msg_init(&reply);
         zmq_msg_recv(&reply, requester, 0);

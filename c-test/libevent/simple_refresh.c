@@ -5,27 +5,28 @@
  * Filename : simple_refresh.c
  * Description :
  * *****************************************************************************/
-#include <stdio.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
 #include <event.h>
 #include <evhttp.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #define RELOAD_TIMEOUT 6
 #define DEFAULT_FILE "sample.html"
 
-char *filedata;
+char * filedata;
 time_t lasttime = 0;
-char filename[80];
-int counter = 0;
+char   filename[80];
+int    counter = 0;
 
-void read_file()
+void
+read_file()
 {
-    int size = 0;
-    char *data;
+    int         size = 0;
+    char *      data;
     struct stat buf;
 
     stat(filename, &buf);
@@ -45,26 +46,26 @@ void read_file()
         fseek(f, 0, SEEK_END);
         size = ftell(f);
         fseek(f, 0, SEEK_SET);
-        data = (char *) malloc(size + 1);
+        data = (char *)malloc(size + 1);
         fread(data, sizeof(char), size, f);
-        filedata = (char *) malloc(size + 1);
+        filedata = (char *)malloc(size + 1);
         strcpy(filedata, data);
         fclose(f);
 
         fprintf(stderr, " (%d bytes)\n", size);
         lasttime = buf.st_mtime;
-
     }
 }
 
-void load_file()
+void
+load_file()
 {
-    struct event *loadfile_event;
+    struct event * loadfile_event;
     struct timeval tv;
 
     read_file();
 
-    tv.tv_sec = RELOAD_TIMEOUT;
+    tv.tv_sec  = RELOAD_TIMEOUT;
     tv.tv_usec = 0;
 
     loadfile_event = malloc(sizeof(struct event));
@@ -74,7 +75,8 @@ void load_file()
     evtimer_add(loadfile_event, &tv);
 }
 
-void generic_request_handler(struct evhttp_request *req, void *arg)
+void
+generic_request_handler(struct evhttp_request *req, void *arg)
 {
     struct evbuffer *evb = evbuffer_new();
 
@@ -83,10 +85,11 @@ void generic_request_handler(struct evhttp_request *req, void *arg)
     evbuffer_free(evb);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    short http_port = 8081;
-    char *http_addr = "192.168.1.104";
+    short          http_port   = 8081;
+    char *         http_addr   = "192.168.1.104";
     struct evhttp *http_server = NULL;
 
     if (argc > 1) {

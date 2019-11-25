@@ -1,20 +1,20 @@
+#include <regex.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
-#include <regex.h>
 
-#define REG_MV_DISK_SLOT                        \
-	"(b[0-9]+)([a-z]+)(.*)(b)"
+#define REG_MV_DISK_SLOT "(b[0-9]+)([a-z]+)(.*)(b)"
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    FILE *fp;
-    regex_t mv_disk_slot_regex, test_regex;
+    FILE *     fp;
+    regex_t    mv_disk_slot_regex, test_regex;
     regmatch_t pmatch[10];
-    int ret;
-    char sbuf[200];
-    char buf[1024];
-    int i, j;
+    int        ret;
+    char       sbuf[200];
+    char       buf[1024];
+    int        i, j;
 
     ret = regcomp(&mv_disk_slot_regex, REG_MV_DISK_SLOT, REG_EXTENDED);
     if (ret != 0) {
@@ -44,6 +44,4 @@ int main(int argc, char *argv[])
 
     regfree(&mv_disk_slot_regex);
     return 0;
-
-
 }

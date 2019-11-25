@@ -4,16 +4,16 @@
  * Copyright (C) 2019 liyunteng
  * Last-Updated: <2019/06/12 00:40:33 liyunteng>
  */
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include "ourhdr.h"
-
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 char buf1[] = "abcdefghij";
 char buf2[] = "ABCDEFGHIJ";
 
-int main(void)
+int
+main(void)
 {
     int fd;
 

@@ -7,16 +7,17 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/wait.h>
 #include "ourhdr.h"
+#include <sys/wait.h>
 
 #define DEF_PAGER "/usr/bin/more"
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    int n, fd[2];
+    int   n, fd[2];
     pid_t pid;
-    char line[MAXLINE], *pager, *argv0;
+    char  line[MAXLINE], *pager, *argv0;
     FILE *fp;
 
     if (argc != 2)

@@ -1,30 +1,30 @@
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/fcntl.h>
-#include <unistd.h>
-#include <time.h>
-#include <stdio.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <sqlite3.h>
-#include <limits.h>
 #include "log.h"
+#include <errno.h>
+#include <limits.h>
+#include <sqlite3.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/fcntl.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/un.h>
+#include <time.h>
+#include <unistd.h>
 
-
-int LogInsert(const char *user,	/* 用户名， 供web接口使用 */
-              const char *module,	/* 写入日志的模块 */
-              const char *category,	/* 日志类型 */
-              const char *event,	/* 日志事件 */
-              const char *content	/* 日志内容 */
-    )
+int
+LogInsert(const char *user,     /* 用户名， 供web接口使用 */
+          const char *module,   /* 写入日志的模块 */
+          const char *category, /* 日志类型 */
+          const char *event,    /* 日志事件 */
+          const char *content   /* 日志内容 */
+)
 {
-    int sock_fd;
+    int                sock_fd;
     struct sockaddr_un serv_addr;
-    socklen_t addr_len;
-    size_t msg_len;
-    msg_request_t *msg;
+    socklen_t          addr_len;
+    size_t             msg_len;
+    msg_request_t *    msg;
 
     if ((sock_fd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
         return -1;
@@ -34,7 +34,7 @@ int LogInsert(const char *user,	/* 用户名， 供web接口使用 */
 
     /* 分配消息内存 */
     msg_len = sizeof(msg_request_t) + strlen(content) + 1;
-    if (!(msg = (msg_request_t *) malloc(msg_len))) {
+    if (!(msg = (msg_request_t *)malloc(msg_len))) {
         close(sock_fd);
         return -1;
     }
@@ -45,16 +45,15 @@ int LogInsert(const char *user,	/* 用户名， 供web接口使用 */
         strcpy(msg->user, user);
     else
         msg->user[0] = "\0";
-    msg->module = LogModuleInt(module);
-    msg->category = LogCategoryInt(category);
-    msg->event = LogEventInt(event);
+    msg->module         = LogModuleInt(module);
+    msg->category       = LogCategoryInt(category);
+    msg->event          = LogEventInt(event);
     msg->content_length = strlen(content);
     strcpy(msg->content, content);
 
     /* 发消息， 不关心返回 */
     addr_len = strlen(serv_addr.sun_path) + sizeof(serv_addr.sun_family);
-    sendto(sock_fd, (char *) msg, msg_len, 0,
-           (struct sockaddr *) &serv_addr, addr_len);
+    sendto(sock_fd, (char *)msg, msg_len, 0, (struct sockaddr *)&serv_addr, addr_len);
 
     close(sock_fd);
     free(msg);
@@ -63,20 +62,19 @@ int LogInsert(const char *user,	/* 用户名， 供web接口使用 */
 }
 
 /* 获取日志数量 */
-ssize_t LogGetQuantity()
+ssize_t
+LogGetQuantity()
 {
     sqlite3 *db;
-    char *errmsg, **result;
-    char sql_cmd[256];
-    int col, row;
-    ssize_t ret = -1;
+    char *   errmsg, **result;
+    char     sql_cmd[256];
+    int      col, row;
+    ssize_t  ret = -1;
 
-    if (SQLITE_OK !=
-        sqlite3_open_v2(LOG_FILE, &db, SQLITE_OPEN_READONLY, NULL))
+    if (SQLITE_OK != sqlite3_open_v2(LOG_FILE, &db, SQLITE_OPEN_READONLY, NULL))
         return -1;
     sprintf(sql_cmd, "SELECT count(id) FROM testlog;");
-    if (SQLITE_OK ==
-        sqlite3_get_table(db, sql_cmd, &result, &col, &row, &errmsg))
+    if (SQLITE_OK == sqlite3_get_table(db, sql_cmd, &result, &col, &row, &errmsg))
         ret = atol(result[col * row]);
 
     sqlite3_free_table(result);
@@ -88,37 +86,35 @@ ssize_t LogGetQuantity()
 typedef struct _session_info session_s;
 struct __session_info {
     uint32_t session_id;
-    int page_size;
+    int      page_size;
     uint64_t last_rec;
 };
 
-static inline const char *__sessino_file(uint32_t session_id)
+static inline const char *
+__sessino_file(uint32_t session_id)
 {
     static char file_name[PATH_MAX];
 
-    sprintf(file_name, "/home/lyt/Documents/test/my/.log/session-%.8x",
-            session_id);
+    sprintf(file_name, "/home/lyt/Documents/test/my/.log/session-%.8x", session_id);
     return file_name;
 }
 
-
 #define LOG_DEFAULT_PAGE_SIZE 30
 
-uint64_t __get_header_id()
+uint64_t
+__get_header_id()
 {
     sqlite3 *db;
-    char *errmsg, **result;
-    char sql_cmd[256];
-    int col, row;
+    char *   errmsg, **result;
+    char     sql_cmd[256];
+    int      col, row;
     uint64_t ret = 0;
 
-    if (SQLITE_OK !=
-        sqlite3_open_v2(LOG_FILE, &db, SQLITE_OPEN_READONLY, NULL))
+    if (SQLITE_OK != sqlite3_open_v2(LOG_FILE, &db, SQLITE_OPEN_READONLY, NULL))
         return ret;
 
     sprintf(sql_cmd, "SELECT min(id) FROM testlog;");
-    if (SQLITE_OK ==
-        sqlite3_get_table(db, sql_cmd, &result, &col, &row, &errmsg))
+    if (SQLITE_OK == sqlite3_get_table(db, sql_cmd, &result, &col, &row, &errmsg))
         ret = atol(result[col * row]);
 
     sqlite3_free_table(result);
@@ -128,9 +124,10 @@ uint64_t __get_header_id()
 }
 
 /* 更新制动session的信息， 不存在则创建 */
-bool __session_update(session_s * sess)
+bool
+__session_update(session_s *sess)
 {
-    int fd;
+    int         fd;
     const char *fname = __sessino_file(sess->session_id);
 
     if (access(fname, R_OK | W_OK)) {
@@ -148,9 +145,10 @@ bool __session_update(session_s * sess)
 }
 
 /* 获取制定SESSION_ID的信息， 不存在则返回NULL */
-bool __sessino_info(session_s * sess)
+bool
+__sessino_info(session_s *sess)
 {
-    int fd;
+    int         fd;
     const char *fname = __session_file(sess->session_id);
 
     if (access(fname, R_OK | W_OK))
@@ -168,18 +166,17 @@ bool __sessino_info(session_s * sess)
    请求的start, end之差要小于log能存储的记录个数,否则会发生越界
 */
 
-ssize_t LogGet(uint32_t session_id,
-               uint64_t start,
-               uint64_t end, int page_size, log_info_s * log)
+ssize_t
+LogGet(uint32_t session_id, uint64_t start, uint64_t end, int page_size, log_info_s *log)
 {
     sqlite3 *db;
-    int col, row, i;
-    char *errmsg, **result;
-    char sql_cmd[256];
-    ssize_t rec_num = 0;
+    int      col, row, i;
+    char *   errmsg, **result;
+    char     sql_cmd[256];
+    ssize_t  rec_num = 0;
 
     session_s sess;
-    uint64_t header_id;
+    uint64_t  header_id;
 
 #define ROW_MAX 6
     /* 支持两种查询方式
@@ -188,8 +185,7 @@ ssize_t LogGet(uint32_t session_id,
     */
 
     header_id = __get_header_id();
-    if (SQLITE_OK !=
-        sqlite3_open_v2(LOG_FILE, &db, SQLITE_OPEN_READONLY, NULL))
+    if (SQLITE_OK != sqlite3_open_v2(LOG_FILE, &db, SQLITE_OPEN_READONLY, NULL))
         goto err_quit;
 
     if (session_id) {
@@ -201,20 +197,17 @@ ssize_t LogGet(uint32_t session_id,
             if (page_size <= 0)
                 return -1;
             sess.page_size = page_size;
-            sess.last_rec = header_id;
+            sess.last_rec  = header_id;
             if (!__session_update(&sess))
                 return -1;
         }
         /* session已经存在 */
-        sprintf(sql_cmd,
-                "SELECT * FROM testlog WHERE (ID>=%llu and ID<%llu)",
-                (unsigned long long) sess.last_rec,
-                (unsigned long long) sess.last_rec + sess.page_size);
-        if (SQLITE_OK ==
-            sqlite3_get_table(db, sql_cmd, &result, &col, &row, &errmsg)) {
+        sprintf(sql_cmd, "SELECT * FROM testlog WHERE (ID>=%llu and ID<%llu)",
+                (unsigned long long)sess.last_rec,
+                (unsigned long long)sess.last_rec + sess.page_size);
+        if (SQLITE_OK == sqlite3_get_table(db, sql_cmd, &result, &col, &row, &errmsg)) {
             for (i = 1; (i <= col) && (i <= sess.page_size); i++) {
-                log[i - 1].idid =
-                    atoll(result[ROW_MAX * i]) - header_id + 1;
+                log[i - 1].idid = atoll(result[ROW_MAX * i]) - header_id + 1;
                 strcpy(log[i - 1].datetime, result[ROW_MAX * i + 1]);
                 strcpy(log[i - 1].module, result[ROW_MAX * i + 2]);
                 strcpy(log[i - 1].category, result[ROW_MAX * i + 3]);
@@ -227,7 +220,6 @@ ssize_t LogGet(uint32_t session_id,
             __sessino_update(&sess);
         }
     } else if (start > 0 && end > start) {
-
     }
     sqlite3_free_table(result);
 

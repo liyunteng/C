@@ -1,10 +1,11 @@
+#include <json-c/json.h>
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <locale.h>
-#include <json-c/json.h>
 /* #include <json/json.h> */
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     json_object *root, *value;
     setlocale(LC_ALL, "");

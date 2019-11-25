@@ -7,16 +7,17 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include "ourhdr.h"
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 static void lockabyte(const char *, int, off_t);
 
-int main(void)
+int
+main(void)
 {
-    int fd;
+    int   fd;
     pid_t pid;
 
     if ((fd = creat("templock", FILE_MODE)) < 0)
@@ -41,7 +42,8 @@ int main(void)
     return 0;
 }
 
-static void lockabyte(const char *name, int fd, off_t offset)
+static void
+lockabyte(const char *name, int fd, off_t offset)
 {
     if (writew_lock(fd, offset, SEEK_SET, 1) < 0)
         err_sys("%s: writew_lock error", name);

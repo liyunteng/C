@@ -1,31 +1,33 @@
 /*******************************************************************************
-* Author : liyunteng
-* Email : li_yunteng@163.com
-* Created Time : 2014-02-19 14:19
-* Filename : sys-global.c
-* Description : 
-* *****************************************************************************/
-#include <stdio.h>
+ * Author : liyunteng
+ * Email : li_yunteng@163.com
+ * Created Time : 2014-02-19 14:19
+ * Filename : sys-global.c
+ * Description :
+ * *****************************************************************************/
 #include "sys-global.h"
+#include <stdio.h>
 
 sys_global_t gconf;
 
-void sys_global_init()
+void
+sys_global_init()
 {
-    gconf.tmpfs = false;
-    gconf.info_size = 10;
+    gconf.tmpfs        = false;
+    gconf.info_size    = 10;
     gconf.warning_size = 10;
-    gconf.error_size = 10;
-    gconf.power_cnt = 1;
+    gconf.error_size   = 10;
+    gconf.power_cnt    = 1;
 }
 
-void dump_sys_global()
+void
+dump_sys_global()
 {
     puts("---------dump global-------------");
     if (gconf.tmpfs)
-	puts("tmpfs: true");
+        puts("tmpfs: true");
     else
-	puts("tmpfs: false");
+        puts("tmpfs: false");
 
     puts("msg_buff_size:");
     printf("\tinfo: %d\n", gconf.info_size);

@@ -5,24 +5,26 @@
  * Last-Updated: <2018/12/28 07:00:42 liyunteng>
  */
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 
-int reverse(int x) {
-    char c;
-    char *tmp = malloc(32);
-    int flag = 0;
+int
+reverse(int x)
+{
+    char  c;
+    char *tmp  = malloc(32);
+    int   flag = 0;
     if (x < 0) {
         flag = 1;
     }
     int len = snprintf(tmp, 32, "%d", abs(x));
     int i;
-    for (i=0; i < len/2; i++) {
-        c = tmp[i];
-        tmp[i] = tmp[len-i-1];
-        tmp[len-i-1] = c;
+    for (i = 0; i < len / 2; i++) {
+        c                = tmp[i];
+        tmp[i]           = tmp[len - i - 1];
+        tmp[len - i - 1] = c;
     }
     printf("%s\n", tmp);
     long r = atol(tmp);
@@ -35,7 +37,8 @@ int reverse(int x) {
     return r;
 }
 
-int main(void)
+int
+main(void)
 {
     printf("%d\n", reverse(-123));
     return 0;

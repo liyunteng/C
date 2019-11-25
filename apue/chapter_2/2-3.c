@@ -4,19 +4,20 @@
  * Copyright (C) 2019 liyunteng
  * Last-Updated: <2019/06/11 23:40:32 liyunteng>
  */
+#include "ourhdr.h"
 #include <errno.h>
 #include <limits.h>
-#include "ourhdr.h"
 
 #ifdef OPEN_MAX
 static int openmax = OPEN_MAX;
 #else
 static int openmax = 0;
-#endif // OPEN_MAX
+#endif  // OPEN_MAX
 
 #define OPEN_MAX_GUESS 256
 
-int open_max(void)
+int
+open_max(void)
 {
     if (openmax == 0) {
         errno = 0;
@@ -31,7 +32,8 @@ int open_max(void)
 }
 
 /* for test */
-int main(void)
+int
+main(void)
 {
     printf("open max: %d\n", open_max());
     return 0;

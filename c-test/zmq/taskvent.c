@@ -21,15 +21,16 @@
  *
  */
 
-#include <zmq.h>
-#include <stdio.h>
-#include <unistd.h>
 #include <assert.h>
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
+#include <unistd.h>
+#include <zmq.h>
 
-int main(void)
+int
+main(void)
 {
     void *context = zmq_ctx_new();
 
@@ -43,7 +44,6 @@ int main(void)
     getchar();
     printf("Sending tasks to workers...\n");
 
-
     int ret = zmq_send(sink, "0", sizeof("0"), 0);
     assert(ret == 2);
 
@@ -51,14 +51,14 @@ int main(void)
     int task_nbr;
     int total_msec = 0;
     for (task_nbr = 0; task_nbr != 100; ++task_nbr) {
-	int workload;
+        int workload;
 
-	workload = random() % 100 + 1;
-	total_msec += workload;
-	char string[10];
-	sprintf(string, "%d", workload);
-	ret = zmq_send(sender, string, strlen(string) + 1, 0);
-	assert(ret == strlen(string) + 1);
+        workload = random() % 100 + 1;
+        total_msec += workload;
+        char string[10];
+        sprintf(string, "%d", workload);
+        ret = zmq_send(sender, string, strlen(string) + 1, 0);
+        assert(ret == strlen(string) + 1);
     }
 
     printf("Total expencted cost: %d msec", total_msec);

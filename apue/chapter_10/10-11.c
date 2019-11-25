@@ -7,12 +7,13 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <signal.h>
 #include "ourhdr.h"
+#include <signal.h>
 
 static void sig_quit(int);
 
-int main(void)
+int
+main(void)
 {
     sigset_t newmask, oldmask, pendmask;
 
@@ -42,7 +43,8 @@ int main(void)
     return 0;
 }
 
-static void sig_quit(int signo)
+static void
+sig_quit(int signo)
 {
     printf("catch SIGQUIT\n");
 

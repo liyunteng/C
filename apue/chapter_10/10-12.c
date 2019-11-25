@@ -8,10 +8,11 @@
  * All rights reserved.
  */
 
-#include <signal.h>
 #include "ourhdr.h"
+#include <signal.h>
 
-Sigfunc *signal(int signo, Sigfunc *func)
+Sigfunc *
+signal(int signo, Sigfunc *func)
 {
     struct sigaction act, oact;
 
@@ -20,7 +21,7 @@ Sigfunc *signal(int signo, Sigfunc *func)
     act.sa_flags = 0;
     if (signo == SIGALRM) {
 #ifdef SA_INTERRUPT
-    act.sa_flags |= SA_INTERRUPT;
+        act.sa_flags |= SA_INTERRUPT;
 #endif
     } else {
 #ifdef SA_RESTART
@@ -33,7 +34,8 @@ Sigfunc *signal(int signo, Sigfunc *func)
     return (oact.sa_handler);
 }
 
-Sigfunc *signal_intr(int signo, Sigfunc *func)
+Sigfunc *
+signal_intr(int signo, Sigfunc *func)
 {
     struct sigaction act, oact;
 
@@ -45,11 +47,12 @@ Sigfunc *signal_intr(int signo, Sigfunc *func)
 #endif
 
     if (sigaction(signo, &act, &oact) < 0)
-        return(SIG_ERR);
+        return (SIG_ERR);
     return (oact.sa_handler);
 }
 
-int main(void)
+int
+main(void)
 {
     return 0;
 }

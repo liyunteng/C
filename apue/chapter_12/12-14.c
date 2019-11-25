@@ -8,20 +8,21 @@
  * All rights reserved.
  */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <fcntl.h>
 #include "ourhdr.h"
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #ifndef MAP_FILE
 #define MAP_FILE 0
 #endif
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    int fdin, fdout;
-    char *src, *dst;
+    int         fdin, fdout;
+    char *      src, *dst;
     struct stat statbuf;
 
     if (argc != 3)
@@ -41,11 +42,11 @@ int main(int argc, char *argv[])
     if (write(fdout, "", 1) != 1)
         err_sys("write error");
 
-    if ((src = mmap(0, statbuf.st_size, PROT_READ, MAP_FILE | MAP_SHARED, fdin, 0)) == (caddr_t) -1)
+    if ((src = mmap(0, statbuf.st_size, PROT_READ, MAP_FILE | MAP_SHARED, fdin, 0)) == (caddr_t)-1)
         err_sys("mmap error for input");
 
-    if ((dst = mmap(0, statbuf.st_size, PROT_READ | PROT_WRITE,
-                    MAP_FILE | MAP_SHARED, fdout, 0)) == (caddr_t)-1)
+    if ((dst = mmap(0, statbuf.st_size, PROT_READ | PROT_WRITE, MAP_FILE | MAP_SHARED, fdout, 0))
+        == (caddr_t)-1)
         err_sys("mmap error for output");
 
     memcpy(dst, src, statbuf.st_size);

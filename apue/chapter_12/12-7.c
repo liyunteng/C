@@ -7,19 +7,19 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
+#include "ourhdr.h"
 #include <errno.h>
 #include <fcntl.h>
-#include "ourhdr.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
-
-int main(void)
+int
+main(void)
 {
-    int fd;
-    pid_t pid;
-    char buf[5];
+    int         fd;
+    pid_t       pid;
+    char        buf[5];
     struct stat statbuf;
 
     if ((fd = open("templock", O_RDWR | O_CREAT | O_TRUNC, FILE_MODE)) < 0)
@@ -59,7 +59,6 @@ int main(void)
             err_ret("read failed (mandatory locking works)");
         else
             printf("read OK (no mandatory locking), buff = %2.2s\n", buf);
-
     }
     return 0;
 }

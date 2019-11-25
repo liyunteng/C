@@ -7,15 +7,16 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/types.h>
 #include <signal.h>
-#include <wait.h>
-#include <unistd.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <wait.h>
 
 static void sig_cld(int);
 
-int main(void)
+int
+main(void)
 {
     pid_t pid;
 
@@ -34,10 +35,11 @@ int main(void)
     return 0;
 }
 
-static void sig_cld(int signo)
+static void
+sig_cld(int signo)
 {
     pid_t pid;
-    int status;
+    int   status;
 
     printf("SIGCLD received\n");
     if (signal(SIGCLD, sig_cld) == SIG_ERR) {

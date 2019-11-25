@@ -7,16 +7,17 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/types.h>
+#include "ourhdr.h"
 #include <errno.h>
 #include <fcntl.h>
-#include "ourhdr.h"
+#include <sys/types.h>
 
 char buf[100000];
 
-int main(void)
+int
+main(void)
 {
-    int ntowrite, nwrite;
+    int   ntowrite, nwrite;
     char *ptr;
 
     ntowrite = read(STDIN_FILENO, buf, sizeof(buf));
@@ -25,7 +26,7 @@ int main(void)
     set_fl(STDOUT_FILENO, O_NONBLOCK);
 
     for (ptr = buf; ntowrite > 0;) {
-        errno = 0;
+        errno  = 0;
         nwrite = write(STDOUT_FILENO, ptr, ntowrite);
         fprintf(stderr, "nwrite = %d, errno = %d\n", nwrite, errno);
         if (nwrite > 0) {

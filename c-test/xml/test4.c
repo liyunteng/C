@@ -1,20 +1,21 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <libxml/tree.h>
 #include <libxml/parser.h>
+#include <libxml/tree.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void parseStory(xmlDocPtr doc, xmlNodePtr cur, char *keyword)
+void
+parseStory(xmlDocPtr doc, xmlNodePtr cur, char *keyword)
 {
-    xmlNewProp(xmlNewTextChild(cur, NULL, "lytlyt", keyword), "test",
-               "ddd");
+    xmlNewProp(xmlNewTextChild(cur, NULL, "lytlyt", keyword), "test", "ddd");
 
     return;
 }
 
-xmlDocPtr parseDoc(char *docname, char *keyword)
+xmlDocPtr
+parseDoc(char *docname, char *keyword)
 {
-    xmlDocPtr doc;
+    xmlDocPtr  doc;
     xmlNodePtr cur;
 
     doc = xmlParseFile(docname);
@@ -30,7 +31,7 @@ xmlDocPtr parseDoc(char *docname, char *keyword)
         return NULL;
     }
 
-    if (xmlStrcmp(cur->name, (const xmlChar *) "story")) {
+    if (xmlStrcmp(cur->name, (const xmlChar *)"story")) {
         fprintf(stderr, "document os the wrong type, root node != story");
         xmlFreeDoc(doc);
         return NULL;
@@ -38,7 +39,7 @@ xmlDocPtr parseDoc(char *docname, char *keyword)
 
     cur = cur->xmlChildrenNode;
     while (cur) {
-        if ((!xmlStrcmp(cur->name, (const xmlChar *) "storyinfo"))) {
+        if ((!xmlStrcmp(cur->name, (const xmlChar *)"storyinfo"))) {
             parseStory(doc, cur, keyword);
         }
         cur = cur->next;
@@ -47,10 +48,11 @@ xmlDocPtr parseDoc(char *docname, char *keyword)
     return doc;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    char *docname;
-    char *keyword;
+    char *    docname;
+    char *    keyword;
     xmlDocPtr doc;
 
     if (argc <= 2) {
@@ -60,7 +62,7 @@ int main(int argc, char *argv[])
 
     docname = argv[1];
     keyword = argv[2];
-    doc = parseDoc(docname, keyword);
+    doc     = parseDoc(docname, keyword);
 
     if (doc != NULL) {
         xmlSaveFormatFile(docname, doc, 0);

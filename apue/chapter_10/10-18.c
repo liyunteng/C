@@ -8,17 +8,17 @@
  * All rights reserved.
  */
 
-#include <sys/signal.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
+#include <sys/signal.h>
 
 #include "ourhdr.h"
 
-
-void abort_1(void)
+void
+abort_1(void)
 {
-    sigset_t mask;
+    sigset_t         mask;
     struct sigaction action;
     sigaction(SIGABRT, NULL, &action);
     if (action.sa_handler == SIG_IGN) {
@@ -46,7 +46,8 @@ void abort_1(void)
     exit(1);
 }
 
-int main(void)
+int
+main(void)
 {
     abort_1();
     return 0;

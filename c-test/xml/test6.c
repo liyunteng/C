@@ -1,16 +1,17 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <libxml/tree.h>
 #include <libxml/parser.h>
+#include <libxml/tree.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void getReference(xmlDocPtr doc, xmlNodePtr cur)
+void
+getReference(xmlDocPtr doc, xmlNodePtr cur)
 {
     xmlChar *uri;
 
     cur = cur->xmlChildrenNode;
     while (cur) {
-        if ((!xmlStrcmp(cur->name, (const xmlChar *) "reference"))) {
+        if ((!xmlStrcmp(cur->name, (const xmlChar *)"reference"))) {
             uri = xmlGetProp(cur, "uri");
             printf("uri: %s\n", uri);
 
@@ -21,9 +22,10 @@ void getReference(xmlDocPtr doc, xmlNodePtr cur)
     return;
 }
 
-void parseDoc(char *docname)
+void
+parseDoc(char *docname)
 {
-    xmlDocPtr doc;
+    xmlDocPtr  doc;
     xmlNodePtr cur;
 
     doc = xmlParseFile(docname);
@@ -39,9 +41,8 @@ void parseDoc(char *docname)
         return;
     }
 
-    if (xmlStrcmp(cur->name, (const xmlChar *) "story")) {
-        fprintf(stderr,
-                "document of the wrong type, root node != story\n");
+    if (xmlStrcmp(cur->name, (const xmlChar *)"story")) {
+        fprintf(stderr, "document of the wrong type, root node != story\n");
         xmlFreeDoc(doc);
         return;
     }
@@ -51,7 +52,8 @@ void parseDoc(char *docname)
     return;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     char *docname;
     if (argc <= 1) {

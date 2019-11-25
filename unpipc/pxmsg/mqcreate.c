@@ -21,44 +21,42 @@
  *
  */
 
-#include <mqueue.h>
 #include "../unpipc.h"
+#include <mqueue.h>
 
 struct mq_attr attr;
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    int c, flags;
+    int   c, flags;
     mqd_t mqd;
 
     flags = O_RDWR | O_CREAT;
     while ((c = getopt(argc, argv, "em:z:")) != -1) {
-	switch (c) {
-	case 'e':
-	    flags |= O_EXCL;
-	    break;
-	case 'm':
-	    attr.mq_maxmsg = atol(optarg);
-	    break;
-	case 'z':
-	    attr.mq_msgsize = atol(optarg);
-	    break;
-	default:
-	    exit(1);
-	}
+        switch (c) {
+        case 'e':
+            flags |= O_EXCL;
+            break;
+        case 'm':
+            attr.mq_maxmsg = atol(optarg);
+            break;
+        case 'z':
+            attr.mq_msgsize = atol(optarg);
+            break;
+        default:
+            exit(1);
+        }
     }
     if (optind != argc - 1)
-	err_quit
-	    ("usage: mqcreate [ -e ] [ -m maxmsg -z msgsize ] <name>\n");
+        err_quit("usage: mqcreate [ -e ] [ -m maxmsg -z msgsize ] <name>\n");
 
-    if ((attr.mq_maxmsg != 0 && attr.mq_msgsize == 0) ||
-	(attr.mq_maxmsg == 0 && attr.mq_msgsize != 0))
-	err_quit("must specify both -m maxmsg and -z msgsize\n");
+    if ((attr.mq_maxmsg != 0 && attr.mq_msgsize == 0)
+        || (attr.mq_maxmsg == 0 && attr.mq_msgsize != 0))
+        err_quit("must specify both -m maxmsg and -z msgsize\n");
 
-    if ((mqd = mq_open(argv[optind], flags, 644,
-		       (attr.mq_maxmsg != 0) ? &attr : NULL)) < 0)
-	err_sys("mq_open error:");
-
+    if ((mqd = mq_open(argv[optind], flags, 644, (attr.mq_maxmsg != 0) ? &attr : NULL)) < 0)
+        err_sys("mq_open error:");
 
     mq_close(mqd);
     return 0;

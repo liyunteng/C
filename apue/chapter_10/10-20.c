@@ -8,19 +8,19 @@
  * All rights reserved.
  */
 
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <errno.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
-
-int system_1(const char *cmdstring)
+int
+system_1(const char *cmdstring)
 {
-    pid_t pid;
-    int status;
+    pid_t            pid;
+    int              status;
     struct sigaction ignore, saveintr, savequit;
-    sigset_t  chldmask, savemask;
+    sigset_t         chldmask, savemask;
 
     if (cmdstring == NULL)
         return 1;
@@ -38,7 +38,7 @@ int system_1(const char *cmdstring)
     if (sigprocmask(SIG_BLOCK, &chldmask, &savemask) < 0)
         return (-1);
 
-    if ( (pid = fork()) < 0)
+    if ((pid = fork()) < 0)
         status = -1;
     else if (pid == 0) {
         sigaction(SIGINT, &saveintr, NULL);
@@ -66,7 +66,8 @@ int system_1(const char *cmdstring)
     return (status);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     if (argc > 1) {
         system_1(argv[1]);

@@ -1,18 +1,19 @@
 /*******************************************************************************
-* Author : liyunteng
-* Email : li_yunteng@163.com
-* Created Time : 2014-01-14 16:44
-* Filename : simple_http.c
-* Description :
-* *****************************************************************************/
-#include <stdio.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <unistd.h>
+ * Author : liyunteng
+ * Email : li_yunteng@163.com
+ * Created Time : 2014-01-14 16:44
+ * Filename : simple_http.c
+ * Description :
+ * *****************************************************************************/
 #include <event.h>
 #include <evhttp.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-void generic_request_handler(struct evhttp_request *req, void *arg)
+void
+generic_request_handler(struct evhttp_request *req, void *arg)
 {
     struct evbuffer *returnbuffer = evbuffer_new();
 
@@ -22,10 +23,11 @@ void generic_request_handler(struct evhttp_request *req, void *arg)
     return;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    short http_port = 8081;
-    char *http_addr = "0.0.0.0";
+    short          http_port   = 8081;
+    char *         http_addr   = "0.0.0.0";
     struct evhttp *http_server = NULL;
 
     event_init();
@@ -36,7 +38,6 @@ int main(int argc, char *argv[])
     event_dispatch();
 
     return 0;
-
 }
 
 /* Local Variables: */

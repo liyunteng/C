@@ -8,12 +8,13 @@
  * All rights reserved.
  */
 
-#include <signal.h>
-#include <errno.h>
 #include "ourhdr.h"
+#include <errno.h>
+#include <signal.h>
 
 static void sig_int(int);
-int main(void)
+int
+main(void)
 {
     sigset_t newmask, oldmask, zeromask;
 
@@ -40,7 +41,8 @@ int main(void)
     return 0;
 }
 
-static void sig_int(int signo)
+static void
+sig_int(int signo)
 {
     pr_mask("\nin sig_int: ");
     return;

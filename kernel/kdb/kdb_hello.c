@@ -1,7 +1,8 @@
-#include <linux/module.h>
 #include <linux/kdb.h>
+#include <linux/module.h>
 
-static int kdb_hello_cmd(int argc, char **argv)
+static int
+kdb_hello_cmd(int argc, char **argv)
 {
     if (argc > 1)
         return -1;
@@ -14,14 +15,15 @@ static int kdb_hello_cmd(int argc, char **argv)
     return 0;
 }
 
-static int __init kdb_hello_cmd_init(void)
+static int __init
+kdb_hello_cmd_init(void)
 {
-    kdb_register("hello", kdb_hello_cmd, "[string]",
-                 "Say Hello World or Hello [string]", 0);
+    kdb_register("hello", kdb_hello_cmd, "[string]", "Say Hello World or Hello [string]", 0);
     return 0;
 }
 
-static void __exit kdb_hello_cmd_exit(void)
+static void __exit
+kdb_hello_cmd_exit(void)
 {
     kdb_unregister("hello");
 }

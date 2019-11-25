@@ -4,12 +4,13 @@
  * Copyright (C) 2019 liyunteng
  * Last-Updated: <2019/06/13 22:41:58 liyunteng>
  */
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include "ourhdr.h"
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-int main(void)
+int
+main(void)
 {
     if (open("tempfile", O_RDWR | O_CREAT, FILE_MODE) < 0)
         err_sys("open error");

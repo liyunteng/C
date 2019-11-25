@@ -15,32 +15,30 @@
  *
  * =====================================================================================
  */
-#include <stdio.h>
 #include "speed.h"
+#include <stdio.h>
 
 #define PORT 6666
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    int port = PORT;
+    int port     = PORT;
     int interval = 10;
     if (argc < 2) {
-	fprintf(stderr, "Usage: %s host [port [interval]].\n", argv[0]);
-	return -1;
+        fprintf(stderr, "Usage: %s host [port [interval]].\n", argv[0]);
+        return -1;
     }
 
-
-
     if (argc == 3)
-	port = atoi(argv[2]);
+        port = atoi(argv[2]);
 
     if (argc >= 4) {
-	port = atoi(argv[2]);
-	interval = atoi(argv[3]);
+        port     = atoi(argv[2]);
+        interval = atoi(argv[3]);
     }
 
     return tcp_speed_test(argv[1], port, interval);
-
 }
 
 /* Local Variables: */

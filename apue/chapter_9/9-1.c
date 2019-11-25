@@ -7,18 +7,19 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/types.h>
+#include "ourhdr.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
-#include "ourhdr.h"
+#include <sys/types.h>
 
 static void sig_hup(int);
 static void pr_ids(char *);
 
-int main(void)
+int
+main(void)
 {
-    char c;
+    char  c;
     pid_t pid;
 
     pr_ids("parent");
@@ -41,15 +42,16 @@ int main(void)
     return 0;
 }
 
-static void sig_hup(int signo)
+static void
+sig_hup(int signo)
 {
     printf("SIGHUP received, pid = %d\n", getpid());
     return;
 }
 
-static void pr_ids(char *name)
+static void
+pr_ids(char *name)
 {
-    printf("%s: pid = %d, ppid = %d, pgrp = %d\n",
-           name, getpid(), getppid(), getpgrp());
+    printf("%s: pid = %d, ppid = %d, pgrp = %d\n", name, getpid(), getppid(), getpgrp());
     fflush(stdout);
 }

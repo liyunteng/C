@@ -4,14 +4,14 @@
  * Date   : 2019/11/20
  */
 
-#include <stdio.h>
 #include <aio.h>
 #include <assert.h>
-#include <string.h>
-#include <stdlib.h>
 #include <errno.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
@@ -19,10 +19,11 @@
 #define BUFFER_SIZE 4096
 #define MAX_LIST 2
 
-void aio_handler(__sigval_t sigval)
+void
+aio_handler(__sigval_t sigval)
 {
     struct aiocb *prd;
-    int ret;
+    int           ret;
 
     prd = (struct aiocb *)sigval.sival_ptr;
 
@@ -31,11 +32,11 @@ void aio_handler(__sigval_t sigval)
         printf("%s", prd->aio_buf);
         printf("read: %d\n", ret);
     }
-
 }
-int async_test(const char *filename)
+int
+async_test(const char *filename)
 {
-    int fd, ret;
+    int          fd, ret;
     struct aiocb rd;
 
     fd = open(filename, O_RDONLY);
@@ -43,51 +44,49 @@ int async_test(const char *filename)
 
     memset(&rd, 0, sizeof(rd));
     rd.aio_fildes = fd;
-    rd.aio_buf = (char *) malloc(BUFFER_SIZE);
+    rd.aio_buf    = (char *)malloc(BUFFER_SIZE);
     rd.aio_nbytes = BUFFER_SIZE;
     rd.aio_offset = 0;
 
-    rd.aio_sigevent.sigev_notify = SIGEV_THREAD; /* CALLBACK */
-    rd.aio_sigevent.sigev_notify_function = aio_handler;
+    rd.aio_sigevent.sigev_notify            = SIGEV_THREAD; /* CALLBACK */
+    rd.aio_sigevent.sigev_notify_function   = aio_handler;
     rd.aio_sigevent.sigev_notify_attributes = NULL;
-    rd.aio_sigevent.sigev_value.sival_ptr = &rd;
+    rd.aio_sigevent.sigev_value.sival_ptr   = &rd;
 
     ret = aio_read(&rd);
     assert(ret == 0);
 
-    sleep(1);                   /* WAIT CALLBACK */
+    sleep(1); /* WAIT CALLBACK */
     return 0;
-
 }
-int lio_test(const char *filename)
+int
+lio_test(const char *filename)
 {
     struct aiocb *listio[MAX_LIST];
-    struct aiocb rd, wr;
-    int fd, ret;
-    char str[] = "This is a lio test.\n";
+    struct aiocb  rd, wr;
+    int           fd, ret;
+    char          str[] = "This is a lio test.\n";
 
     fd = open(filename, O_RDWR | O_APPEND | O_CREAT, FILE_MODE);
     assert(fd > 0);
 
-
     memset(&wr, 0, sizeof(wr));
     wr.aio_buf = str;
     assert(wr.aio_buf != NULL);
-    wr.aio_fildes = fd;
-    wr.aio_nbytes = strlen(str);
+    wr.aio_fildes     = fd;
+    wr.aio_nbytes     = strlen(str);
     wr.aio_lio_opcode = LIO_WRITE; /* WRITE */
-    listio[0] = &wr;
+    listio[0]         = &wr;
 
     memset(&rd, 0, sizeof(rd));
     rd.aio_buf = (char *)malloc(BUFFER_SIZE);
     assert(rd.aio_buf != NULL);
-    rd.aio_fildes = fd;
-    rd.aio_nbytes = BUFFER_SIZE;
-    rd.aio_offset = 0;
+    rd.aio_fildes     = fd;
+    rd.aio_nbytes     = BUFFER_SIZE;
+    rd.aio_offset     = 0;
     rd.aio_lio_opcode = LIO_READ; /* READ */
 
     listio[1] = &rd;
-
 
     ret = lio_listio(LIO_WAIT, listio, MAX_LIST, NULL);
     ret = aio_return(&wr);
@@ -96,21 +95,21 @@ int lio_test(const char *filename)
     printf("%s", rd.aio_buf);
     printf("read: %d\n", ret);
 
-
     return 0;
 }
 
-int suspend_test(const char *filename)
+int
+suspend_test(const char *filename)
 {
-    struct aiocb rd;
-    int fd, ret;
+    struct aiocb        rd;
+    int                 fd, ret;
     const struct aiocb *aiocb_list[MAX_LIST];
     fd = open(filename, O_RDONLY);
     assert(fd > 0);
 
     memset(&aiocb_list, 0, sizeof(aiocb_list));
     memset(&rd, 0, sizeof(rd));
-    rd.aio_buf = malloc(BUFFER_SIZE);
+    rd.aio_buf    = malloc(BUFFER_SIZE);
     rd.aio_fildes = fd;
     rd.aio_nbytes = BUFFER_SIZE;
     rd.aio_offset = 0;
@@ -120,22 +119,23 @@ int suspend_test(const char *filename)
     ret = aio_read(&rd);
     assert(ret >= 0);
 
-    ret = aio_suspend(aiocb_list, sizeof(aiocb_list)/sizeof(aiocb_list[0]), NULL);
+    ret = aio_suspend(aiocb_list, sizeof(aiocb_list) / sizeof(aiocb_list[0]), NULL);
     printf("%s", rd.aio_buf);
     free((void *)rd.aio_buf);
     close(fd);
     return 0;
 }
 
-int read_test(const char *filename)
+int
+read_test(const char *filename)
 {
     struct aiocb rd;
-    int fd, ret, counter;
+    int          fd, ret, counter;
     fd = open(filename, O_RDONLY);
     assert(fd > 0);
 
     memset(&rd, 0, sizeof(rd));
-    rd.aio_buf = malloc(BUFFER_SIZE);
+    rd.aio_buf    = malloc(BUFFER_SIZE);
     rd.aio_fildes = fd;
     rd.aio_nbytes = BUFFER_SIZE;
     rd.aio_offset = 0;
@@ -156,16 +156,17 @@ int read_test(const char *filename)
     return 0;
 }
 
-int write_test(const char *filename)
+int
+write_test(const char *filename)
 {
     struct aiocb wr;
-    int ret, fd, counter;
-    char str[] = "This is a test txt.\n";
-    fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, FILE_MODE);
+    int          ret, fd, counter;
+    char         str[] = "This is a test txt.\n";
+    fd                 = open(filename, O_CREAT | O_WRONLY | O_APPEND, FILE_MODE);
     assert(fd > 0);
 
     memset(&wr, 0, sizeof(wr));
-    wr.aio_buf = str;
+    wr.aio_buf    = str;
     wr.aio_fildes = fd;
     wr.aio_nbytes = strlen(str);
 
@@ -183,7 +184,8 @@ int write_test(const char *filename)
     return 0;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     const char *filename = FILE_NAME;
     if (argc == 2) {

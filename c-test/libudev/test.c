@@ -1,36 +1,33 @@
+#include <errno.h>
+#include <libudev.h>
+#include <linux/netlink.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
-#include <string.h>
-#include <linux/netlink.h>
-#include <libudev.h>
-#include <errno.h>
 
 #define UEVENT_BUFFER_SIZE 2048
 
-static int init_hotplug_sock(void)
+static int
+init_hotplug_sock(void)
 {
     struct sockaddr_nl snl;
-    const int buffersize = 16 * 1024 * 1024;
-    int retval;
+    const int          buffersize = 16 * 1024 * 1024;
+    int                retval;
 
     memset(&snl, 0x00, sizeof(struct sockaddr_nl));
-    snl.nl_family = AF_NETLINK;
-    snl.nl_pid = getpid();
-    snl.nl_groups = 1;
-    int hotplug_sock =
-        socket(PF_NETLINK, SOCK_DGRAM, NETLINK_KOBJECT_UEVENT);
+    snl.nl_family    = AF_NETLINK;
+    snl.nl_pid       = getpid();
+    snl.nl_groups    = 1;
+    int hotplug_sock = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_KOBJECT_UEVENT);
     if (hotplug_sock == -1) {
         printf("error getting socket: %s\n", strerror(errno));
         return -1;
     }
 
-    setsockopt(hotplug_sock, SOL_SOCKET, SO_RCVBUFFORCE, &buffersize,
-               sizeof(buffersize));
-    retval =
-        bind(hotplug_sock, (struct sockaddr *) &snl,
-             sizeof(struct sockaddr_nl));
+    setsockopt(hotplug_sock, SOL_SOCKET, SO_RCVBUFFORCE, &buffersize, sizeof(buffersize));
+    retval = bind(hotplug_sock, (struct sockaddr *)&snl, sizeof(struct sockaddr_nl));
     if (retval < 0) {
         printf("bind failed: %s\n", strerror(errno));
         close(hotplug_sock);
@@ -41,18 +38,17 @@ static int init_hotplug_sock(void)
     return hotplug_sock;
 }
 
-
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    int hotplug_sock = init_hotplug_sock();
-    struct udev *udev;
+    int                  hotplug_sock = init_hotplug_sock();
+    struct udev *        udev;
     struct udev_monitor *mon;
 
     struct udv_device *dev;
-    const char *path;
-    const char *dev_node;
-    const char *action;
-
+    const char *       path;
+    const char *       dev_node;
+    const char *       action;
 
     udev = udev_new();
     if (udev == NULL) {
@@ -66,9 +62,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if (udev_monitor_filter_add_match_subsystem_devtype(mon,
-                                                        "block",
-                                                        "disk") < 0) {
+    if (udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk") < 0) {
         printf("udev monitor add match failed!\n");
         udev_unref(udev);
         return -1;
@@ -81,7 +75,7 @@ int main(int argc, char *argv[])
         udev_unref(udev);
         return -1;
     }
-    struct udev_enumerate *uenum;
+    struct udev_enumerate * uenum;
     struct udev_list_entry *devs, *dev_list;
     uenum = udev_enumerate_new(udev);
     if (uenum == NULL) {
@@ -97,8 +91,8 @@ int main(int argc, char *argv[])
         return -1;
     }
     devs = udev_enumerate_get_list_entry(uenum);
-    udev_list_entry_foreach(dev_list, devs) {
-
+    udev_list_entry_foreach(dev_list, devs)
+    {
 
         path = udev_list_entry_get_name(dev_list);
         if (path == NULL)
@@ -113,20 +107,16 @@ int main(int argc, char *argv[])
         printf("=====enume  path:%s, node:%s\n", path, dev_node);
     }
 
-
-
     while (1) {
 
         dev = NULL;
         dev = udev_monitor_receive_device(mon);
         if (dev == NULL)
             continue;
-        path = udev_device_get_devpath(dev);
+        path     = udev_device_get_devpath(dev);
         dev_node = udev_device_get_devnode(dev);
-        action = udev_device_get_action(dev);
-        printf("path: %s, devnode: %s, event: %s\n",
-               path, dev_node, action);
-
+        action   = udev_device_get_action(dev);
+        printf("path: %s, devnode: %s, event: %s\n", path, dev_node, action);
     }
     return 0;
 }

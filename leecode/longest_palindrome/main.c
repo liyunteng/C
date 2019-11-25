@@ -5,9 +5,8 @@
  * Last-Updated: <2018/12/28 06:47:09 liyunteng>
  */
 
-
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #if 0
@@ -61,10 +60,11 @@ char* longestPalindrome(char* s) {
 }
 #endif
 
-int getPalindromeLength(char *s, int left, int right)
+int
+getPalindromeLength(char *s, int left, int right)
 {
     int length = strlen(s);
-    while(left >= 0 & right < length && s[left] == s[right]) {
+    while (left >= 0 & right < length && s[left] == s[right]) {
         left--;
         right++;
     }
@@ -72,7 +72,8 @@ int getPalindromeLength(char *s, int left, int right)
     return right - left - 1;
 }
 
-char *longestPalindrome(char *s)
+char *
+longestPalindrome(char *s)
 {
     int length = strlen(s);
     if (length < 2) {
@@ -83,23 +84,24 @@ char *longestPalindrome(char *s)
     int i;
     for (i = 0; i < length; i++) {
         int len1 = getPalindromeLength(s, i, i);
-        int len2 = getPalindromeLength(s, i, i+1);
-        int len = len1 > len2 ? len1 : len2;
+        int len2 = getPalindromeLength(s, i, i + 1);
+        int len  = len1 > len2 ? len1 : len2;
         if (len > end - begin) {
             begin = i - (len - 1) / 2;
-            end = i + len / 2;
+            end   = i + len / 2;
         }
     }
     char *r = malloc(end - begin + 2);
-    strncpy(r, s+begin, end-begin+1);
-    r[end-begin + 1] = '\0';
+    strncpy(r, s + begin, end - begin + 1);
+    r[end - begin + 1] = '\0';
     return r;
 }
 
-int main(void)
+int
+main(void)
 {
     char *p = "";
-    printf("%d\n", ispalindrome(p,p));
+    printf("%d\n", ispalindrome(p, p));
     printf("%s\n", longestPalindrome(p));
     return 0;
 }

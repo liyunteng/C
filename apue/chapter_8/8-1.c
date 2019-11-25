@@ -7,29 +7,30 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/types.h>
 #include "ourhdr.h"
+#include <sys/types.h>
 
-int glob = 6;
+int  glob  = 6;
 char buf[] = "a write to stdout\n";
 
-int main(void)
+int
+main(void)
 {
-    int var;
+    int   var;
     pid_t pid;
 
     var = 88;
-    if (write(STDOUT_FILENO, buf, sizeof(buf)-1) != sizeof(buf)-1) {
+    if (write(STDOUT_FILENO, buf, sizeof(buf) - 1) != sizeof(buf) - 1) {
         err_sys("write error");
     }
 
-    if ( (pid = fork()) < 0) {
+    if ((pid = fork()) < 0) {
         err_sys("fork error");
 
     } else if (pid == 0) {
         /* child */
-        glob ++;
-        var ++;
+        glob++;
+        var++;
     } else {
         /* parent */
         sleep(2);

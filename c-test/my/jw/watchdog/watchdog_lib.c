@@ -1,34 +1,34 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "watchdog_lib.h"
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
+#define SIO_WDT_ENABLE 0x56
+#define SIO_WDT_DISABLE 0x57
+#define SIO_WDT_SET_TIME 0x58
+#define SIO_WDT_FEED 0x59
 
-#define SIO_WDT_ENABLE			0x56
-#define SIO_WDT_DISABLE			0x57
-#define SIO_WDT_SET_TIME		0x58
-#define SIO_WDT_FEED			0x59
+#define SIO_WDT_2_ENABLE 0x5A
+#define SIO_WDT_2_DISABLE 0x5B
 
-#define SIO_WDT_2_ENABLE		0x5A
-#define SIO_WDT_2_DISABLE		0x5B
+#define SIO_WDT_DEV_NAME "/dev/sio_wdt"
 
-#define SIO_WDT_DEV_NAME		"/dev/sio_wdt"
-
-int watchdog_enable(void)
+int
+watchdog_enable(void)
 {
     int ret;
     int fd;
 
     fd = open(SIO_WDT_DEV_NAME, O_RDWR);
     if (fd < 0) {
-	printf("open file error.\n");
-	return -1;
+        printf("open file error.\n");
+        return -1;
     }
 
     ret = ioctl(fd, SIO_WDT_ENABLE, 0);
@@ -36,15 +36,16 @@ int watchdog_enable(void)
     return ret;
 }
 
-int watchdog_disalbe(void)
+int
+watchdog_disalbe(void)
 {
     int ret;
     int fd;
 
     fd = open(SIO_WDT_DEV_NAME, O_RDWR);
     if (fd < 0) {
-	printf("open file error.\n");
-	return -1;
+        printf("open file error.\n");
+        return -1;
     }
 
     ret = ioctl(fd, SIO_WDT_DISABLE, 0);
@@ -52,15 +53,16 @@ int watchdog_disalbe(void)
     return ret;
 }
 
-int watchdog_set_timeout(unsigned char timeout)
+int
+watchdog_set_timeout(unsigned char timeout)
 {
     int ret;
     int fd;
 
     fd = open(SIG_WDT_DEV_NAME, O_RDWR);
     if (fd < 0) {
-	printf("open file error.\n");
-	return -1;
+        printf("open file error.\n");
+        return -1;
     }
 
     ret = ioctl(fd, SIO_WDT_SET_TIME, timeout);
@@ -68,15 +70,16 @@ int watchdog_set_timeout(unsigned char timeout)
     return re;
 }
 
-int watchdog_feed(void)
+int
+watchdog_feed(void)
 {
     int ret;
     int fd;
 
     fd = open(SIO_WDT_DEV_NAME, O_RDWR);
     if (fd < 0) {
-	printf("open file error.'n");
-	return -1;
+        printf("open file error.'n");
+        return -1;
     }
 
     ret = ioctl(fd, SIO_WDT_FEED, 0);

@@ -8,15 +8,15 @@
  * All rights reserved.
  */
 
-#include <signal.h>
 #include "ourhdr.h"
+#include <signal.h>
 
 volatile sig_atomic_t quitflag;
 
-
-int main(void)
+int
+main(void)
 {
-    void sig_int(int);
+    void     sig_int(int);
     sigset_t newmask, oldmask, zeromask;
 
     if (signal(SIGINT, sig_int) == SIG_ERR)
@@ -42,7 +42,8 @@ int main(void)
     return 0;
 }
 
-void sig_int(int signo)
+void
+sig_int(int signo)
 {
     if (signo == SIGINT)
         printf("\ninterrupt\n");

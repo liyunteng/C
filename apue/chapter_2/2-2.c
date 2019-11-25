@@ -4,20 +4,20 @@
  * Copyright (C) 2019 liyunteng
  * Last-Updated: <2019/06/11 23:41:22 liyunteng>
  */
+#include "ourhdr.h"
 #include <errno.h>
 #include <limits.h>
-#include "ourhdr.h"
-
 
 #ifdef PATH_MAX
 static int pathmax = PATH_MAX;
 #else
 static int pathmax = 0;
-#endif // PATH_MAX
+#endif  // PATH_MAX
 
 #define PATH_MAX_GUESS 1024
 
-char *path_alloc(int *size)
+char *
+path_alloc(int *size)
 {
     char *ptr;
     if (pathmax == 0) {
@@ -32,7 +32,7 @@ char *path_alloc(int *size)
             pathmax++;
     }
 
-    if ( (ptr = malloc(pathmax + 1)) == NULL)
+    if ((ptr = malloc(pathmax + 1)) == NULL)
         err_sys("malloc error for pathname");
 
     if (size != NULL)
@@ -42,11 +42,12 @@ char *path_alloc(int *size)
 }
 
 /* for test */
-int main(void)
+int
+main(void)
 {
-    char *p = NULL;
-    int size = 0;
-    p = path_alloc(&size);
+    char *p    = NULL;
+    int   size = 0;
+    p          = path_alloc(&size);
     printf("pathmax: %d\n", size);
     return 0;
 }

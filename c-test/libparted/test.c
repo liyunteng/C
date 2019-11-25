@@ -1,12 +1,13 @@
 #include <parted/parted.h>
 #include <stdio.h>
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     ped_device_probe_all();
-    PedDevice *dev = 0;
-    PedDisk *disk = NULL;
-    PedDiskType *type;
+    PedDevice *   dev  = 0;
+    PedDisk *     disk = NULL;
+    PedDiskType * type;
     PedPartition *part;
 
     while ((dev = ped_device_get_next(dev))) {
@@ -14,8 +15,7 @@ int main(int argc, char *argv[])
         printf("device model: %s\n", dev->model);
         printf("path: %s\n", dev->path);
 
-        long long size =
-            (dev->sector_size * dev->length) / (1024 * 1024 * 1024);
+        long long size = (dev->sector_size * dev->length) / (1024 * 1024 * 1024);
         printf("size: %llu G\n", size);
 
         if (!(type = ped_disk_probe(dev))) {
@@ -27,8 +27,7 @@ int main(int argc, char *argv[])
         if (disk) {
             printf("needs_clobber: %d\n", disk->needs_clobber);
             printf("update_mode: %d\n", disk->update_mode);
-            printf("total patition: %d\n",
-                   ped_disk_get_last_partition_num(disk));
+            printf("total patition: %d\n", ped_disk_get_last_partition_num(disk));
         } else {
             printf("disk is NULL.\n");
             continue;
@@ -54,7 +53,6 @@ int main(int argc, char *argv[])
         }
 
         ped_disk_destroy(disk);
-
     }
     return 0;
 }

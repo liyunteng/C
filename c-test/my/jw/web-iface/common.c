@@ -1,7 +1,8 @@
-#include <stdio.h>
 #include "common.h"
+#include <stdio.h>
 
-void error_out(const char *fmt, ...)
+void
+error_out(const char *fmt, ...)
 {
     va_list arg_ptr;
 
@@ -13,7 +14,8 @@ void error_out(const char *fmt, ...)
     exit(-1);
 }
 
-void exit_json_msg(const int type, const char *msg)
+void
+exit_json_msg(const int type, const char *msg)
 {
     if (MSG_OK == type) {
         fprintf(stdout, "{\"status\":true, \"msg\":\"%s\"}\n", msg);

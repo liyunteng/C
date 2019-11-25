@@ -1,12 +1,13 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <libxml/tree.h>
 #include <libxml/parser.h>
+#include <libxml/tree.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-xmlDocPtr parseDoc(char *docname, char *uri)
+xmlDocPtr
+parseDoc(char *docname, char *uri)
 {
-    xmlDocPtr doc;
+    xmlDocPtr  doc;
     xmlNodePtr cur;
     xmlNodePtr newnode;
     xmlAttrPtr newattr;
@@ -23,7 +24,7 @@ xmlDocPtr parseDoc(char *docname, char *uri)
         xmlFreeDoc(doc);
         return NULL;
     }
-    if (xmlStrcmp(cur->name, (const xmlChar *) "story")) {
+    if (xmlStrcmp(cur->name, (const xmlChar *)"story")) {
         fprintf(stderr, "document of the wrong type, root node!=story");
         xmlFreeDoc(doc);
         return NULL;
@@ -32,13 +33,13 @@ xmlDocPtr parseDoc(char *docname, char *uri)
     newnode = xmlNewTextChild(cur, NULL, "reference", NULL);
     newattr = xmlNewProp(newnode, "uri", uri);
     return doc;
-
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    char *docname;
-    char *uri;
+    char *    docname;
+    char *    uri;
     xmlDocPtr doc;
 
     if (argc <= 2) {
@@ -47,7 +48,7 @@ int main(int argc, char *argv[])
     }
 
     docname = argv[1];
-    uri = argv[2];
+    uri     = argv[2];
 
     doc = parseDoc(docname, uri);
     if (doc != NULL) {

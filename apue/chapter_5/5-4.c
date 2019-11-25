@@ -6,9 +6,10 @@
  */
 #include "ourhdr.h"
 
-int main(void)
+int
+main(void)
 {
-    char name[L_tmpnam], line[MAXLINE];
+    char  name[L_tmpnam], line[MAXLINE];
     FILE *fp;
 
     printf("%s\n", tmpnam_r(NULL));

@@ -7,7 +7,8 @@
 
 #include "ourhdr.h"
 
-int main(void)
+int
+main(void)
 {
     int c;
 

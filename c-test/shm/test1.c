@@ -1,26 +1,28 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <sys/ipc.h>
-#include <sys/shm.h>
 #include <sys/sem.h>
+#include <sys/shm.h>
+#include <unistd.h>
 
 /* 信号量的p操作 */
-void p()
+void
+p()
 {
     struct sembuf sem_p;
     sem_p.sem_num = 0;
-    sem_p.sem_op = 1;
+    sem_p.sem_op  = 1;
     if (semop(semid, &sem_p, 1) == -1) {
         printf("p operation failed.\n");
         return -1;
     }
 }
 
-void v()
+void
+v()
 {
     struct sembuf sem_v;
     sem_v.sem_num = 0;
-    sem_v.sem_op = 1;
+    sem_v.sem_op  = 1;
 
     if (semop(semid, &sem_v, 1) == -1) {
         printf("v operation failed.\n");
@@ -30,14 +32,15 @@ void v()
 
 struct Peopel {
     char name[10];
-    int age;
+    int  age;
 };
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
 
-    int semid;
-    int shmid;
+    int   semid;
+    int   shmid;
     key_t semkey;
     key_t shmkey;
 
@@ -58,9 +61,9 @@ int main(int argc, char *argv[])
 
     /* 设置信号量的初始值 */
     union semum {
-        int val;
+        int              val;
         struct semid_ds *buf;
-        ushort *array;
+        ushort *         array;
     } sem_u;
 
     sem_u.val = 1;
@@ -70,8 +73,8 @@ int main(int argc, char *argv[])
      * addr操作就是对共享内存操作 */
 
     struct People *addr;
-    addr = (struct People *) shmat(shmid, 0, 0);
-    if (addr == (struct People *) -1) {
+    addr = (struct People *)shmat(shmid, 0, 0);
+    if (addr == (struct People *)-1) {
         printf("shm shmat failed.\n");
         return -1;
     }

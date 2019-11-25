@@ -21,30 +21,30 @@
  *
  */
 
-
 #include "../unpipc.h"
 #include <mqueue.h>
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    int c, flags;
+    int   c, flags;
     mqd_t mqd;
 
     flags = O_RDWR | O_CREAT;
     while ((c = getopt(argc, argv, "e")) != -1) {
-	switch (c) {
-	case 'e':
-	    flags |= O_EXCL;
-	    break;
-	}
+        switch (c) {
+        case 'e':
+            flags |= O_EXCL;
+            break;
+        }
     }
 
     if (optind != argc - 1) {
-	err_quit("usage: mqcreatel [ -e  <name> ]\n");
+        err_quit("usage: mqcreatel [ -e  <name> ]\n");
     }
 
     if ((mqd = mq_open(argv[optind], flags, 644, NULL)) < 0) {
-	err_quit("mq_open fialed:");
+        err_quit("mq_open fialed:");
     }
     mq_close(mqd);
 

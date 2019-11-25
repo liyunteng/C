@@ -9,11 +9,12 @@
  */
 #include "ourhdr.h"
 
-int main(void)
+int
+main(void)
 {
-    int n, fd[2];
+    int   n, fd[2];
     pid_t pid;
-    char line[MAXLINE];
+    char  line[MAXLINE];
 
     if (pipe(fd) < 0)
         err_sys("pipe error");

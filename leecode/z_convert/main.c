@@ -18,21 +18,22 @@
  * 2 4   8 10    14
  * 3     9       15
  */
-char *convert(char *s, int numRows)
+char *
+convert(char *s, int numRows)
 {
     int i, j;
     int length = strlen(s);
     if (numRows <= 1) {
         return s;
     }
-    char *r = malloc(length+1);
-    int base = numRows * 2 - 2;
-    int left = 0;
-    int right = 0;
-    int index = 0;
+    char *r     = malloc(length + 1);
+    int   base  = numRows * 2 - 2;
+    int   left  = 0;
+    int   right = 0;
+    int   index = 0;
     for (i = 0; i < numRows; i++) {
-        left = base - i*2;
-        right = i*2;
+        left  = base - i * 2;
+        right = i * 2;
         for (j = i; j < length;) {
             r[index++] = s[j];
             /*
@@ -46,7 +47,6 @@ char *convert(char *s, int numRows)
                      * printf("%c[%d]", s[j], j);
                      */
                 }
-
             }
 
             if (right > 0) {
@@ -58,12 +58,15 @@ char *convert(char *s, int numRows)
     return r;
 }
 
-int main(void)
+int
+main(void)
 {
     /*
      * char *s = "LEETCODEISHIRING";
      */
-    char *s = "Apalindromeisaword,phrase,number,orothersequenceofunitsthatcanbereadthesamewayineitherdirection,withgeneralallowancesforadjustmentstopunctuationandworddividers.";
-    printf("%s\n", convert(s,2));
+    char *s = "Apalindromeisaword,phrase,number,"
+              "orothersequenceofunitsthatcanbereadthesamewayineitherdirection,"
+              "withgeneralallowancesforadjustmentstopunctuationandworddividers.";
+    printf("%s\n", convert(s, 2));
     return 0;
 }

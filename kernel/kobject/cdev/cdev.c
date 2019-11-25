@@ -1,20 +1,21 @@
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/fs.h>
-#include <linux/init.h>
+#include <asm-generic/irq.h>
+#include <asm-generic/uaccess.h>
 #include <linux/delay.h>
 #include <linux/device.h>
-#include <asm-generic/uaccess.h>
-#include <asm-generic/irq.h>
+#include <linux/fs.h>
+#include <linux/init.h>
+#include <linux/kernel.h>
+#include <linux/module.h>
 //#include <asm-generic/io.h>
 
-static struct class *firstdrv_class;
+static struct class * firstdrv_class;
 static struct device *firstdrv_class_dev;
 
 volatile unsigned long *gpfcon = NULL;
 volatile unsigned long *gpfdat = NULL;
 
-static int first_drv_open(struct inode *inode, struct file *file)
+static int
+first_drv_open(struct inode *inode, struct file *file)
 {
     printk("first_drv_open\n");
     /* 配置GPF4，5，6为输出 */
@@ -25,8 +26,8 @@ static int first_drv_open(struct inode *inode, struct file *file)
     return 0;
 }
 
-static ssize_t first_drv_write(struct file *file, const char __user * buf,
-			       size_t count, loff_t * ppos)
+static ssize_t
+first_drv_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
 {
     int val;
 
@@ -34,36 +35,37 @@ static ssize_t first_drv_write(struct file *file, const char __user * buf,
 
     copy_from_user(&val, buf, count);
     if (val == 1) {
-	*gpfdat &= ~((1 << 4) | (1 << 5) | (1 << 6));
+        *gpfdat &= ~((1 << 4) | (1 << 5) | (1 << 6));
     } else {
-	*gpfdat |= (1 << 4) | (1 << 5) | (1 << 6);
+        *gpfdat |= (1 << 4) | (1 << 5) | (1 << 6);
     }
     return 0;
 }
 
 static struct file_operations first_drv_fops = {
-    .owner = THIS_MODULE,	/* 宏， 指向编译模块时自动创建
-				 * 的__this_module变量 */
-    .open = first_drv_open,
+    .owner = THIS_MODULE, /* 宏， 指向编译模块时自动创建
+                           * 的__this_module变量 */
+    .open  = first_drv_open,
     .write = first_drv_write,
 };
 
 int major;
 
-static int first_drv_init(void)
+static int
+first_drv_init(void)
 {
     major = register_chrdev(0, "first_drv", &first_drv_fops);
 
     firstdrv_class = class_create(THIS_MODULE, "firstdrv");
 
-    firstdrv_class_dev = device_create(firstdrv_class, NULL,
-				       MKDEV(major, 0), NULL, "lyt");
-    gpfcon = (volatile unsigned long *) ioremap(0x56000050, 16);
-    gpfdat = gpfcon + 1;
+    firstdrv_class_dev = device_create(firstdrv_class, NULL, MKDEV(major, 0), NULL, "lyt");
+    gpfcon             = (volatile unsigned long *)ioremap(0x56000050, 16);
+    gpfdat             = gpfcon + 1;
     return 0;
 }
 
-static void first_drv_exit(void)
+static void
+first_drv_exit(void)
 {
     unregister_chrdev(major, "first_dev");
 

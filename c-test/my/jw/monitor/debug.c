@@ -5,10 +5,10 @@
  * Filename : debug.c
  * Description :
  * *****************************************************************************/
-#include <stdio.h>
 #include <assert.h>
 #include <errno.h>
 #include <pthread.h>
+#include <stdio.h>
 #include <string.h>
 #include <time.h>
 
@@ -16,33 +16,33 @@
 
 static bool bstamp = true;
 
-void set_dbgstamp(bool stamp)
+void
+set_dbgstamp(bool stamp)
 {
     bstamp = stamp;
 }
 
-bool get_dbgstamp()
+bool
+get_dbgstamp()
 {
     return bstamp;
 }
 
-void __dbg_vprintf(FILE * stream,
-                   const char *file,
-                   const char *func,
-                   size_t line, bool berr, const char *fmt, va_list ap)
+void
+__dbg_vprintf(FILE *stream, const char *file, const char *func, size_t line, bool berr,
+              const char *fmt, va_list ap)
 {
-    char buf[32];
-    size_t i = 0;
+    char                   buf[32];
+    size_t                 i    = 0;
     static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
     if (bstamp) {
-        time_t now = time(NULL);
+        time_t    now = time(NULL);
         struct tm now_tm;
         i = strftime(buf, 31, "%h %e %T", localtime_r(&now, &now_tm));
     }
 
     buf[i] = '\0';
-
 
     pthread_mutex_lock(&lock);
 

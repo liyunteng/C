@@ -5,24 +5,25 @@
  * Last-Updated: <2019/06/11 00:16:29 liyunteng>
  */
 
+#include "ourhdr.h"
 #include <sys/types.h>
 #include <sys/wait.h>
-#include "ourhdr.h"
 
-int main(void)
+int
+main(void)
 {
-    char buf[MAXLINE];
+    char  buf[MAXLINE];
     pid_t pid;
-    int status;
+    int   status;
 
     printf("%% ");
     while (fgets(buf, MAXLINE, stdin) != NULL) {
-        buf[strlen(buf)-1] = 0;
+        buf[strlen(buf) - 1] = 0;
 
         if ((pid = fork()) < 0) {
             err_sys("fork error");
 
-        } else if (pid == 0) {  /* child */
+        } else if (pid == 0) { /* child */
             execlp(buf, buf, (char *)0);
             err_ret("couldn't execute: %s", buf);
             exit(127);

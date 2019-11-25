@@ -1,17 +1,18 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <libxml/tree.h>
 #include <libxml/parser.h>
+#include <libxml/tree.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void parseStory(xmlDocPtr doc, xmlNodePtr cur)
+void
+parseStory(xmlDocPtr doc, xmlNodePtr cur)
 {
     xmlChar *key;
 
     cur = cur->xmlChildrenNode;
 
     while (cur) {
-        if ((!xmlStrcmp(cur->name, (const xmlChar *) "keyword"))) {
+        if ((!xmlStrcmp(cur->name, (const xmlChar *)"keyword"))) {
             key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
             printf("keyword:%s\n", key);
             xmlFree(key);
@@ -20,12 +21,12 @@ void parseStory(xmlDocPtr doc, xmlNodePtr cur)
         cur = cur->next;
     }
     return;
-
 }
 
-static void parseDoc(char *docname)
+static void
+parseDoc(char *docname)
 {
-    xmlDocPtr doc;
+    xmlDocPtr  doc;
     xmlNodePtr cur;
 
     doc = xmlParseFile(docname);
@@ -41,7 +42,7 @@ static void parseDoc(char *docname)
         return;
     }
 
-    if (xmlStrcmp(cur->name, (const xmlChar *) "story")) {
+    if (xmlStrcmp(cur->name, (const xmlChar *)"story")) {
         fprintf(stderr, "documents of the wrong type, root node != story");
         xmlFreeDoc(doc);
         return;
@@ -49,7 +50,7 @@ static void parseDoc(char *docname)
 
     cur = cur->xmlChildrenNode;
     while (cur) {
-        if ((!xmlStrcmp(cur->name, (const xmlChar *) "storyinfo"))) {
+        if ((!xmlStrcmp(cur->name, (const xmlChar *)"storyinfo"))) {
             parseStory(doc, cur);
         }
         cur = cur->next;
@@ -58,7 +59,8 @@ static void parseDoc(char *docname)
     return;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     char *docname;
     if (argc <= 1) {

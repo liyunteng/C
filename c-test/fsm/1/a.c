@@ -23,8 +23,8 @@
  * Filename : a.c
  * Description :
  * *****************************************************************************/
-#include <stdio.h>
 #include "a.h"
+#include <stdio.h>
 
 STATE_TRANS state_trans_arry[] = {
     {STATE1, INPUT1, STATE2},
@@ -33,11 +33,12 @@ STATE_TRANS state_trans_arry[] = {
     {STATE4, INPUT4, STATE5},
 };
 
-#define STATE_TRANS_CNT (sizeof(state_trans_arry))/sizeof(state_trans_arry[0])
+#define STATE_TRANS_CNT (sizeof(state_trans_arry)) / sizeof(state_trans_arry[0])
 
-int main(int argc, const char *argv[])
+int
+main(int argc, const char *argv[])
 {
-    int i;
+    int  i;
     char ch;
 
     STATE state_machine = STATE1;
@@ -54,7 +55,6 @@ int main(int argc, const char *argv[])
                 } else if (i == (STATE_TRANS_CNT)) {
                     state_machine = STATE1;
                 }
-
             }
             if (state_machine == STATE5)
                 printf("Password correct, state transfer machine pass!\n");

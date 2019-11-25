@@ -4,13 +4,14 @@
  * * Copyright (C) 2019 liyunteng
  * Last-Updated: <2019/06/11 23:30:39 liyunteng>
  */
-#include <errno.h>
 #include "ourhdr.h"
+#include <errno.h>
 
 static void pr_sysconf(char *, int);
 static void pr_pathconf(char *, char *, int);
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     if (argc != 2)
         err_quit("usage: %s <dirname>", argv[0]);
@@ -23,11 +24,11 @@ int main(int argc, char *argv[])
 
 #ifdef _SC_STREAM_MAX
     pr_sysconf("STREAM_MAX          =", _SC_STREAM_MAX);
-#endif // _SC_STREAM_MAX
+#endif  // _SC_STREAM_MAX
 
 #ifdef _SC_TZNAME_MAX
     pr_sysconf("TZNAME_MAX          =", _SC_TZNAME_MAX);
-#endif // _SC_TZNAME_MAX
+#endif  // _SC_TZNAME_MAX
 
     pr_sysconf("_POSIX_JOB_CONTROL  =", _SC_JOB_CONTROL);
     pr_sysconf("_POSIX_SAVED_IDS    =", _SC_SAVED_IDS);
@@ -43,11 +44,11 @@ int main(int argc, char *argv[])
     pr_pathconf("_POSIX_NO_TRUNC    =", argv[1], _PC_NO_TRUNC);
     pr_pathconf("_POSIX_CHOWN_RESTRICTED    =", argv[1], _PC_CHOWN_RESTRICTED);
 
-
     return 0;
 }
 
-static void pr_sysconf(char *mesg, int name)
+static void
+pr_sysconf(char *mesg, int name)
 {
     long val;
 
@@ -63,7 +64,8 @@ static void pr_sysconf(char *mesg, int name)
     }
 }
 
-static void pr_pathconf(char *mesg, char *path, int name)
+static void
+pr_pathconf(char *mesg, char *path, int name)
 {
     long val;
 

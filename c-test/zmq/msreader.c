@@ -21,13 +21,14 @@
  *
  */
 
-#include <zmq.h>
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <zmq.h>
 
-int main(void)
+int
+main(void)
 {
     void *context = zmq_ctx_new();
 
@@ -39,27 +40,27 @@ int main(void)
     zmq_setsockopt(subscriber, ZMQ_SUBSCRIBE, "10001 ", 6);
 
     zmq_pollitem_t items[] = {
-	{receiver, 0, ZMQ_POLLIN, 0},
-	{subscriber, 0, ZMQ_POLLIN, 0},
+        {receiver, 0, ZMQ_POLLIN, 0},
+        {subscriber, 0, ZMQ_POLLIN, 0},
     };
 
     while (1) {
-	zmq_msg_t message;
-	zmq_poll(items, 2, -1);
-	if (items[0].revents & ZMQ_POLLIN) {
-	    zmq_msg_init(&message);
-	    zmq_msg_recv(&message, receiver, 0);
+        zmq_msg_t message;
+        zmq_poll(items, 2, -1);
+        if (items[0].revents & ZMQ_POLLIN) {
+            zmq_msg_init(&message);
+            zmq_msg_recv(&message, receiver, 0);
 
-	    printf("receiver: %s\n", (char *) zmq_msg_data(&message));
-	    zmq_msg_close(&message);
-	}
-	if (items[1].revents & ZMQ_POLLIN) {
-	    zmq_msg_init(&message);
-	    zmq_msg_recv(&message, subscriber, 0);
+            printf("receiver: %s\n", (char *)zmq_msg_data(&message));
+            zmq_msg_close(&message);
+        }
+        if (items[1].revents & ZMQ_POLLIN) {
+            zmq_msg_init(&message);
+            zmq_msg_recv(&message, subscriber, 0);
 
-	    printf("subscribe: %s\n", (char *) zmq_msg_data(&message));
-	    zmq_msg_close(&message);
-	}
+            printf("subscribe: %s\n", (char *)zmq_msg_data(&message));
+            zmq_msg_close(&message);
+        }
     }
 
     zmq_close(receiver);

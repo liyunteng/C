@@ -28,14 +28,14 @@
 #include <sys/inotify.h>
 #include <unistd.h>
 
-static void handle_events(int fd, int *wd, int argc, char *argv[])
+static void
+handle_events(int fd, int *wd, int argc, char *argv[])
 {
-    char buf[4096]
-        __attribute__ ((aligned(__alignof__(struct inotify_event))));
+    char buf[4096] __attribute__((aligned(__alignof__(struct inotify_event))));
     const struct inotify_event *event;
-    int i;
-    ssize_t len;
-    char *ptr;
+    int                         i;
+    ssize_t                     len;
+    char *                      ptr;
 
     for (;;) {
         len = read(fd, buf, sizeof buf);
@@ -44,13 +44,11 @@ static void handle_events(int fd, int *wd, int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-
         if (len <= 0)
             break;
 
-        for (ptr = buf; ptr < buf + len;
-             ptr += sizeof(struct inotify_event) + event->len) {
-            event = (const struct inotify_event *) ptr;
+        for (ptr = buf; ptr < buf + len; ptr += sizeof(struct inotify_event) + event->len) {
+            event = (const struct inotify_event *)ptr;
 
             if (event->mask & IN_OPEN)
                 printf("IN_OPEN: ");
@@ -69,7 +67,6 @@ static void handle_events(int fd, int *wd, int argc, char *argv[])
             if (event->len)
                 printf("%s", event->name);
 
-
             if (event->mask & IN_ISDIR)
                 printf(" [directory]\n");
             else
@@ -78,12 +75,13 @@ static void handle_events(int fd, int *wd, int argc, char *argv[])
     }
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    char buf;
-    int fd, i, poll_num;
-    int *wd;
-    nfds_t nfds;
+    char          buf;
+    int           fd, i, poll_num;
+    int *         wd;
+    nfds_t        nfds;
     struct pollfd fds[2];
 
     if (argc < 2) {
@@ -98,7 +96,6 @@ int main(int argc, char *argv[])
         perror("inotify_init1");
         exit(EXIT_FAILURE);
     }
-
 
     wd = calloc(argc, sizeof(int));
     if (wd == NULL) {
@@ -115,11 +112,11 @@ int main(int argc, char *argv[])
         }
     }
 
-    nfds = 2;
-    fds[0].fd = STDIN_FILENO;
+    nfds          = 2;
+    fds[0].fd     = STDIN_FILENO;
     fds[0].events = POLLIN;
 
-    fds[1].fd = fd;
+    fds[1].fd     = fd;
     fds[1].events = POLLIN;
 
     printf("Listening for events.\n");

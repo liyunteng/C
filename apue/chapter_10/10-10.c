@@ -10,7 +10,8 @@
 
 #include "ourhdr.h"
 
-int main(void)
+int
+main(void)
 {
     pr_mask("abc");
     return 0;

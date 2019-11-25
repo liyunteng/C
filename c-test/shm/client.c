@@ -1,39 +1,41 @@
 #include <stdio.h>
-#include <sys/shm.h>
-#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#include <sys/shm.h>
+#include <sys/types.h>
 
 struct People {
     char name[10];
-    int age;
+    int  age;
 };
 
-void p(int semid)
+void
+p(int semid)
 {
     struct sembuf sem_p;
     sem_p.sem_num = 0;
-    sem_p.sem_op = -1;
+    sem_p.sem_op  = -1;
     if (semop(semid, &sem_p, 1) == -1) {
         printf("p operation failed.\n");
     }
 }
 
-void v(int semid)
+void
+v(int semid)
 {
     struct sembuf sem_v;
     sem_v.sem_num = 0;
-    sem_v.sem_op = 1;
+    sem_v.sem_op  = 1;
     if (semop(semid, &sem_v, 1) == -1) {
         printf("v operation failed.\n");
     }
 }
 
-
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    int semid;
-    int shmid;
+    int   semid;
+    int   shmid;
     key_t semkey;
     key_t shmkey;
 
@@ -52,8 +54,8 @@ int main(int argc, char *argv[])
     }
 
     struct People *addr;
-    addr = (struct People *) shmat(shmid, 0, 0);
-    if (addr == (struct People *) -1) {
+    addr = (struct People *)shmat(shmid, 0, 0);
+    if (addr == (struct People *)-1) {
         printf("shm shmat failed.\n");
         return -1;
     }

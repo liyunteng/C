@@ -7,14 +7,15 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/wait.h>
 #include "ourhdr.h"
+#include <sys/wait.h>
 
 #define PAGER "${PAGER:-more}"
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    char line[MAXLINE];
+    char  line[MAXLINE];
     FILE *fpin, *fpout;
 
     if (argc != 2)

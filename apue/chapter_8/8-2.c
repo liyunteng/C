@@ -7,14 +7,15 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/types.h>
 #include "ourhdr.h"
+#include <sys/types.h>
 
 int glob = 6;
 
-int main(void)
+int
+main(void)
 {
-    int var;
+    int   var;
     pid_t pid;
 
     var = 88;
@@ -24,7 +25,7 @@ int main(void)
         err_sys("vfork error");
     } else if (pid == 0) {
         glob++;
-        var ++;
+        var++;
         /* _exit(0); */
         exit(0);
     }

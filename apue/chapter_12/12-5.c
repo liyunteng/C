@@ -7,17 +7,18 @@
  * Copyright (C) 2019 StreamOcean, Inc.
  * All rights reserved.
  */
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "ourhdr.h"
 #include <errno.h>
 #include <fcntl.h>
-#include "ourhdr.h"
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #define PIDFILE "daemon.pid"
 
-int main(void)
+int
+main(void)
 {
-    int fd, val;
+    int  fd, val;
     char buf[10];
 
     if ((fd = open(PIDFILE, O_WRONLY | O_CREAT, FILE_MODE)) < 0)
@@ -30,7 +31,7 @@ int main(void)
             err_sys("write_lock error");
     }
 
-    if (ftruncate(fd,0) < 0)
+    if (ftruncate(fd, 0) < 0)
         err_sys("ftruncate error");
 
     sprintf(buf, "%d\n", getpid());

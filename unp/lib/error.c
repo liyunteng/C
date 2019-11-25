@@ -2,17 +2,18 @@
  *更新时间: < 修改人[liyunteng] 2014/10/25 12:35:58 >
  */
 
-#include "../unp.h"
 #include "./error.h"
+#include "../unp.h"
 
 #include <stdarg.h>
 #include <syslog.h>
 
 int daemon_proc;
 
-static void err_doit(int errnoflag, int level, const char *fmt, va_list ap)
+static void
+err_doit(int errnoflag, int level, const char *fmt, va_list ap)
 {
-    int errno_save, n;
+    int  errno_save, n;
     char buf[MAXLINE + 1];
 
     errno_save = errno;
@@ -20,11 +21,11 @@ static void err_doit(int errnoflag, int level, const char *fmt, va_list ap)
     vsnprintf(buf, MAXLINE, fmt, ap);
 #else
     vsprintf(buf, fmt, ap);
-#endif				// HAVE_VSNPRINTF
+#endif  // HAVE_VSNPRINTF
 
     n = strlen(buf);
     if (errnoflag) {
-	syslog(level, buf);
+        syslog(level, buf);
     }
 
     fflush(stdout);
@@ -34,8 +35,8 @@ static void err_doit(int errnoflag, int level, const char *fmt, va_list ap)
     return;
 }
 
-
-void err_ret(const char *fmt, ...)
+void
+err_ret(const char *fmt, ...)
 {
     va_list ap;
 
@@ -45,7 +46,8 @@ void err_ret(const char *fmt, ...)
     return;
 }
 
-void err_sys(const char *fmt, ...)
+void
+err_sys(const char *fmt, ...)
 {
     va_list ap;
 
@@ -55,7 +57,8 @@ void err_sys(const char *fmt, ...)
     exit(1);
 }
 
-void err_dump(const char *fmt, ...)
+void
+err_dump(const char *fmt, ...)
 {
     va_list ap;
 
@@ -66,7 +69,8 @@ void err_dump(const char *fmt, ...)
     exit(1);
 }
 
-void err_msg(const char *fmt, ...)
+void
+err_msg(const char *fmt, ...)
 {
     va_list ap;
 
@@ -76,7 +80,8 @@ void err_msg(const char *fmt, ...)
     return;
 }
 
-void err_quit(const char *fmt, ...)
+void
+err_quit(const char *fmt, ...)
 {
     va_list ap;
 

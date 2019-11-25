@@ -8,12 +8,13 @@
  * All rights reserved.
  */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include "ourhdr.h"
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-int main(void)
+int
+main(void)
 {
     int i, fd;
 
