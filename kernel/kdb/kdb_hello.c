@@ -2,7 +2,7 @@
 #include <linux/module.h>
 
 static int
-kdb_hello_cmd(int argc, char **argv)
+kdb_hello_cmd(int argc, const char **argv)
 {
     if (argc > 1)
         return -1;
@@ -34,7 +34,3 @@ module_exit(kdb_hello_cmd_exit);
 MODULE_AUTHOR("WindRiver");
 MODULE_DESCRIPTION("KDB example to add a hello command");
 MODULE_LICENSE("GPL");
-
-/* Local Variables: */
-/* compile-command: "make -k " */
-/* End: */

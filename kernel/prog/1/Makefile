@@ -7,4 +7,4 @@ default:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD)
 
 clean:
-	rm -rf *.ko *.o
+	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean

@@ -6,4 +6,4 @@ KERNERDIRS := /lib/modules/$(shell uname -r)/build
 default:
 	$(MAKE) -C  $(KERNERDIRS) M=$(PWD)
 clean:
-	rm -rf *.o *.ko
+	$(MAKE) -C  $(KERNERDIRS) M=$(PWD) clean

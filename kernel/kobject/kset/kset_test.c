@@ -17,8 +17,10 @@ void    obj_test_release(struct kobject *);
 ssize_t kobj_test_show(struct kobject *, struct attribute *, char *);
 ssize_t kobj_test_store(struct kobject *, struct attribute *, const char *, size_t);
 
+static char attr_buf[128] = "abc";
+
 static struct attribute test_attr = {
-    .name = "kobj_config",
+    .name = "kobj_test_config",
     .mode = S_IRWXUGO,
 };
 
@@ -47,24 +49,24 @@ obj_test_release(struct kobject *kobject)
 ssize_t
 kobj_test_show(struct kobject *kobject, struct attribute *attr, char *buf)
 {
-    printk("Have show-->\n");
-    printk("attrname: %s.\n", attr->name);
-    sprintf(buf, "%s\n", attr->name);
-    return strlen(attr->name) + 2;
+    printk("show attrname: %s.\n", attr->name);
+    sprintf(buf, "%s\n", attr_buf);
+    return strlen(buf) + 1;
 }
 
 ssize_t
 kobj_test_store(struct kobject *kobject, struct attribute *attr, const char *buf, size_t size)
 {
-    printk("Have store-->\n");
+    printk("store attrname: %s.\n", attr->name);
     printk("write: %s.\n", buf);
+    snprintf(attr_buf, sizeof(attr_buf), "%s", buf);
     return size;
 }
 
 static int
 kset_filter(struct kset *kset, struct kobject *kobj)
 {
-    printk("Filter: kobj %s.\n", kobj->name);
+    printk("Filter: %s.\n", kobj->name);
     return 1;
 }
 
@@ -72,8 +74,8 @@ static const char *
 kset_name(struct kset *kset, struct kobject *kobj)
 {
     static char buf[20];
-    printk("Name kobj %s.\n", kobj->name);
-    sprintf(buf, "%s", kset_name);
+    printk("Name: %s.\n", kobj->name);
+    sprintf(buf, "%s", kobj->name);
     return buf;
 }
 
@@ -81,7 +83,7 @@ static int
 kset_uevent(struct kset *kset, struct kobject *kobj, struct kobj_uevent_env *env)
 {
     int i = 0;
-    printk("uevent: kobj %s.\n", kobj->name);
+    printk("Uevent: %s.\n", kobj->name);
 
     while (i < env->envp_idx) {
         printk("%s.\n", env->envp[i]);
@@ -91,7 +93,7 @@ kset_uevent(struct kset *kset, struct kobject *kobj, struct kobj_uevent_env *env
     return 0;
 }
 
-static struct kset_uevent_ops uevent_ops = {)
+static struct kset_uevent_ops uevent_ops = {
 	.filter = kset_filter,
     .name = kset_name,
     .uevent = kset_uevent,

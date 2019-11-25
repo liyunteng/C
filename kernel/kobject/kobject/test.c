@@ -14,8 +14,10 @@ ssize_t kobj_test_show(struct kobject *kobject, struct attribute *attr, char *bu
 ssize_t kobj_test_store(struct kobject *kobject, struct attribute *attr, const char *buf,
                         size_t count);
 
+static char attr_buf[] = "abc";
+
 struct attribute test_attr = {
-    .name = "kobj_confi",
+    .name = "kobj_test_config",
     .mode = S_IRWXUGO,
 };
 
@@ -38,23 +40,23 @@ struct kobj_type ktype = {
 void
 obj_test_release(struct kobject *kobject)
 {
-    printk("eric_test: release.\n");
+    printk("kobject_test: release.\n");
 }
 
 ssize_t
 kobj_test_show(struct kobject *kobject, struct attribute *attr, char *buf)
 {
-    printk("have show.\n");
-    printk("attrname: %s.\n", attr->name);
-    sprintf(buf, "%s\n", attr->name);
-    return strlen(attr->name) + 2;
+    printk("show attrname: %s\n", attr->name);
+    sprintf(buf, "%s\n", attr_buf);
+    return strlen(buf) + 1;
 }
 
 ssize_t
 kobj_test_store(struct kobject *kobject, struct attribute *attr, const char *buf, size_t count)
 {
-    printk("have store.\n");
+    printk("store attrname: %s\n", attr->name);
     printk("write: %s\n", buf);
+    snprintf(attr_buf, sizeof(attr_buf), "%s", buf);
     return count;
 }
 

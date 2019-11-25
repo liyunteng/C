@@ -1,10 +1,8 @@
-obj-m := device.o my_dev.o driver.o
+obj-m := my_bus.o my_dev.o my_driver.o
 PWD := $(shell pwd)
 KERNELDIR := /lib/modules/$(shell uname -r)/build
 
 default:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD)
 clean:
-	rm -rf *.ko *.o  .*.cmd  .tmp_versions *.symvers *.order
-
-
+	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean

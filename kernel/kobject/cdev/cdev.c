@@ -1,80 +1,103 @@
-#include <asm-generic/irq.h>
-#include <asm-generic/uaccess.h>
 #include <linux/delay.h>
 #include <linux/device.h>
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
-//#include <asm-generic/io.h>
+#include <linux/uaccess.h>
 
-static struct class * firstdrv_class;
-static struct device *firstdrv_class_dev;
 
-volatile unsigned long *gpfcon = NULL;
-volatile unsigned long *gpfdat = NULL;
+static struct class * cdev_class;
+static struct device *cdev_class_dev;
+
+static char info_buf[4096] = {0};
+static const char* msg = "This is a cdev.";
 
 static int
-first_drv_open(struct inode *inode, struct file *file)
+cdev_open(struct inode *inode, struct file *file)
 {
-    printk("first_drv_open\n");
-    /* 配置GPF4，5，6为输出 */
+    printk("cdev_open\n");
+    return 0;
+}
 
-    *gpfcon &= ~((0x3 << (4 * 2)) | (0x3 << (5 * 2)) | (0x3 << (6 * 2)));
-    *gpfcon |= ((0x1 << (4 * 2)) | (0x1 << (5 * 2)) | (0x1 << (6 * 2)));
-
+static int
+cdev_release(struct inode *inode, struct file *file)
+{
+    printk("cdev_release\n");
     return 0;
 }
 
 static ssize_t
-first_drv_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
+cdev_read(struct file *file, char __user *buf, size_t count, loff_t *offset)
 {
-    int val;
+    int ret = 0;
+    int len = 0;
+    printk("cdev_read count: %ld offset: %lld\n", count, *offset);
 
-    printk("first_drv_write\n");
-
-    copy_from_user(&val, buf, count);
-    if (val == 1) {
-        *gpfdat &= ~((1 << 4) | (1 << 5) | (1 << 6));
+    len = min(sizeof(info_buf), count);
+    if (copy_to_user(buf, info_buf, len)) {
+        ret = -EFAULT;
     } else {
-        *gpfdat |= (1 << 4) | (1 << 5) | (1 << 6);
+        count = len;
+        *offset += len;
+        ret = len;
     }
-    return 0;
+    return ret;
 }
 
-static struct file_operations first_drv_fops = {
+static ssize_t
+cdev_write(struct file *file, const char __user *buf, size_t count, loff_t *offset)
+{
+    int ret = 0;
+    int len = 0;
+    printk("cdev_write count: %ld offset: %lld\n", count, *offset);
+
+    len = min(sizeof(info_buf), count);
+    if (copy_from_user(info_buf, buf, len)) {
+        ret = -EFAULT;
+    } else {
+        count = len;
+        *offset += len;
+        ret = len;
+    }
+    return ret;
+}
+
+static struct file_operations cdev_fops = {
     .owner = THIS_MODULE, /* 宏， 指向编译模块时自动创建
                            * 的__this_module变量 */
-    .open  = first_drv_open,
-    .write = first_drv_write,
+    .open  = cdev_open,
+    .write = cdev_write,
+    .read = cdev_read,
+    .release = cdev_release,
 };
 
 int major;
 
 static int
-first_drv_init(void)
+cdev_init(void)
 {
-    major = register_chrdev(0, "first_drv", &first_drv_fops);
+    major = register_chrdev(0, "cdev", &cdev_fops);
 
-    firstdrv_class = class_create(THIS_MODULE, "firstdrv");
+    cdev_class = class_create(THIS_MODULE, "cdev");
 
-    firstdrv_class_dev = device_create(firstdrv_class, NULL, MKDEV(major, 0), NULL, "lyt");
-    gpfcon             = (volatile unsigned long *)ioremap(0x56000050, 16);
-    gpfdat             = gpfcon + 1;
+    cdev_class_dev = device_create(cdev_class, NULL, MKDEV(major, 0), NULL, "lyt");
+
+    memset(info_buf, 0, sizeof(info_buf));
+    snprintf(info_buf, sizeof(info_buf), "%s", msg);
     return 0;
 }
 
 static void
-first_drv_exit(void)
+cdev_exit(void)
 {
-    unregister_chrdev(major, "first_dev");
+    unregister_chrdev(major, "cdev");
 
-    device_unregister(firstdrv_class_dev);
-    class_destroy(firstdrv_class);
-    iounmap(gpfcon);
+    device_unregister(cdev_class_dev);
+    class_destroy(cdev_class);
 }
 
-module_init(first_drv_init);
-module_exit(first_drv_exit);
+module_init(cdev_init);
+module_exit(cdev_exit);
 
 MODULE_LICENSE("GPL");

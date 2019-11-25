@@ -1,33 +1,37 @@
-#include <fcntl.h>
+/*
+ * test.c - test
+ *
+ * Date   : 2019/11/25
+ */
 #include <stdio.h>
 #include <sys/stat.h>
-#include <sys/types.h>
+#include <fcntl.h>
+#include <assert.h>
 
-int
-main(int argc, char *argv[])
+#define FILE_NAME "/dev/lyt"
+
+int main(void)
 {
     int fd;
-    int val = 1;
+    fd = open(FILE_NAME, O_RDWR);
+    assert(fd > 0);
 
-    fd = open("/dev/lyt", O_RDWR);
-    if (fd < 0) {
-        printf("open file faile.\n");
-        return -1;
-    }
+    char buf[128];
+    int n = read(fd, buf, 128);
+    assert(n > 0);
+    buf[n] = 0;
+    printf("%s\n",buf);
 
-    if (argc != 2) {
-        printf("Usage: %s <on|off>", argv[0]);
-        return 0;
-    }
+    const char *msg = "abc";
+    n = write(fd, msg, strlen(msg)+1);
+    assert(n > 0);
 
-    if (strcmp(argv[1], "on") == 0) {
-        val = 1;
-    }
+    printf("after write\n");
+    n = read(fd, buf, 128);
+    assert(n > 0);
+    buf[n] = 0;
+    printf("%s\n",buf);
 
-    if (strcmp(argv[1], "off") == 0) {
-        val = 0;
-    }
-
-    write(fd, &val, 4);
+    close(fd);
     return 0;
 }
