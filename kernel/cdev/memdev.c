@@ -1,5 +1,3 @@
-#include <asm-generic/uaccess.h>
-#include <asm/io.h>
 #include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/errno.h>
@@ -10,6 +8,8 @@
 #include <linux/sched.h>
 #include <linux/slab.h>
 #include <linux/types.h>
+#include <linux/uaccess.h>
+
 
 #define MEMDEV_MAJOR 110
 #define MEMDEV_NR_DEVS 4
