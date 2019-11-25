@@ -33,12 +33,12 @@ void aio_handler(__sigval_t sigval)
     }
 
 }
-int async_test()
+int async_test(const char *filename)
 {
     int fd, ret;
     struct aiocb rd;
 
-    fd = open(FILE_NAME, O_RDONLY);
+    fd = open(filename, O_RDONLY);
     assert(fd > 0);
 
     memset(&rd, 0, sizeof(rd));
@@ -59,14 +59,14 @@ int async_test()
     return 0;
 
 }
-int lio_test()
+int lio_test(const char *filename)
 {
     struct aiocb *listio[MAX_LIST];
     struct aiocb rd, wr;
     int fd, ret;
     char str[] = "This is a lio test.\n";
 
-    fd = open(FILE_NAME, O_RDWR | O_APPEND | O_CREAT, FILE_MODE);
+    fd = open(filename, O_RDWR | O_APPEND | O_CREAT, FILE_MODE);
     assert(fd > 0);
 
 
@@ -100,12 +100,12 @@ int lio_test()
     return 0;
 }
 
-int suspend_test()
+int suspend_test(const char *filename)
 {
     struct aiocb rd;
     int fd, ret;
     const struct aiocb *aiocb_list[MAX_LIST];
-    fd = open(FILE_NAME, O_RDONLY);
+    fd = open(filename, O_RDONLY);
     assert(fd > 0);
 
     memset(&aiocb_list, 0, sizeof(aiocb_list));
@@ -127,11 +127,11 @@ int suspend_test()
     return 0;
 }
 
-int read_test()
+int read_test(const char *filename)
 {
     struct aiocb rd;
     int fd, ret, counter;
-    fd = open(FILE_NAME, O_RDONLY);
+    fd = open(filename, O_RDONLY);
     assert(fd > 0);
 
     memset(&rd, 0, sizeof(rd));
@@ -156,12 +156,12 @@ int read_test()
     return 0;
 }
 
-int write_test()
+int write_test(const char *filename)
 {
     struct aiocb wr;
     int ret, fd, counter;
     char str[] = "This is a test txt.\n";
-    fd = open(FILE_NAME, O_CREAT | O_WRONLY | O_APPEND, FILE_MODE);
+    fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, FILE_MODE);
     assert(fd > 0);
 
     memset(&wr, 0, sizeof(wr));
@@ -185,16 +185,20 @@ int write_test()
 
 int main(int argc, char *argv[])
 {
+    const char *filename = FILE_NAME;
+    if (argc == 2) {
+        filename = argv[1];
+    }
     printf("write_test\n");
-    write_test();
+    write_test(filename);
     printf("read_test\n");
-    read_test();
+    read_test(filename);
     printf("suspend_test\n");
-    suspend_test();
+    suspend_test(filename);
     printf("lio_test\n");
-    lio_test();
+    lio_test(filename);
     printf("async_test\n");
-    async_test();
+    async_test(filename);
     return 0;
 }
 

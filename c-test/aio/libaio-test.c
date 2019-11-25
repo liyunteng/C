@@ -34,14 +34,14 @@ static void wr_done(io_context_t ctx, struct iocb *iocb, long res, long res2)
     assert(iosize == res && res2 == 0);
 }
 
-void read_test()
+void read_test(const char *filename)
 {
     io_context_t ctx;
     int rc;
     char *buf = NULL;
     int fd;
 
-    fd = open(FILE_NAME, O_RDONLY);
+    fd = open(filename, O_RDONLY);
     assert(fd > 0);
 
     memset(&ctx, 0, sizeof(ctx));
@@ -64,7 +64,7 @@ void read_test()
     close(fd);
 }
 
-void write_test()
+void write_test(const char *filename)
 {
     int fd;
     char buf[] = "This is a libaio test.\n";
@@ -72,7 +72,7 @@ void write_test()
     struct iocb* iocb = NULL;
     int rc;
 
-    fd = open(FILE_NAME, O_WRONLY | O_CREAT | O_APPEND, FILE_MODE);
+    fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, FILE_MODE);
     assert(fd > 0);
 
     memset(&ctx, 0, sizeof(ctx));
@@ -110,10 +110,14 @@ void write_test()
     close(fd);
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
-    write_test();
-    read_test();
+    char *filename = FILE_NAME;
+    if (argc == 2) {
+        filename = argv[1];
+    }
+    write_test(filename);
+    read_test(filename);
     return 0;
 }
 
