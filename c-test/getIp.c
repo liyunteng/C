@@ -17,52 +17,80 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
-#define UPDATE_SERVER "upgrade.streamocean.com"
-#define UPDATE_PORT 80
-#define UPDATE_DIR "/yum/ihi/client"
-
-int
-main(void)
-{
-    int           sockfd;
-    struct ifreq  ifr;
+typedef struct {
+    char ip[14];
+    char netmask[14];
+    char ifname[16];
     unsigned char mac[6];
+    int16_t flags;
+} ip_info_t;
+
+int getIp(const char *ifname, ip_info_t *info)
+{
+    int sockfd;
+    struct ifreq ifr;
 
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        fprintf(stderr, "create sock failed: %s\n", strerror(errno));
-        return errno;
-    }
-
-    strcpy(ifr.ifr_name, "eth0");
-    if (ioctl(sockfd, SIOCGIFFLAGS, &ifr) < 0) {
-        fprintf(stderr, "ioctl failed\n");
         return -1;
     }
-    printf("dev: %s ", ifr.ifr_name);
-    if (ifr.ifr_flags & IFF_UP) {
-        printf("up\n");
-    } else {
-        printf("down\n");
+    strcpy(info->ifname, ifname);
+    strcpy(ifr.ifr_name, ifname);
+    if (ioctl(sockfd, SIOCGIFFLAGS, &ifr) < 0) {
+        return -1;
     }
+    printf("DEV: %s ", ifname);
+    info->flags = ifr.ifr_flags;
+    if (ifr.ifr_flags & IFF_UP) {
+        printf("UP ");
+    }
+    if (ifr.ifr_flags & IFF_BROADCAST) {
+        printf("BROADCAST ");
+    }
+    if (ifr.ifr_flags & IFF_DEBUG) {
+        printf("DEBUG ");
+    }
+    if (ifr.ifr_flags & IFF_LOOPBACK) {
+        printf("LOOPBACK ");
+    }
+    if (ifr.ifr_flags & IFF_POINTOPOINT) {
+        printf("POINTOPOINT ");
+    }
+    if (ifr.ifr_flags & IFF_RUNNING) {
+        printf("RUNNING ");
+    }
+    if (ifr.ifr_flags & IFF_MULTICAST) {
+        printf("MULTICAST ");
+    }
+    printf("\n");
 
     if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) < 0) {
-        fprintf(stderr, "ioctl failed\n");
         return -1;
     }
-    memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
-    printf("MAC: %02X-%02X-%02X-%02X-%02X-%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    memcpy(info->mac, ifr.ifr_hwaddr.sa_data, sizeof(info->mac));
+    printf("MAC: %02X-%02X-%02X-%02X-%02X-%02X\n",
+           info->mac[0], info->mac[1], info->mac[2],
+           info->mac[3], info->mac[4], info->mac[5]);
 
     if (ioctl(sockfd, SIOCGIFADDR, &ifr) < 0) {
-        fprintf(stderr, "ioctl failed\n");
         return -1;
     }
-    printf("ip: %s\n", inet_ntoa(((struct sockaddr_in *)(&ifr.ifr_addr))->sin_addr));
-
+    strcpy(info->ip, inet_ntoa(((struct sockaddr_in *)(&ifr.ifr_addr))->sin_addr));
+    printf("IP: %s\n", info->ip);
     if (ioctl(sockfd, SIOCGIFNETMASK, &ifr) < 0) {
-        fprintf(stderr, "ioctl failed\n");
         return -1;
     }
-    printf("netmask: %s\n", inet_ntoa(((struct sockaddr_in *)(&ifr.ifr_addr))->sin_addr));
-
+    strcpy(info->netmask, inet_ntoa(((struct sockaddr_in *)(&ifr.ifr_addr))->sin_addr));
+    printf("NETMASK: %s\n", info->netmask);
     return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+    ip_info_t info;
+    const char *ifname = "eth0";
+    if (argc == 2) {
+        ifname = argv[1];
+    }
+    getIp(ifname, &info);
 }
