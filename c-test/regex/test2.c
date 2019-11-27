@@ -8,13 +8,13 @@
 int
 main(int argc, char *argv[])
 {
-    FILE *     fp;
-    regex_t    mv_disk_slot_regex, test_regex;
+    FILE *fp;
+    regex_t mv_disk_slot_regex, test_regex;
     regmatch_t pmatch[10];
-    int        ret;
-    char       sbuf[200];
-    char       buf[1024];
-    int        i, j;
+    int ret;
+    char sbuf[200];
+    char buf[1024];
+    int i, j;
 
     ret = regcomp(&mv_disk_slot_regex, REG_MV_DISK_SLOT, REG_EXTENDED);
     if (ret != 0) {

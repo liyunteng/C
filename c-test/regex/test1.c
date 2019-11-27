@@ -3,18 +3,19 @@
 #include <string.h>
 #include <sys/types.h>
 
-#define REG_MV_DISK_SLOT "pci0000:00/0000:00:1c.[0-9]+.*/ata([0-9])+/.*/block/sd[a-z]"
+#define REG_MV_DISK_SLOT                                                       \
+    "pci0000:00/0000:00:1c.[0-9]+.*/ata([0-9])+/.*/block/sd[a-z]"
 
 int
 main(int argc, char *argv[])
 {
-    FILE *     fp;
-    regex_t    mv_disk_slot_regex, test_regex;
+    FILE *fp;
+    regex_t mv_disk_slot_regex, test_regex;
     regmatch_t pmatch[10];
-    int        ret;
-    char       sbuf[200];
-    char       buf[1024];
-    int        i, j;
+    int ret;
+    char sbuf[200];
+    char buf[1024];
+    int i, j;
 
     ret = regcomp(&mv_disk_slot_regex, REG_MV_DISK_SLOT, REG_EXTENDED);
     if (ret != 0) {
@@ -36,7 +37,8 @@ main(int argc, char *argv[])
                 i = pmatch[j].rm_eo - pmatch[j].rm_so;
                 strncpy(sbuf, &buf[pmatch[j].rm_so], i);
                 sbuf[i] = '\0';
-                printf("start:%d end:%d i:%d\t%s\n", pmatch[j].rm_so, pmatch[j].rm_eo, i, sbuf);
+                printf("start:%d end:%d i:%d\t%s\n", pmatch[j].rm_so,
+                       pmatch[j].rm_eo, i, sbuf);
             }
             printf("====================================\n");
         }

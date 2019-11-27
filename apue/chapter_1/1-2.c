@@ -11,7 +11,7 @@
 int
 main(void)
 {
-    int  n;
+    int n;
     char buf[BUFFSIZE];
 
     while ((n = read(STDIN_FILENO, buf, BUFFSIZE)) > 0) {
@@ -28,5 +28,6 @@ main(void)
 }
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -o 1-2 1-2.c -g -I../include -L../lib -lourhdr" */
+/* compile-command: "clang -Wall -o 1-2 1-2.c -g -I../include -L../lib -lourhdr"
+ */
 /* End: */

@@ -15,9 +15,9 @@
 int
 main(int argc, char *argv[])
 {
-    int   n, fd[2];
+    int n, fd[2];
     pid_t pid;
-    char  line[MAXLINE], *pager, *argv0;
+    char line[MAXLINE], *pager, *argv0;
     FILE *fp;
 
     if (argc != 2)

@@ -12,15 +12,15 @@
 
 struct test_ev {
     ev_io ev;
-    int   fd;
+    int fd;
 };
 
 struct test_ev t_ev;
-ev_io          stdin_watcher;
-ev_timer       timeout_watcher;
-ev_signal      signal_watcher;
-ev_child       cw;
-ev_stat        file;
+ev_io stdin_watcher;
+ev_timer timeout_watcher;
+ev_signal signal_watcher;
+ev_child cw;
+ev_stat file;
 
 static void
 file_cb(struct ev_loop *loop, ev_stat *w, int revents)
@@ -55,7 +55,8 @@ stdin_cb(EV_P_ ev_io *w, int revents)
 {
     struct test_ev *t = (struct test_ev *)w;
     printf("ev_io: %p test_io:%p\n", w, t_ev);
-    printf("t->fd: %d t->ev.fd:%d t->ev.events:%d\n", t->fd, t->ev.fd, t->ev.events);
+    printf("t->fd: %d t->ev.fd:%d t->ev.events:%d\n", t->fd, t->ev.fd,
+           t->ev.events);
     printf("ev.fd : %d, ev.events: %d\n", w->fd, w->events);
     printf("ev_io: %p test_io:%p\n", w, t_ev);
     ev_io_stop(EV_A_ w);
@@ -72,7 +73,7 @@ timeout_cb(EV_P_ ev_timer *w, int revents)
 int
 main(int argc, char *argv[])
 {
-    pid_t           pid;
+    pid_t pid;
     struct ev_loop *loop = EV_DEFAULT;
 
     if ((pid = fork()) < 0) {

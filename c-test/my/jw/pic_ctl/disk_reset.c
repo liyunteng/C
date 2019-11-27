@@ -7,7 +7,8 @@
 
 #include "pic_ctl.h"
 
-struct option longopts[] = {{"index", 1, NULL, 'i'}, {"delay", 1, NULL, 'd'}, {0, 0, 0, 0}};
+struct option longopts[] = {
+    {"index", 1, NULL, 'i'}, {"delay", 1, NULL, 'd'}, {0, 0, 0, 0}};
 
 int idx   = 0;
 int delay = 0;

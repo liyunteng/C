@@ -27,9 +27,9 @@
 int
 main(int argc, char *argv[])
 {
-    mqd_t    mqd;
-    void *   ptr;
-    size_t   len;
+    mqd_t mqd;
+    void *ptr;
+    size_t len;
     uint32_t prio;
 
     if (argc != 4) {

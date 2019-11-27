@@ -20,7 +20,7 @@
 int debug = 0;
 
 struct client {
-    int                 fd;
+    int fd;
     struct bufferevent *buf_ev;
 };
 
@@ -38,7 +38,7 @@ void
 buf_read_callback(struct bufferevent *incoming, void *arg)
 {
     struct evbuffer *evreturn;
-    char *           req;
+    char *req;
 
     req = evbuffer_readline(incoming->input);
     if (req == NULL)
@@ -68,10 +68,10 @@ buf_error_callback(struct bufferevent *bev, short what, void *arg)
 void
 accept_callback(int fd, short ev, void *arg)
 {
-    int                client_fd;
+    int client_fd;
     struct sockaddr_in client_addr;
-    socklen_t          client_len = sizeof(client_addr);
-    struct client *    client;
+    socklen_t client_len = sizeof(client_addr);
+    struct client *client;
 
     client_fd = accept(fd, (struct sockaddr *)&client_addr, &client_len);
     if (client_fd < 0) {
@@ -85,8 +85,9 @@ accept_callback(int fd, short ev, void *arg)
         err(1, "malloc failed");
     client->fd = client_fd;
 
-    client->buf_ev = bufferevent_new(client_fd, buf_read_callback, buf_write_callback,
-                                     buf_error_callback, client);
+    client->buf_ev =
+        bufferevent_new(client_fd, buf_read_callback, buf_write_callback,
+                        buf_error_callback, client);
 
     bufferevent_enable(client->buf_ev, EV_READ);
 }
@@ -94,10 +95,10 @@ accept_callback(int fd, short ev, void *arg)
 int
 main(int argc, char *argv[])
 {
-    int                socketlisten;
+    int socketlisten;
     struct sockaddr_in addresslisten;
-    struct event       accept_event;
-    int                reuse = 1;
+    struct event accept_event;
+    int reuse = 1;
 
     event_init();
 
@@ -114,7 +115,9 @@ main(int argc, char *argv[])
     addresslisten.sin_addr.s_addr = INADDR_ANY;
     addresslisten.sin_port        = htons(SERVER_PORT);
 
-    if (bind(socketlisten, (struct sockaddr *)&addresslisten, sizeof(addresslisten)) < 0) {
+    if (bind(socketlisten, (struct sockaddr *)&addresslisten,
+             sizeof(addresslisten))
+        < 0) {
         fprintf(stderr, "Failed to bind");
         return 1;
     }
@@ -127,7 +130,8 @@ main(int argc, char *argv[])
     setsockopt(socketlisten, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
     setnonblock(socketlisten);
 
-    event_set(&accept_event, socketlisten, EV_READ | EV_PERSIST, accept_callback, NULL);
+    event_set(&accept_event, socketlisten, EV_READ | EV_PERSIST,
+              accept_callback, NULL);
 
     event_add(&accept_event, NULL);
 

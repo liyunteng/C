@@ -34,7 +34,7 @@ main(int argc, char *argv[])
 {
     void *context   = zmq_ctx_new();
     void *publisher = zmq_socket(context, ZMQ_PUB);
-    int   rc        = zmq_bind(publisher, "tcp://*:5556");
+    int rc          = zmq_bind(publisher, "tcp://*:5556");
     assert(rc == 0);
     rc = zmq_bind(publisher, "ipc://weather.ipc");
     assert(rc == 0);

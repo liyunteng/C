@@ -20,8 +20,8 @@
 static void
 rd_done(io_context_t ctx, struct iocb *iocb, long res, long res2)
 {
-    int   iosize = iocb->u.c.nbytes;
-    char *buf    = (char *)iocb->u.c.buf;
+    int iosize = iocb->u.c.nbytes;
+    char *buf  = (char *)iocb->u.c.buf;
 
     printf("iosize: %d, res: %ld, res2: %ld\n", iosize, res, res2);
     assert(res2 == 0 && res >= 0);
@@ -40,9 +40,9 @@ void
 read_test(const char *filename)
 {
     io_context_t ctx;
-    int          rc;
-    char *       buf = NULL;
-    int          fd;
+    int rc;
+    char *buf = NULL;
+    int fd;
 
     fd = open(filename, O_RDONLY);
     assert(fd > 0);
@@ -70,11 +70,11 @@ read_test(const char *filename)
 void
 write_test(const char *filename)
 {
-    int          fd;
-    char         buf[] = "This is a libaio test.\n";
+    int fd;
+    char buf[] = "This is a libaio test.\n";
     io_context_t ctx;
     struct iocb *iocb = NULL;
-    int          rc;
+    int rc;
 
     fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, FILE_MODE);
     assert(fd > 0);
@@ -97,15 +97,16 @@ write_test(const char *filename)
 
 #if 1
     struct io_event events[AIO_MAXIO];
-    io_callback_t   cb;
-    int             num = io_getevents(ctx, 1, AIO_MAXIO, events, NULL);
+    io_callback_t cb;
+    int num = io_getevents(ctx, 1, AIO_MAXIO, events, NULL);
     printf("%d io_request completed\n", num);
 
     for (int i = 0; i < num; i++) {
         cb              = (io_callback_t)events[i].data;
         struct iocb *io = events[i].obj;
 
-        printf("events[%d].data=%p, res=%ld, res2=%ld\n", i, cb, events[i].res, events[i].res2);
+        printf("events[%d].data=%p, res=%ld, res2=%ld\n", i, cb, events[i].res,
+               events[i].res2);
         cb(ctx, io, events[i].res, events[i].res2);
     }
 #endif

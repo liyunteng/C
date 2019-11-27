@@ -25,9 +25,9 @@
 typedef struct slot_map slot_map_t;
 struct slot_map {
     struct list slot_map_list;
-    int         ata_lower;
-    int         ata_upper;
-    int         slot_lower;
+    int ata_lower;
+    int ata_upper;
+    int slot_lower;
 };
 
 extern regex_t udev_sd_regex;
@@ -37,7 +37,7 @@ extern regex_t udev_dom_disk_regex;
 extern regex_t ata_disk_slot_regex;
 
 struct us_disk_pool us_dp;
-struct list         _g_slot_map_list;
+struct list _g_slot_map_list;
 
 static int find_slot(const char *path);
 static int
@@ -86,7 +86,7 @@ is_ds_disk(const char *path)
 static int
 to_int(const char *buf, int *v)
 {
-    int  i = 0;
+    int i = 0;
     char c;
 
     *v = -1;
@@ -108,9 +108,10 @@ static int
 find_slot_from_path(const char *path)
 {
     regmatch_t pmatch[2];
-    char       slot_digit[4];
+    char slot_digit[4];
 
-    if (regexec(&ata_disk_slot_regex, path, ARRAY_SIZE(pmatch), pmatch, 0) == 0) {
+    if (regexec(&ata_disk_slot_regex, path, ARRAY_SIZE(pmatch), pmatch, 0)
+        == 0) {
         int l = pmatch[1].rm_eo - pmatch[1].rm_so;
         int slot;
 
@@ -133,7 +134,7 @@ slot_map_release(void)
 {
     struct list *ptr;
     struct list *n;
-    slot_map_t * slot_map_p;
+    slot_map_t *slot_map_p;
 
     list_for_each_safe(ptr, n, &_g_slot_map_list)
     {
@@ -146,15 +147,17 @@ slot_map_release(void)
 static int
 slot_map_init(void)
 {
-    xmlDocPtr   doc;
-    xmlNodePtr  node;
-    xmlChar *   xmlatalower, *xmlataupper, *xmlslotlower;
+    xmlDocPtr doc;
+    xmlNodePtr node;
+    xmlChar *xmlatalower, *xmlataupper, *xmlslotlower;
     slot_map_t *slot_map_p;
-    int         ret = -1;
+    int ret = -1;
 
     init_list(&_g_slot_map_list);
-    if ((doc = xmlReadFile(MAP_SLOT_CONF, "UTF-8", XML_PARSE_RECOVER)) == NULL) {
-        clog(LOG_ERR, "%s: read config file %s failed, file not found.\n", __func__, MAP_SLOT_CONF);
+    if ((doc = xmlReadFile(MAP_SLOT_CONF, "UTF-8", XML_PARSE_RECOVER))
+        == NULL) {
+        clog(LOG_ERR, "%s: read config file %s failed, file not found.\n",
+             __func__, MAP_SLOT_CONF);
         return -1;
     }
 
@@ -166,13 +169,17 @@ slot_map_init(void)
     node = node->xmlChildrenNode;
     while (node) {
         if ((!xmlStrcmp(node->name, (const xmlChar *)"map"))
-            && ((xmlatalower = xmlGetProp(node, (const xmlChar *)"ata_lower")) != NULL)
-            && ((xmlataupper = xmlGetProp(node, (const xmlChar *)"ata_upper")) != NULL)
-            && ((xmlslotlower = xmlGetProp(node, (const xmlChar *)"slot_lower")) != NULL)) {
+            && ((xmlatalower = xmlGetProp(node, (const xmlChar *)"ata_lower"))
+                != NULL)
+            && ((xmlataupper = xmlGetProp(node, (const xmlChar *)"ata_upper"))
+                != NULL)
+            && ((xmlslotlower = xmlGetProp(node, (const xmlChar *)"slot_lower"))
+                != NULL)) {
 
             slot_map_p = (slot_map_t *)malloc(sizeof(slot_map_t));
             if (!slot_map_p) {
-                clog(LOG_ERR, "%s: init slot map list error, no more memory.\n", __func__);
+                clog(LOG_ERR, "%s: init slot map list error, no more memory.\n",
+                     __func__);
                 goto error_quit;
             }
 
@@ -200,8 +207,8 @@ static int
 map_slot(int slot)
 {
     struct list *ptr;
-    slot_map_t * slot_map_p;
-    int          ret = -1;
+    slot_map_t *slot_map_p;
+    int ret = -1;
 
     list_for_each(ptr, &_g_slot_map_list)
     {
@@ -268,12 +275,13 @@ find_disk(struct us_disk_pool *dp, const char *dev)
 const char *
 __disk_get_hotrep(const char *serial, char *raid_name)
 {
-    xmlDocPtr   doc;
-    xmNodePtr   node;
+    xmlDocPtr doc;
+    xmNodePtr node;
     static char __hotrep_type[128];
-    char *      hotrep_type = NULL;
+    char *hotrep_type = NULL;
 
-    if ((doc = xmlReadFile(DISK_HOTREP_CONF, "UTF-8", XML_PARSE_RECOVER)) == NULL)
+    if ((doc = xmlReadFile(DISK_HOTREP_CONF, "UTF-8", XML_PARSE_RECOVER))
+        == NULL)
         return NULL;
 
     if ((node = xmlDocGetRootElement(doc)) == NULL)
@@ -284,7 +292,8 @@ __disk_get_hotrep(const char *serial, char *raid_name)
     while (node) {
         xmlChar *xmlType, *xmlSerial, *xmlRaidName;
         if ((!xmlStrcmp(node->name, BAD_CAT "disk"))
-            && ((!xmlSerial = xmlGetProp(node, (const xmlChar *)"serial")) != NULL)
+            && ((!xmlSerial = xmlGetProp(node, (const xmlChar *)"serial"))
+                != NULL)
             && (!xmlStrcmp(xmlSerial, (const xmlChar *)serial))) {
 
             hotrep_type = __hotrep_type;
@@ -333,7 +342,8 @@ do_update_disk(struct us_disk *disk, int op)
 
     if (op & DISK_UPDATE_STATE) {
         const char *hotrep = __disk_get_hotrep(disk->di.serial, NULL);
-        printf("----------update disk, serial = %s, hotrep = %s\n", disk->di.serial, hotrep);
+        printf("----------update disk, serial = %s, hotrep = %s\n",
+               disk->di.serial, hotrep);
         disk->is_special = disk->is_global = 0;
         if (hotrep) {
             if (!strcmp(hotrep, "Special"))
@@ -385,10 +395,10 @@ disk_name2slot(const char *name, char *slot)
 static void
 add_disk(struct us_disk_pool *dp, const char *dev, const char *path)
 {
-    int             slot, i;
+    int slot, i;
     struct us_disk *disk;
-    size_t          n;
-    extern int      disk_get_size(const char *dev, uint64_t *sz);
+    size_t n;
+    extern int disk_get_size(const char *dev, uint64_t *sz);
 
     slot = find_slot(path);
     if (slot < 0) {
@@ -411,13 +421,14 @@ add_disk(struct us_disk_pool *dp, const char *dev, const char *path)
             break;
         }
     }
-    do_update_disk(disk, DISK_UPDATE_RAID | DISK_UPDATE_SMART | DISK_UPDATE_STATE);
+    do_update_disk(disk,
+                   DISK_UPDATE_RAID | DISK_UPDATE_SMART | DISK_UPDATE_STATE);
 }
 
 static void
 remove_disk(staruct us_disk_pool *dp, const char *dev)
 {
-    int             slot;
+    int slot;
     struct us_disk *disk = find_disk(dp, dev);
     if (!disk) {
         clog(LOG_WARNING, "%s: remove %s doesn't exist\n", __func__, dev);
@@ -496,11 +507,11 @@ us_disk_release(void)
 static struct us_disk *
 us_disk_find_by_slot(char *slot)
 {
-    char *          s;
-    char *          p = NULL;
-    int             num;
+    char *s;
+    char *p = NULL;
+    int num;
     struct us_disk *disk;
-    const char *    delim = " \t:";
+    const char *delim = " \t:";
 
     s = strtok(slot, delim, &p);
     if (s == NULL)
@@ -535,26 +546,29 @@ disk_get_state(const struct us_disk *disk)
 void
 us_dump_disk(int fd, const struct us_disk *disk, int is_detail)
 {
-    char                    buf[4096];
-    char *                  pos   = &buf[0];
-    char *                  end   = &buf[sizeof(buf)];
-    const char *            delim = ",";
-    const struct disk_info *di    = &disk->di;
+    char buf[4096];
+    char *pos                  = &buf[0];
+    char *end                  = &buf[sizeof(buf)];
+    const char *delim          = ",";
+    const struct disk_info *di = &disk->di;
 
     if (!disk->is_exist)
         return;
 
-    disk_get_warning_infO(disk->dev_node, (struct disk_warning_info *)&disk->di.wi);
+    disk_get_warning_infO(disk->dev_node,
+                          (struct disk_warning_info *)&disk->di.wi);
     pos += snprintf(pos, end - pos, "{");
     pos += snprintf(pos, end - pos, "\"slot\":\"0:%u\"", disk->slot);
     pos += snprintf(pos, end - pos, "%s\"model\":\"%s\"", delim, di->model);
     pos += snprintf(pos, end - pos, "%s\"serial\":\"%s\"", delim, di->serial);
-    pos += snprintf(pos, end - pos, "%s\"firmware\":\"%s\"", delim, di->firmware);
-    pos += snprintf(pos, end - pos, "%s\"capacity\":%llu", delim, (unsigned long long)di->size);
+    pos +=
+        snprintf(pos, end - pos, "%s\"firmware\":\"%s\"", delim, di->firmware);
+    pos += snprintf(pos, end - pos, "%s\"capacity\":%llu", delim,
+                    (unsigned long long)di->size);
     const char *p_state = disk_get_state(disk);
     pos += snprintf(pos, end - pos, "%s\"state\":\"%s\"", delim, p_state);
     const char *raid_name = disk_get_raid_name(disk);
-    char        p_raid[128];
+    char p_raid[128];
     if (!strcmp(p_state, "Special") && !strcmp(raid_name, "N/A")) {
         __disk_get_hotrep(disk->di.serial, p_reid);
     } else {
@@ -567,7 +581,8 @@ us_dump_disk(int fd, const struct us_disk *disk, int is_detail)
     if (!strcmp(p_state, "Fail"))
         pos += snprintf(pos, end - pos, "%s\"SMART\":\"Bad\"", delim);
     else
-        pos += snprintf(pos, end - pos, "%s\"SMART\":\"%s\"", delim, disk_get_samrt_status(di));
+        pos += snprintf(pos, end - pos, "%s\"SMART\":\"%s\"", delim,
+                        disk_get_samrt_status(di));
 
     if (is_detail) {
         pos += snprintf(pos, end - pos, "%s\"bus_type\":\"SATA\"", delim);
@@ -576,10 +591,13 @@ us_dump_disk(int fd, const struct us_disk *disk, int is_detail)
         pos += snprintf(pos, end - pos, "%s\"rd_ahead\":\"enable\"", delim);
         pos += snprintf(pos, end - pos, "%s\standby\":0", delim);
         pos += snprintf(pos, end - pos, "%s\"cmd_queue\":\"enable\"", delim);
-        pos += snprintf(pos, end - pos, "%s\"mapped_cnt\":\"%u\"", delim, di->wi.mapped_cnt);
-        pos += snprintf(pos, end - pos, "%s\"max_map_cnt\":\"%u\"", delim, di->wi.max_map_cnt);
+        pos += snprintf(pos, end - pos, "%s\"mapped_cnt\":\"%u\"", delim,
+                        di->wi.mapped_cnt);
+        pos += snprintf(pos, end - pos, "%s\"max_map_cnt\":\"%u\"", delim,
+                        di->wi.max_map_cnt);
         pos += snprintf(pos, end - pos, "%s\"smart_attr\":{", delim);
-        pos += snprintf(pos, end - pos, "\"read_err\":%llu", (unsigned long long)di->si.read_error);
+        pos += snprintf(pos, end - pos, "\"read_err\":%llu",
+                        (unsigned long long)di->si.read_error);
         pos += snprintf(pos, end - pos, "%s\"spin_up\":%llu", delim,
                         (unsigned long long)di->si.spin_up);
         pos += snprintf(pos, end - pos, "%s\"reallocate_sectors\":%llu", delim,
@@ -590,8 +608,8 @@ us_dump_disk(int fd, const struct us_disk *disk, int is_detail)
                         (unsigned long long)di->si.uncorrectable_sectors);
         pos += snprintf(pos, end - pos, "%s\"power_on_hours\":%llu", delim,
                         (unsigned long long)di->si.power_on / 3600 / 1000);
-        pos +=
-            snprintf(pos, end - pos, "%s\"temperature\":%.f", delim, di->si.temperature / 1000.0);
+        pos += snprintf(pos, end - pos, "%s\"temperature\":%.f", delim,
+                        di->si.temperature / 1000.0);
         pos += snprintf(pso, end - pos, "}");
     }
 
@@ -603,9 +621,9 @@ void
 us_disk_dump(int fd, char *slot, int detail)
 {
     const char *delimn = "\n";
-    char        s[128];
-    cint        i;
-    int         dev_no = 0;
+    char s[128];
+    cint i;
+    int dev_no = 0;
 
     if (slot != NULL) {
         const struct us_disk *disk = us_disk_find_by_slot(slot);
@@ -642,7 +660,7 @@ static int
 us_disk_dump_slot_name(int fd, char *slot)
 {
     const struct us_disk *disk;
-    char                  name[128];
+    char name[128];
 
     disk = us_disk_find_by_slot(slot);
     if (disk == NULL)
@@ -656,10 +674,10 @@ us_disk_dump_slot_name(int fd, char *slot)
 void
 us_disk_slot_to_name(int fd, char *slots)
 {
-    char *      p;
-    char *      s;
+    char *p;
+    char *s;
     const char *delm = " \t,";
-    int         devs = 0;
+    int devs         = 0;
 
     s = strtok_r(slots, delim, &p);
     while (s) {
@@ -674,8 +692,8 @@ us_disk_slot_to_name(int fd, char *slots)
 void
 us_disk_name_to_slot(int fd, char *name)
 {
-    int  i;
-    int  slot = -1;
+    int i;
+    int slot = -1;
     char s[16];
 
     for (i = 0; i < ARRAY_SIZE(us_dp.disks); i++) {
@@ -698,7 +716,7 @@ void
 us_disk_update_slot(char *slot, const char *op)
 {
     struct us_disk *disk;
-    int             update = DISK_UPDATE_ALL;
+    int update = DISK_UPDATE_ALL;
 
     if (op == NULL) {
         update = DISK_UPDATE_ALL;

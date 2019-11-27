@@ -19,7 +19,7 @@ static void pr_ids(char *);
 int
 main(void)
 {
-    char  c;
+    char c;
     pid_t pid;
 
     pr_ids("parent");
@@ -52,6 +52,7 @@ sig_hup(int signo)
 static void
 pr_ids(char *name)
 {
-    printf("%s: pid = %d, ppid = %d, pgrp = %d\n", name, getpid(), getppid(), getpgrp());
+    printf("%s: pid = %d, ppid = %d, pgrp = %d\n", name, getpid(), getppid(),
+           getpgrp());
     fflush(stdout);
 }

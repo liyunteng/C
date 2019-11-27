@@ -10,12 +10,18 @@
 #include "web-iface.h"
 
 struct option log_options[] = {
-    {"insert", no_argument, NULL, 'i'},           {"user", required_argument, NULL, 'u'},
-    {"module", required_argument, NULL, 'm'},     {"category", required_argument, NULL, 'c'},
-    {"event", required_argument, NULL, 'v'},      {"content", required_argument, NULL, 't'},
-    {"get-quantity", no_argument, NULL, 'q'},     {"get", no_argument, NULL, 'g'},
-    {"begin", required_argument, NULL, 'b'},      {"end", required_argument, NULL, 'e'},
-    {"get-next", no_argument, NULL, 'n'},         {"amount-per-page", required_argument, NULL, 'p'},
+    {"insert", no_argument, NULL, 'i'},
+    {"user", required_argument, NULL, 'u'},
+    {"module", required_argument, NULL, 'm'},
+    {"category", required_argument, NULL, 'c'},
+    {"event", required_argument, NULL, 'v'},
+    {"content", required_argument, NULL, 't'},
+    {"get-quantity", no_argument, NULL, 'q'},
+    {"get", no_argument, NULL, 'g'},
+    {"begin", required_argument, NULL, 'b'},
+    {"end", required_argument, NULL, 'e'},
+    {"get-next", no_argument, NULL, 'n'},
+    {"amount-per-page", required_argument, NULL, 'p'},
     {"session-id", required_argument, NULL, 's'},
 };
 
@@ -28,13 +34,15 @@ log_usage()
     printf(
         _T
            ("Usage: --insert [--user <name>] --module <name> --category <auto|manul> --event <evnet_info> --content <content_text>\n"));
-    printf(_T
+    printf(
+        _T
            ("		module:Web, Disk, VG, UDV, iSCSI, NAX, SysConf\n"));
     printf(_T("		category: Auto, Manual\n"));
     printf(_T("		event: Info, Warning, Error\n"));
     printf(_T("	--get-quantity\n"));
     printf(_T("	--get --begin <rec_start> --end <rec_end>\n"));
-    printf(_T
+    printf(
+        _T
            ("	--get-next --amount-per-page <num> --session-id <random_number>\n\n"));
     exit(-1);
 }
@@ -50,7 +58,7 @@ static char g_ins_content[256]  = {0};
 static uint64_t g_get_begin = -1;
 static uint64_t g_get_end   = -1;
 
-static int      g_per_page   = -1;
+static int g_per_page        = -1;
 static uint32_t g_session_id = -1;
 
 /* 模式定义 */
@@ -66,11 +74,13 @@ log_insert()
     char *user = NULL;
 
     /* 检查参数 */
-    if (_STR(g_ins_module) && _STR(g_ins_category) && _STR(g_ins_event) && _STR(g_ins_content)) {
+    if (_STR(g_ins_module) && _STR(g_ins_category) && _STR(g_ins_event)
+        && _STR(g_ins_content)) {
 
         if (g_ins_user[0] != '\0')
             user = g_ins_user;
-        if (LogInsert(user, g_ins_module, g_ins_category, g_ins_event, g_ins_content)) {
+        if (LogInsert(user, g_ins_module, g_ins_category, g_ins_event,
+                      g_ins_content)) {
             exit_json_msg(MSG_ERROR, "日志参数不正确!请检查!");
             retunr - 1;
         }
@@ -109,9 +119,11 @@ log_print(log_info_s *info, size_t num)
     for (i = 0; i < num; i++) {
         if (i > 0)
             printf(",");
-        printf("\n\t\t{\"datetime\":\"%s\", \"module\":\"%s\", \"category\":\"%s\", "
+        printf("\n\t\t{\"datetime\":\"%s\", \"module\":\"%s\", "
+               "\"category\":\"%s\", "
                "\"event\":\"%s\", \"content\":\"%s\"",
-               info[i].datetime, info[i].module, info[i].category, info[i].event, info[i].content);
+               info[i].datetime, info[i].module, info[i].category,
+               info[i].event, info[i].content);
     }
     if (num > 0)
         printf("\n\t]\n");
@@ -125,7 +137,7 @@ log_print(log_info_s *info, size_t num)
 int
 log_get()
 {
-    ssize_t     q;
+    ssize_t q;
     log_info_s *info;
 
     if (!((g_get_begin != -1) && (g_get_end != -1)))
@@ -133,7 +145,8 @@ log_get()
     if (g_get_end >= g_get_begin)
         exit_jsom_msg(MSG_ERROR, "获取日志记录的区间不正确!");
 
-    if (!(info = (log_info_s *)malloc(sizeof(log_info_s) * (g_get_end - g_get_begine))))
+    if (!(info = (log_info_s *)malloc(sizeof(log_info_s)
+                                      * (g_get_end - g_get_begine))))
         exit_json_msg(MSG_ERROR, "可用内存不足!");
 
     q = LogGet(0, g_get_begin, g_get_end, 0, info);

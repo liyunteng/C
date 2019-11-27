@@ -12,10 +12,10 @@
 int
 main(int argc, char *argv[])
 {
-    int                listenfd, connfd;
+    int listenfd, connfd;
     struct sockaddr_in servaddr1, servaddr2;
-    char               buf[1024];
-    int                n;
+    char buf[1024];
+    int n;
 
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         fprintf(stderr, "create socket failed: %s\n", strerror(errno));
@@ -32,12 +32,14 @@ main(int argc, char *argv[])
     inet_pton(AF_INET, "127.0.0.1", &servaddr2.sin_addr);
     servaddr2.sin_port = htons(port);
 
-    /* if (bind(listenfd,(struct sockaddr *)&servaddr1, sizeof(servaddr1)) == -1) { */
+    /* if (bind(listenfd,(struct sockaddr *)&servaddr1, sizeof(servaddr1)) ==
+     * -1) { */
     /*      fprintf(stderr, "bind  servaddr1 failed: %s\n", */
     /*              strerror(errno)); */
     /*      return -1; */
     /* } */
-    if (bind(listenfd, (struct sockaddr *)&servaddr2, sizeof(servaddr2)) == -1) {
+    if (bind(listenfd, (struct sockaddr *)&servaddr2, sizeof(servaddr2))
+        == -1) {
         fprintf(stderr, "bind servaddr2 failed: %s\n", strerror(errno));
         return -1;
     }

@@ -6,7 +6,7 @@
 
 struct People {
     char name[10];
-    int  age;
+    int age;
 };
 
 void
@@ -34,8 +34,8 @@ v(int semid)
 int
 main(int argc, char *argv[])
 {
-    int   semid;
-    int   shmid;
+    int semid;
+    int shmid;
     key_t semkey;
     key_t shmkey;
 

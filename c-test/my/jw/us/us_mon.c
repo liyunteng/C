@@ -15,10 +15,10 @@
 #include "us_mon.h"
 
 struct us_mon {
-    struct udev *        udev;
+    struct udev *udev;
     struct udev_monitor *mon;
 
-    ev_io       udev_io;
+    ev_io udev_io;
     struct list mon_list;
 };
 
@@ -41,11 +41,11 @@ us_mon_do_action(const char *path, const char *dev, const char *act)
 static void
 udev_io_cb(EV_P_ ev_io *w, int r)
 {
-    struct us_mon *     ud = container_of(w, struct us_mon, udev_io);
+    struct us_mon *ud = container_of(w, struct us_mon, udev_io);
     struct udev_device *dev;
-    const char *        path;
-    const char *        dev_node;
-    const char *        action;
+    const char *path;
+    const char *dev_node;
+    const char *action;
 
     dev = udev_monitor_receive_device(ud->mon);
     if (dev == NULL)
@@ -53,7 +53,8 @@ udev_io_cb(EV_P_ ev_io *w, int r)
     path     = udev_device_get_devpath(dev);
     dev_node = udev_device_get_devnode(dev);
     action   = udev_device_get_action(dev);
-    printf("*** Get path: %s, devnode: %s, event: %s\n", path, dev_node, action);
+    printf("*** Get path: %s, devnode: %s, event: %s\n", path, dev_node,
+           action);
 
     if (path == NULL || dev_node == NULL || action == NULL)
         goto out;
@@ -67,7 +68,7 @@ out:
 int
 us_mon_init(void)
 {
-    struct udev *        udev;
+    struct udev *udev;
     struct udev_monitor *mon;
 
     memset((void *)&us_mon, sizeof(struct us_mon), 0);
@@ -85,7 +86,8 @@ us_mon_init(void)
         goto failed_mon;
     }
 
-    if (udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk") < 0) {
+    if (udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk")
+        < 0) {
         clog(LOG_EMERG, "Udev monitor add match failed: %s\n", strerror(errno));
         goto failed_mon;
     }
@@ -131,14 +133,15 @@ us_mon_unregister_notifier(struct mon_node *node)
 
 void us_mon_enum_dev(voide)
 {
-    struct us_mon *         ud   = &us_mon;
-    struct udev *           udev = ud->udev;
-    struct udev_enumerate * uenum;
+    struct us_mon *ud = &us_mon;
+    struct udev *udev = ud->udev;
+    struct udev_enumerate *uenum;
     struct udev_list_entry *devs, *dev_list;
 
     uenum = udev_enumerate_new(udev);
     if (uenum == NULL) {
-        clog(LOG_ERR, "%s: alloc enumerator failed: %s\n", __func__, strerror(errno));
+        clog(LOG_ERR, "%s: alloc enumerator failed: %s\n", __func__,
+             strerror(errno));
         return;
     }
 
@@ -148,7 +151,8 @@ void us_mon_enum_dev(voide)
     }
 
     if (udev_enumerate_scan_devices(uenum) < 0) {
-        clog(LOG_ERR, "%s: Scan device failed: %s\n", __func__, strerror(errno));
+        clog(LOG_ERR, "%s: Scan device failed: %s\n", __func__,
+             strerror(errno));
         goto out;
     }
 
@@ -156,8 +160,8 @@ void us_mon_enum_dev(voide)
     udev_list_entry_foreach(dev_list, devs)
     {
         struct udev_device *dev;
-        const char *        path;
-        const char *        node;
+        const char *path;
+        const char *node;
 
         path = udev_list_entry_get_name(dev_list);
         if (path == NULL)
@@ -165,13 +169,15 @@ void us_mon_enum_dev(voide)
 
         dev = udev_device_new_from_syspath(udev, path);
         if (dev == NULL) {
-            clog(LOG_ERR, "%s: create device failed: %s\n", __func__, strerror(errno));
+            clog(LOG_ERR, "%s: create device failed: %s\n", __func__,
+                 strerror(errno));
             continue;
         }
 
         node = udev_device_get_devnode(dev);
         if (node == NULL) {
-            clog(LOG_ERR, "%s: create node failed: %s\n", __func__, strerror(errno));
+            clog(LOG_ERR, "%s: create node failed: %s\n", __func__,
+                 strerror(errno));
         } else {
             us_mon_do_action(path, node, MA_ADD);
         }

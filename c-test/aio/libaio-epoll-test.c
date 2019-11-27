@@ -25,17 +25,18 @@
 
 struct custom_iocb {
     struct iocb iocb;
-    int         nth_request;
+    int nth_request;
 };
 
 void
 aio_callback(io_context_t ctx, struct iocb *iocb, long res, long res2)
 {
     struct custom_iocb *ciocb = (struct custom_iocb *)iocb;
-    printf(
-        "##nth_request: %d, request_type: %s, offset: %lld, length: %lu, res: %ld, res2: %ld##\n",
-        ciocb->nth_request, (ciocb->iocb.aio_lio_opcode == IO_CMD_PREAD) ? "READ" : "WRITE",
-        ciocb->iocb.u.c.offset, ciocb->iocb.u.c.nbytes, res, res2);
+    printf("##nth_request: %d, request_type: %s, offset: %lld, length: %lu, "
+           "res: %ld, res2: %ld##\n",
+           ciocb->nth_request,
+           (ciocb->iocb.aio_lio_opcode == IO_CMD_PREAD) ? "READ" : "WRITE",
+           ciocb->iocb.u.c.offset, ciocb->iocb.u.c.nbytes, res, res2);
 
     char buf[BUF_SIZE + 1];
     snprintf(buf, BUF_SIZE + 1, "%s", ciocb->iocb.u.c.buf);
@@ -45,16 +46,16 @@ aio_callback(io_context_t ctx, struct iocb *iocb, long res, long res2)
 void
 test(const char *filename)
 {
-    int                 efd, fd, epfd;
-    io_context_t        ctx;
-    struct timespec     tms;
-    struct io_event     events[MAX_EVENTS];
-    struct iocb *       iocbs[MAX_EVENTS];
-    struct custom_iocb  ciocbs[MAX_EVENTS];
+    int efd, fd, epfd;
+    io_context_t ctx;
+    struct timespec tms;
+    struct io_event events[MAX_EVENTS];
+    struct iocb *iocbs[MAX_EVENTS];
+    struct custom_iocb ciocbs[MAX_EVENTS];
     struct custom_iocb *ciocbp;
 
-    int                i, j, rc;
-    void *             buf;
+    int i, j, rc;
+    void *buf;
     struct epoll_event epevent;
 
     efd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
@@ -109,8 +110,8 @@ test(const char *filename)
             rc          = io_getevents(ctx, 1, MAX_EVENTS, events, &tms);
             assert(rc >= 0);
             for (j = 0; j < rc; j++) {
-                ((io_callback_t)(events[j].data))(ctx, events[j].obj, events[j].res,
-                                                  events[j].res2);
+                ((io_callback_t)(events[j].data))(
+                    ctx, events[j].obj, events[j].res, events[j].res2);
             }
             i += rc;
             finished_aio -= rc;
@@ -136,5 +137,6 @@ main(int argc, char *argv[])
 }
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -o libaio-epoll-test libaio-epoll-test.c -g -laio" */
+/* compile-command: "clang -Wall -o libaio-epoll-test libaio-epoll-test.c -g
+ * -laio" */
 /* End: */

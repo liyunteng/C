@@ -47,8 +47,8 @@ nl_open(void)
 static int
 nl_write(int fd, void *data, int len)
 {
-    struct iovec    iov[2];
-    struct msghdr   msg;
+    struct iovec iov[2];
+    struct msghdr msg;
     struct nlmsghdr nlh = {0};
 
     iov[0].iov_base = &nlh;
@@ -73,10 +73,10 @@ nl_write(int fd, void *data, int len)
 static int
 nl_read(int fd, void *data, int len, int wait)
 {
-    struct iovec    iov[2];
-    struct msghdr   msg;
+    struct iovec iov[2];
+    struct msghdr msg;
     struct nlmsghdr nlh;
-    int             res;
+    int res;
 
     iov[0].iov_base = &nlh;
     iov[0].iov_len  = NLMSG_HDRLEN;
@@ -107,21 +107,23 @@ extern struct us_disk_pool us_dp;
 static void
 nl_io_cb(EV_P_ ev_io *w, int r)
 {
-    struct vsd_warning_info   warning_info;
-    struct us_disk *          disk;
+    struct vsd_warning_info warning_info;
+    struct us_disk *disk;
     struct disk_warning_info *dwi;
-    char                      dev[16], msg[128];
+    char dev[16], msg[128];
 
     if (nl_read(w->fd, &warning_info, sizeof(warning_info), 1) < 0) {
         if ((EINTR != errno) && (EAGAIN != errno)) {
-            clog(CL_ERROR, "read netlink fd (%d) failed: %s", w->fd, strerror(errno));
+            clog(CL_ERROR, "read netlink fd (%d) failed: %s", w->fd,
+                 strerror(errno));
             return;
         }
     }
     sprintf(dev, "/dev/%s", warning_info.disk_name);
     disk = find_disk(&us_dp, dev);
     if (!disk) {
-        clog(CL_ERROR, "disk warning, cann't find %s slot!", warning_info.disk_name);
+        clog(CL_ERROR, "disk warning, cann't find %s slot!",
+             warning_info.disk_name);
         return;
     }
 
@@ -129,15 +131,19 @@ nl_io_cb(EV_P_ ev_io *w, int r)
     dwi->warning_area = warning_info.warning_area;
     dwi->mapped_cnt   = warning_info.mapped_cnt;
 
-    sprintf(msg, "磁盘预警: 0:%d 出现%s, 已修复扇区计数: %u, 最大可修复扇区数: %u", disk->slot,
-            (dwi->warning_area == (1 << WARNING_AREA_BAD_SECT)) ? "新坏块" : "关键坏块",
+    sprintf(msg,
+            "磁盘预警: 0:%d 出现%s, 已修复扇区计数: %u, 最大可修复扇区数: %u",
+            disk->slot,
+            (dwi->warning_area == (1 << WARNING_AREA_BAD_SECT)) ? "新坏块" :
+                                                                  "关键坏块",
             dwi->mapped_cnt, dwi->max_map_cnt);
 
     LogInsert(NULL, "DiskWarning", "Auto", "Error", msg);
     sprintf(msg, "disks=0:%d", disk->slot);
     sysmon_event("disk", "led_blink2s1", msg, "");
 
-    if (dwi->mapped_cnt > dwi->max_map_cnt / 2 || dwi->warning_area == (1 << WARNING_AREA_SUPER)
+    if (dwi->mapped_cnt > dwi->max_map_cnt / 2
+        || dwi->warning_area == (1 << WARNING_AREA_SUPER)
         || diw->warning_area == (1 << WARNING_AREA_SECT_MAP)) {
         char cmd[128];
         sprintf(cmd, "%s %s hotrep", DISK_SCRIPT, dev);

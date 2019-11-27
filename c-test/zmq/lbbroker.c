@@ -40,7 +40,7 @@ client_task(void *args)
     void *context = zmq_ctx_new();
 
     void *client = zmq_socket(context, ZMQ_REQ);
-    char  id[256];
+    char id[256];
     snprintf(id, sizeof(id), "%lu", pthread_self());
     zmq_setsockopt(client, ZMQ_IDENTITY, id, strlen(id) + 1);
 
@@ -61,7 +61,7 @@ worker_task(void *args)
     void *context = zmq_ctx_new();
 
     void *worker = zmq_socket(context, ZMQ_REQ);
-    char  id[256];
+    char id[256];
     snprintf(id, sizeof(id), "%lu", pthread_self());
     zmq_setsockopt(worker, ZMQ_IDENTITY, id, strlen(id) + 1);
 
@@ -108,7 +108,7 @@ main(void)
         pthread_create(&worker, NULL, worker_task, NULL);
     }
 
-    int  available_worker = 0;
+    int available_worker = 0;
     char worker_queue[10][256];
 
     while (1) {
@@ -123,7 +123,8 @@ main(void)
 
         if (items[0].revents & ZMQ_POLLIN) {
             char id[256], buf[256];
-            zmq_recv(backend, worker_queue[available_worker], sizeof(worker_queue[0]), 0);
+            zmq_recv(backend, worker_queue[available_worker],
+                     sizeof(worker_queue[0]), 0);
             available_worker++;
 
             zmq_recv(backend, buf, sizeof(buf), 0);
@@ -147,7 +148,8 @@ main(void)
             zmq_recv(frontend, buf, sizeof(buf), 0);
             zmq_recv(frontend, buf, sizeof(buf), 0);
 
-            zmq_send(backend, worker_queue[0], strlen(worker_queue[0]) + 1, ZMQ_SNDMORE);
+            zmq_send(backend, worker_queue[0], strlen(worker_queue[0]) + 1,
+                     ZMQ_SNDMORE);
             zmq_send(backend, "", 0, ZMQ_SNDMORE);
             zmq_send(backend, id, strlen(id) + 1, ZMQ_SNDMORE);
             zmq_send(backend, "", 0, ZMQ_SNDMORE);

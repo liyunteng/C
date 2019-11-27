@@ -15,9 +15,9 @@
 #include <sys/wait.h>
 
 static volatile sig_atomic_t sigflag;
-static sigset_t              newmask;
-static sigset_t              oldmask;
-static sigset_t              zeromask;
+static sigset_t newmask;
+static sigset_t oldmask;
+static sigset_t zeromask;
 
 static void
 sig_usr(int signo)
@@ -123,7 +123,7 @@ void
 pr_mask(const char *str)
 {
     sigset_t sigset;
-    int      errno_save;
+    int errno_save;
 
     errno_save = errno;
     if (sigprocmask(0, NULL, &sigset) < 0)
@@ -178,8 +178,8 @@ lock_test(int fd, int type, off_t offset, int whence, off_t len)
 ssize_t
 writen(int fd, const void *vptr, size_t n)
 {
-    size_t      nleft;
-    ssize_t     nwritten;
+    size_t nleft;
+    ssize_t nwritten;
     const char *ptr;
 
     ptr   = vptr;
@@ -197,9 +197,9 @@ writen(int fd, const void *vptr, size_t n)
 ssize_t
 readn(int fd, void *vptr, size_t n)
 {
-    size_t  nleft;
+    size_t nleft;
     ssize_t nread;
-    char *  ptr;
+    char *ptr;
 
     ptr   = vptr;
     nleft = n;

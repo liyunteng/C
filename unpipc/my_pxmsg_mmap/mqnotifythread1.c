@@ -26,8 +26,8 @@
 #include <pthread.h>
 #include <signal.h>
 
-mqd_t           mqd;
-struct mq_attr  attr;
+mqd_t mqd;
+struct mq_attr attr;
 struct sigevent sigev;
 
 static void notify_thread(sigval_t); /* our thread function */
@@ -62,7 +62,7 @@ main(int argc, char *argv[])
 static void
 notify_thread(sigval_t sigval)
 {
-    void *  buf;
+    void *buf;
     ssize_t n;
 
     printf("notify_thread start...\n");

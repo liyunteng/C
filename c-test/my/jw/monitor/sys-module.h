@@ -1,17 +1,16 @@
-#include "sys-global.h"
-#include "sys-event.h"
 #include "list.h"
+#include "sys-event.h"
+#include "sys-global.h"
 
 #ifndef __SYS_MODULE_H__
-#define __SYS_MODULE_H__
+#    define __SYS_MODULE_H__
 
 typedef struct _sys_module sys_module_t;
 struct _sys_module {
-	struct list list;
-	struct list event_list;
-	char name[128];
+    struct list list;
+    struct list event_list;
+    char name[128];
 };
-
 
 extern struct list _gmodule_list;
 

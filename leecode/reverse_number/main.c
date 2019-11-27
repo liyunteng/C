@@ -13,9 +13,9 @@
 int
 reverse(int x)
 {
-    char  c;
-    char *tmp  = malloc(32);
-    int   flag = 0;
+    char c;
+    char *tmp = malloc(32);
+    int flag  = 0;
     if (x < 0) {
         flag = 1;
     }

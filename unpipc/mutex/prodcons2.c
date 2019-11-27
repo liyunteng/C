@@ -31,9 +31,9 @@ int nitems;
 
 struct {
     pthread_mutex_t mutex;
-    int             buf[MAXITEMS];
-    int             nput;
-    int             nval;
+    int buf[MAXITEMS];
+    int nput;
+    int nval;
 } shared = {PTHREAD_MUTEX_INITIALIZER};
 
 void *produce(void *), *consume(void *);
@@ -47,7 +47,7 @@ min(int a, int b)
 int
 main(int argc, char *argv[])
 {
-    int       i, nthreads, count[MAXTHREADS];
+    int i, nthreads, count[MAXTHREADS];
     pthread_t tid_produce[MAXTHREADS], tid_consume;
 
     if (argc != 3)
@@ -82,10 +82,12 @@ produce(void *arg)
 {
     for (;;) {
         if (pthread_mutex_lock(&shared.mutex) < 0)
-            err_sys("pthread_mutex_lock %ld lock error: ", (long)pthread_self());
+            err_sys("pthread_mutex_lock %ld lock error: ",
+                    (long)pthread_self());
         if (shared.nput >= nitems) {
             if (pthread_mutex_unlock(&shared.mutex) < 0)
-                err_sys("pthread_mutex_unlock %ld unlock error: ", (long)pthread_self());
+                err_sys("pthread_mutex_unlock %ld unlock error: ",
+                        (long)pthread_self());
             return (NULL);
         }
 
@@ -93,7 +95,8 @@ produce(void *arg)
         shared.nput++;
         shared.nval++;
         if (pthread_mutex_unlock(&shared.mutex) < 0)
-            err_sys("pthread_mutex_unlock %ld unlock error: ", (long)pthread_self());
+            err_sys("pthread_mutex_unlock %ld unlock error: ",
+                    (long)pthread_self());
         *((int *)arg) += 1;
     }
 }

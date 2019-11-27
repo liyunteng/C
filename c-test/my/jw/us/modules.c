@@ -2,13 +2,13 @@
 #include "types.h"
 #include <stdlib.h>
 
-#define DECLARE_FUNC(func)         \
-    extern int  func##_init(void); \
+#define DECLARE_FUNC(func)                                                     \
+    extern int func##_init(void);                                              \
     extern void func##_release(void);
 
-#define MODULE(name)                       \
-    {                                      \
-#name, name##_init, name##_release \
+#define MODULE(name)                                                           \
+    {                                                                          \
+#        name, name##_init, name##_release                                     \
     }
 
 struct module {

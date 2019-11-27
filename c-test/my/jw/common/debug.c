@@ -30,15 +30,15 @@ get_dbgstamp()
 }
 
 void
-__dbg_vprintf(FILE *stream, const char *file, const char *func, size_t line, bool berr,
-              const char *fmt, va_list ap)
+__dbg_vprintf(FILE *stream, const char *file, const char *func, size_t line,
+              bool berr, const char *fmt, va_list ap)
 {
-    char                   buf[32];
-    size_t                 i    = 0;
+    char buf[32];
+    size_t i                    = 0;
     static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
     if (bstamp) {
-        time_t    now = time(NULL);
+        time_t now = time(NULL);
         struct tm now_tm;
         i = strftime(buf, 31, "%h %e %T", localtime_r(&now, &now_tm));
     }

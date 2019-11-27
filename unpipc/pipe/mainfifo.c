@@ -13,7 +13,7 @@ int
 main(int argc, char *argv[])
 {
 
-    int   readfd, writefd;
+    int readfd, writefd;
     pid_t childpid;
 
     if ((mkfifo(FIFO1, 644) < 0) && (errno != EEXIST)) {

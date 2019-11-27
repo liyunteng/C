@@ -39,7 +39,7 @@ main(void)
     zmq_recv(receiver, buf, sizeof(buf), 0);
 
     struct timeval tv;
-    int            ret;
+    int ret;
     ret = gettimeofday(&tv, NULL);
     assert(ret == 0);
 

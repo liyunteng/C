@@ -3,7 +3,8 @@
 #include <string.h>
 
 int
-print_record(void *params, int n_column, char **column_value, char **column_name)
+print_record(void *params, int n_column, char **column_value,
+             char **column_name)
 {
     int i;
     for (i = 0; i < n_column; i++) {
@@ -16,15 +17,17 @@ print_record(void *params, int n_column, char **column_value, char **column_name
 int
 main(int argc, char *argv[])
 {
-    const char *  sql_create_table = "create table t(id int primary key, msg varchar(128));";
-    char *        errmsg, **result;
-    int           ret = 0;
-    int           col, row, i, j;
-    sqlite3 *     db = NULL;
+    const char *sql_create_table =
+        "create table t(id int primary key, msg varchar(128));";
+    char *errmsg, **result;
+    int ret = 0;
+    int col, row, i, j;
+    sqlite3 *db = NULL;
     sqlite3_stmt *stmt;
-    char          cmd[256];
+    char cmd[256];
 
-    ret = sqlite3_open_v2("./test.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    ret = sqlite3_open_v2("./test.db", &db,
+                          SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
     if (ret != SQLITE_OK) {
         fprintf(stderr, "Can't open db: %s\n", sqlite3_errmsg(db));
         return ret;
@@ -41,7 +44,8 @@ main(int argc, char *argv[])
         fprintf(stderr, "create table error:%s\n", errmsg);
         goto quit;
     }
-    ret = sqlite3_exec(db, "insert into t(id, msg) values(0, 'test0')", NULL, NULL, &errmsg);
+    ret = sqlite3_exec(db, "insert into t(id, msg) values(0, 'test0')", NULL,
+                       NULL, &errmsg);
     if (ret != SQLITE_OK)
         goto quit;
 
@@ -59,7 +63,8 @@ main(int argc, char *argv[])
     if (ret != SQLITE_OK)
         goto quit;
 
-    ret = sqlite3_get_table(db, "select * from t;", &result, &row, &col, &errmsg);
+    ret =
+        sqlite3_get_table(db, "select * from t;", &result, &row, &col, &errmsg);
     if (ret != SQLITE_OK)
         goto quit;
 

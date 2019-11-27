@@ -16,7 +16,7 @@ int
 main(void)
 {
     pid_t pid;
-    int   status;
+    int status;
 
     if ((pid = fork()) < 0)
         err_sys("fork error");

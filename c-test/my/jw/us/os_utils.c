@@ -10,9 +10,9 @@ int
 child_read(const char *cmd, char *buf, size_t *len)
 {
     FILE *fp;
-    int   ret = -1;
-    int   r;
-    int   sts;
+    int ret = -1;
+    int r;
+    int sts;
 
     fp = popen(cmd, "r");
     if (fp == NULL)

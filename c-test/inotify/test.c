@@ -33,9 +33,9 @@ handle_events(int fd, int *wd, int argc, char *argv[])
 {
     char buf[4096] __attribute__((aligned(__alignof__(struct inotify_event))));
     const struct inotify_event *event;
-    int                         i;
-    ssize_t                     len;
-    char *                      ptr;
+    int i;
+    ssize_t len;
+    char *ptr;
 
     for (;;) {
         len = read(fd, buf, sizeof buf);
@@ -47,7 +47,8 @@ handle_events(int fd, int *wd, int argc, char *argv[])
         if (len <= 0)
             break;
 
-        for (ptr = buf; ptr < buf + len; ptr += sizeof(struct inotify_event) + event->len) {
+        for (ptr = buf; ptr < buf + len;
+             ptr += sizeof(struct inotify_event) + event->len) {
             event = (const struct inotify_event *)ptr;
 
             if (event->mask & IN_OPEN)
@@ -78,10 +79,10 @@ handle_events(int fd, int *wd, int argc, char *argv[])
 int
 main(int argc, char *argv[])
 {
-    char          buf;
-    int           fd, i, poll_num;
-    int *         wd;
-    nfds_t        nfds;
+    char buf;
+    int fd, i, poll_num;
+    int *wd;
+    nfds_t nfds;
     struct pollfd fds[2];
 
     if (argc < 2) {

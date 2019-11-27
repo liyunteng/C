@@ -15,9 +15,9 @@ static void sig_int(int); /* our signal-catching function */
 int
 main(void)
 {
-    char  buf[MAXLINE];
+    char buf[MAXLINE];
     pid_t pid;
-    int   status;
+    int status;
 
     if (signal(SIGINT, sig_int) == SIG_ERR)
         err_sys("signal error");
@@ -50,5 +50,6 @@ sig_int(int signo)
 }
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -o 1-8 1-8.c -g -I../include -L../lib -lourhdr" */
+/* compile-command: "clang -Wall -o 1-8 1-8.c -g -I../include -L../lib -lourhdr"
+ */
 /* End: */

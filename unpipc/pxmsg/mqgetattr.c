@@ -27,7 +27,7 @@
 int
 main(int argc, char *argv[])
 {
-    mqd_t          mqd;
+    mqd_t mqd;
     struct mq_attr attr;
 
     if (argc != 2)

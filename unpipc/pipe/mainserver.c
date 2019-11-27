@@ -10,9 +10,9 @@
 int
 main(int argc, char *argv[])
 {
-    int     readfifo, writefifo, dummyfd, fd;
-    char *  ptr, buf[MAXLINE + 1], fifoname[MAXLINE];
-    pid_t   pid;
+    int readfifo, writefifo, dummyfd, fd;
+    char *ptr, buf[MAXLINE + 1], fifoname[MAXLINE];
+    pid_t pid;
     ssize_t n;
 
     if ((mkfifo(SERV_FIFO, 644)) < 0 && (errno != EEXIST))
@@ -43,7 +43,8 @@ main(int argc, char *argv[])
         printf("filename: %s", fifoname);
 
         if ((fd = open(ptr, O_RDONLY)) < 0) {
-            snprintf(buf + n, sizeof(buf) - n, ": can't open, %s", strerror(errno));
+            snprintf(buf + n, sizeof(buf) - n, ": can't open, %s",
+                     strerror(errno));
             n = strlen(ptr);
             if (write(writefifo, ptr, n) < 0)
                 err_msg("write failed");

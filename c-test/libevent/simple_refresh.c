@@ -17,16 +17,16 @@
 #define RELOAD_TIMEOUT 6
 #define DEFAULT_FILE "sample.html"
 
-char * filedata;
+char *filedata;
 time_t lasttime = 0;
-char   filename[80];
-int    counter = 0;
+char filename[80];
+int counter = 0;
 
 void
 read_file()
 {
-    int         size = 0;
-    char *      data;
+    int size = 0;
+    char *data;
     struct stat buf;
 
     stat(filename, &buf);
@@ -60,7 +60,7 @@ read_file()
 void
 load_file()
 {
-    struct event * loadfile_event;
+    struct event *loadfile_event;
     struct timeval tv;
 
     read_file();
@@ -88,8 +88,8 @@ generic_request_handler(struct evhttp_request *req, void *arg)
 int
 main(int argc, char *argv[])
 {
-    short          http_port   = 8081;
-    char *         http_addr   = "192.168.1.104";
+    short http_port            = 8081;
+    char *http_addr            = "192.168.1.104";
     struct evhttp *http_server = NULL;
 
     if (argc > 1) {
@@ -110,5 +110,6 @@ main(int argc, char *argv[])
 }
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -o simple_refresh simple_refresh.c -g -levent" */
+/* compile-command: "clang -Wall -o simple_refresh simple_refresh.c -g -levent"
+ */
 /* End: */

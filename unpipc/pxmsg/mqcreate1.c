@@ -27,7 +27,7 @@
 int
 main(int argc, char *argv[])
 {
-    int   c, flags;
+    int c, flags;
     mqd_t mqd;
 
     flags = O_RDWR | O_CREAT;

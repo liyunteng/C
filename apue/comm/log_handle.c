@@ -10,7 +10,7 @@
 #include <syslog.h>
 
 static void log_doit(int, int, const char *, va_list ap);
-int         debug = 0;
+int debug = 0;
 
 void
 log_open(const char *ident, int option, int facility)
@@ -66,7 +66,7 @@ log_quit(const char *fmt, ...)
 static void
 log_doit(int errnoflag, int priority, const char *fmt, va_list ap)
 {
-    int  errno_save;
+    int errno_save;
     char buf[MAXLINE];
 
     errno_save = errno;

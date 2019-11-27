@@ -48,12 +48,12 @@ speed_alarm_handler(int sig)
 int
 tcp_speed_test(const char *h, const int port, int interval)
 {
-    char               sendbuf[BUFFSIZE];
-    char               recvbuf[BUFFSIZE];
+    char sendbuf[BUFFSIZE];
+    char recvbuf[BUFFSIZE];
     unsigned long long nsent;
     unsigned long long nrecv;
-    pid_t              pid;
-    int                sockfd;
+    pid_t pid;
+    int sockfd;
     struct sockaddr_in dest;
     struct sockaddr_in from;
 
@@ -105,7 +105,7 @@ tcp_speed_test(const char *h, const int port, int interval)
         return -1;
     }
 
-    uint64_t       count = 0;
+    uint64_t count = 0;
     struct timeval tv1, tv2;
     gettimeofday(&tv1, NULL);
     while (flag == 0) {
@@ -116,7 +116,8 @@ tcp_speed_test(const char *h, const int port, int interval)
         hdr->id           = getpid();
         gettimeofday((struct timeval *)hdr->data, NULL);
 
-        int n = sendto(sockfd, sendbuf, sizeof(sendbuf), 0, (struct sockaddr *)&from, sizeof(from));
+        int n = sendto(sockfd, sendbuf, sizeof(sendbuf), 0,
+                       (struct sockaddr *)&from, sizeof(from));
         if (n != sizeof(sendbuf)) {
             if (errno == EINTR) {
                 nsent++;
@@ -139,10 +140,13 @@ tcp_speed_test(const char *h, const int port, int interval)
 
     shutdown(sockfd, SHUT_WR);
     gettimeofday(&tv2, NULL);
-    unsigned long long t = (tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec - tv1.tv_usec) / 1000;
+    unsigned long long t =
+        (tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec - tv1.tv_usec) / 1000;
     if (t == 0)
         t = 1;
-    fprintf(stderr, "Upload size: %" PRIu64 " nsent: %llu time: %llu ms speed: %" PRIu64 " kB/s\n",
+    fprintf(stderr,
+            "Upload size: %" PRIu64 " nsent: %llu time: %llu ms speed: %" PRIu64
+            " kB/s\n",
             count, nsent, t, (uint64_t)(count / t * 1000 / 1024));
 
     // sendto(sockfd, sendbuf, 1, 0, (struct sockaddr *)&dest, sizeof(dest));
@@ -152,7 +156,8 @@ tcp_speed_test(const char *h, const int port, int interval)
     gettimeofday(&tv1, NULL);
     socklen_t len = sizeof(from);
     while (flag == 1) {
-        int n = recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0, (struct sockaddr *)&from, &len);
+        int n = recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0,
+                         (struct sockaddr *)&from, &len);
         if (n > 0) {
             count += n;
             nrecv++;
@@ -161,7 +166,8 @@ tcp_speed_test(const char *h, const int port, int interval)
             break;
         } else if (n < 0) {
             if (errno == EINTR) {
-                n = recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0, (struct sockaddr *)&from, &len);
+                n = recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0,
+                             (struct sockaddr *)&from, &len);
                 if (n > 0) {
                     count += n;
                     nrecv++;
@@ -179,7 +185,8 @@ tcp_speed_test(const char *h, const int port, int interval)
         t = 1;
     t = (tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec - tv1.tv_usec) / 1000;
     fprintf(stderr,
-            "Download size: %" PRIu64 " nrecv: %llu time: %llums ms speed: %" PRIu64 " kB/s\n",
+            "Download size: %" PRIu64
+            " nrecv: %llu time: %llums ms speed: %" PRIu64 " kB/s\n",
             count, nrecv, t, (uint64_t)(count / t * 1000 / 1024));
 
     close(sockfd);

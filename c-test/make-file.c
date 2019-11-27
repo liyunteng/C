@@ -29,8 +29,9 @@ main(int argc, char *argv[])
 {
 
     if (access("config.xml", F_OK)) {
-        const char *p = "<Config>\n\t<SDP ip=\"127.0.0.1\" port=\"30000\"/>\n\t<Cam "
-                        "url=\"rtsp://192.0.0.64:554/1\" bandwidth=\"4000\"/>\n</Config>\n";
+        const char *p =
+            "<Config>\n\t<SDP ip=\"127.0.0.1\" port=\"30000\"/>\n\t<Cam "
+            "url=\"rtsp://192.0.0.64:554/1\" bandwidth=\"4000\"/>\n</Config>\n";
         FILE *fp = NULL;
         if ((fp = fopen("config.xml", "w+")) == NULL) {
             fprintf(stderr, "open config.xml failed");
@@ -45,7 +46,7 @@ main(int argc, char *argv[])
     }
 
     if (access("test.xml", F_OK)) {
-        const char *p  = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
+        const char *p = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
 <root>\n\
         <dev_id>beijing-SO</dev_id>\n\
         <user_acount>beijing-SO</user_acount>\n\
@@ -67,7 +68,7 @@ main(int argc, char *argv[])
                 </msm>\n\
         </msms>\n\
 </root>\n";
-        FILE *      fp = NULL;
+        FILE *fp      = NULL;
         if ((fp = fopen("test.xml", "w+")) == NULL) {
             fprintf(stderr, "open test.xml failed");
         } else {

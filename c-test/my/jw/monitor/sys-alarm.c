@@ -19,7 +19,7 @@
 #define BUZZER_OFF_CMD "sys-manager system --set buzzer --value dec >/dev/null"
 
 struct event_record {
-    char        param[128];
+    char param[128];
     struct list list_entry;
 };
 
@@ -77,9 +77,9 @@ static LIST_INIT(buzzer_list);
 void
 sys_alarm_buzzer_on(void *event)
 {
-    struct list *        n, *nt;
+    struct list *n, *nt;
     struct event_record *er;
-    sys_event_t *        ev = (sys_event_t *)event;
+    sys_event_t *ev = (sys_event_t *)event;
 
     list_iterate_safe(n, nt, &buzzer_list)
     {
@@ -99,9 +99,9 @@ sys_alarm_buzzer_on(void *event)
 void
 sys_alarm_buzzer_off(void *event)
 {
-    struct list *        n, *nt;
+    struct list *n, *nt;
     struct event_record *er;
-    sys_event_t *        ev = (sys_event_t *)event;
+    sys_event_t *ev = (sys_event_t *)event;
 
     list_iterate_safe(n, nt, &buzzer_list)
     {
@@ -130,14 +130,14 @@ sys_alarm_notify_tmpfs(void *event)
 char *
 _get_next_disk_slot(const char *str)
 {
-    int          cflags = REG_EXTENDED;
-    int          status;
-    regmatch_t   pmatch[1];
+    int cflags = REG_EXTENDED;
+    int status;
+    regmatch_t pmatch[1];
     const size_t nmatch = 1;
-    regex_t      reg;
-    const char * pattern = "[0-9]:[0-9]+$";
-    static char  buf[128];
-    static char  slot[12];
+    regex_t reg;
+    const char *pattern = "[0-9]:[0-9]+$";
+    static char buf[128];
+    static char slot[12];
 
     if (buf[0] == '\0') {
         if (strncmp(str, "disk", 4))
@@ -238,9 +238,9 @@ static int sysled_cnt = 0;
 void
 sys_alarm_sysled_on(void *event)
 {
-    struct list *        n, *nt;
+    struct list *n, *nt;
     struct event_record *er;
-    sys_event_t *        ev = (sys_event_t *)event;
+    sys_event_t *ev = (sys_event_t *)event;
 
     list_iterate_safe(n, nt, &sysled_list)
     {
@@ -265,9 +265,9 @@ sys_alarm_sysled_on(void *event)
 void
 sys_alarm_sysled_off(void *event)
 {
-    struct list *        n, *nt;
+    struct list *n, *nt;
     struct event_record *er;
-    sys_event_t *        ev = (sys_event_t *)event;
+    sys_event_t *ev = (sys_event_t *)event;
 
     list_iterate_safe(n, nt, &sysled_list)
     {
@@ -288,7 +288,7 @@ sys_alarm_sysled_off(void *event)
 }
 
 struct _handler_map {
-    char              name[128];
+    char name[128];
     sys_alarm_handler handler;
 };
 

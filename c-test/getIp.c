@@ -25,7 +25,8 @@ typedef struct {
     int16_t flags;
 } ip_info_t;
 
-int getIp(const char *ifname, ip_info_t *info)
+int
+getIp(const char *ifname, ip_info_t *info)
 {
     int sockfd;
     struct ifreq ifr;
@@ -67,19 +68,20 @@ int getIp(const char *ifname, ip_info_t *info)
         return -1;
     }
     memcpy(info->mac, ifr.ifr_hwaddr.sa_data, sizeof(info->mac));
-    printf("MAC: %02X-%02X-%02X-%02X-%02X-%02X\n",
-           info->mac[0], info->mac[1], info->mac[2],
-           info->mac[3], info->mac[4], info->mac[5]);
+    printf("MAC: %02X-%02X-%02X-%02X-%02X-%02X\n", info->mac[0], info->mac[1],
+           info->mac[2], info->mac[3], info->mac[4], info->mac[5]);
 
     if (ioctl(sockfd, SIOCGIFADDR, &ifr) < 0) {
         return -1;
     }
-    strcpy(info->ip, inet_ntoa(((struct sockaddr_in *)(&ifr.ifr_addr))->sin_addr));
+    strcpy(info->ip,
+           inet_ntoa(((struct sockaddr_in *)(&ifr.ifr_addr))->sin_addr));
     printf("IP: %s\n", info->ip);
     if (ioctl(sockfd, SIOCGIFNETMASK, &ifr) < 0) {
         return -1;
     }
-    strcpy(info->netmask, inet_ntoa(((struct sockaddr_in *)(&ifr.ifr_addr))->sin_addr));
+    strcpy(info->netmask,
+           inet_ntoa(((struct sockaddr_in *)(&ifr.ifr_addr))->sin_addr));
     printf("NETMASK: %s\n", info->netmask);
     return 0;
 }

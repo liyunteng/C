@@ -14,10 +14,12 @@
 #include <string.h>
 
 #define _XML_STR_VAL(node, key) (char *)xmlGetProp(node, BAD_CAST(key))
-#define _XML_IGN_CHECK(node) \
-    if (xmlStrcmp(node->name, BAD_CAST "text") && xmlStrcmp(node->name, BAD_CAST "comment"))
+#define _XML_IGN_CHECK(node)                                                   \
+    if (xmlStrcmp(node->name, BAD_CAST "text")                                 \
+        && xmlStrcmp(node->name, BAD_CAST "comment"))
 #define _XML_NODE_NAME(node, name1) (!xmlStrcmp(node->name, BAD_CAST(name1)))
-#define _XML_ATTR_EQU(node, key, value) (!strcmp(_XML_STR_VAL(node, key), value))
+#define _XML_ATTR_EQU(node, key, value)                                        \
+    (!strcmp(_XML_STR_VAL(node, key), value))
 
 void
 _xml_self_run_parse(xmlNodePtr node)
@@ -39,7 +41,8 @@ _xml_self_run_parse(xmlNodePtr node)
                     if ((tmp = _XML_STR_VAL(node, "min_threshold")) != NULL)
                         cap->min_thr = atoi(tmp);
                     if ((tmp = _XML_STR_VAL(node, "max_threshold")) != NULL)
-                        cap->max_thr = atoi(_XML_STR_VAL(node, "max_threshold"));
+                        cap->max_thr =
+                            atoi(_XML_STR_VAL(node, "max_threshold"));
                 }
 
                 sys_capture_set_handler(cap);
@@ -57,7 +60,8 @@ _xml_global_parse(xmlNodePtr node)
     while (node) {
         char *tmp;
 
-        if (_XML_NODE_NAME(node, "tmpfs") && _XML_ATTR_EQU(node, "active", "enable")) {
+        if (_XML_NODE_NAME(node, "tmpfs")
+            && _XML_ATTR_EQU(node, "active", "enable")) {
             gconf.tmpfs = true;
         } else if
             _XML_NODE_NAME(node, "msg_buff_size")
@@ -148,7 +152,7 @@ sys_mon_conf_check()
 void
 sys_mon_load_conf()
 {
-    xmlDocPtr  doc;
+    xmlDocPtr doc;
     xmlNodePtr node, tmp;
 
     sys_action_init();
@@ -161,11 +165,13 @@ sys_mon_load_conf()
     doc = xmlReadFile(SYSMON_CONF, "UTF-8", XML_PARSE_RECOVER);
 
     if (!doc) {
-        syslog(LOG_ERR, "XML: Load system monitor configure file %s error\n", SYSMON_CONF);
+        syslog(LOG_ERR, "XML: Load system monitor configure file %s error\n",
+               SYSMON_CONF);
         return;
     }
 
-    if ((node = xmlDocGetRootElement(doc)) && !xmlStrcmp(node->name, BAD_CAST "monitor")) {
+    if ((node = xmlDocGetRootElement(doc))
+        && !xmlStrcmp(node->name, BAD_CAST "monitor")) {
         tmp = node->xmlChildrenNode;
         while (tmp) {
             if (!xmlStrcmp(tmp->name, BAD_CAST "actions")) {

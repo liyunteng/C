@@ -24,21 +24,21 @@
 #ifndef ZHELPERS_H
 #define ZHELPERS_H
 
-#include <zmq.h>
 #include <assert.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <sys/time.h>
+#include <time.h>
+#include <zmq.h>
 
+#define randof(num) (int)((float)(num)*random() / (RAND_MAX + 1.0))
 
-#define randof(num) (int)((float)(num) * random() / (RAND_MAX + 1.0))
-
-static char * s_recv(void *socket)
+static char *
+s_recv(void *socket)
 {
     char buffer[256];
     int size = zmq_recv(socket, buffer, 255, 0);
@@ -50,26 +50,28 @@ static char * s_recv(void *socket)
     return strdup(buffer);
 }
 
-static int s_send(void *socket, char *string)
+static int
+s_send(void *socket, char *string)
 {
     int size = zmq_send(socket, string, strlen(string), 0);
     return size;
 }
 
-static void s_dump(void *socket)
+static void
+s_dump(void *socket)
 {
     puts("----------------------------");
-    while(1) {
+    while (1) {
         zmq_msg_t message;
-        zmq_msg_init (&message);
+        zmq_msg_init(&message);
         int size = zmq_msg_recv(&message, socket, 0);
 
-        char *data = (char *)zmq_msg_data(&message);
+        char *data  = (char *)zmq_msg_data(&message);
         int is_text = 1;
         int char_nbr;
-        for (char_nbr = 0; char_nbr < size ; char_nbr++) {
-            if ((unsigned char) data[char_nbr] < 32
-                ||(unsigned char)data[char_nbr] > 127)
+        for (char_nbr = 0; char_nbr < size; char_nbr++) {
+            if ((unsigned char)data[char_nbr] < 32
+                || (unsigned char)data[char_nbr] > 127)
                 is_text = 0;
         }
 
@@ -82,7 +84,7 @@ static void s_dump(void *socket)
         }
         printf("\n");
 
-        int more = 0;
+        int more         = 0;
         size_t more_size = sizeof(more);
         zmq_getsockopt(socket, ZMQ_RCVMORE, &more, &more_size);
         zmq_msg_close(&message);
@@ -91,36 +93,40 @@ static void s_dump(void *socket)
     }
 }
 
-static void s_set_id(void *socket)
+static void
+s_set_id(void *socket)
 {
     char identity[10];
     sprintf(identity, "%04X-%04X", randof(0x10000), randof(0x10000));
     zmq_setsockopt(socket, ZMQ_IDENTITY, identity, strlen(identity));
 }
 
-static void s_sleep(int msecs)
+static void
+s_sleep(int msecs)
 {
     struct timespec t;
-    t.tv_sec = msecs / 1000;
+    t.tv_sec  = msecs / 1000;
     t.tv_nsec = (msecs % 1000) * 1000000;
     nanosleep(&t, NULL);
 }
 
-static int64_t s_clock(void)
+static int64_t
+s_clock(void)
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return (int64_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-static void s_console(const char *format, ...)
+static void
+s_console(const char *format, ...)
 {
-    time_t curtime = time(NULL);
+    time_t curtime     = time(NULL);
     struct tm *loctime = localtime(&curtime);
-    char *formatted = (char *)malloc(20);
+    char *formatted    = (char *)malloc(20);
     strftime(formatted, 20, "%y-%m-%d %H:%M:%S", loctime);
     printf("%s", formatted);
-    free (formatted);
+    free(formatted);
 
     va_list argptr;
     va_start(argptr, format);

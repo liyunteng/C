@@ -23,7 +23,7 @@ void
 aio_handler(__sigval_t sigval)
 {
     struct aiocb *prd;
-    int           ret;
+    int ret;
 
     prd = (struct aiocb *)sigval.sival_ptr;
 
@@ -36,7 +36,7 @@ aio_handler(__sigval_t sigval)
 int
 async_test(const char *filename)
 {
-    int          fd, ret;
+    int fd, ret;
     struct aiocb rd;
 
     fd = open(filename, O_RDONLY);
@@ -63,9 +63,9 @@ int
 lio_test(const char *filename)
 {
     struct aiocb *listio[MAX_LIST];
-    struct aiocb  rd, wr;
-    int           fd, ret;
-    char          str[] = "This is a lio test.\n";
+    struct aiocb rd, wr;
+    int fd, ret;
+    char str[] = "This is a lio test.\n";
 
     fd = open(filename, O_RDWR | O_APPEND | O_CREAT, FILE_MODE);
     assert(fd > 0);
@@ -101,8 +101,8 @@ lio_test(const char *filename)
 int
 suspend_test(const char *filename)
 {
-    struct aiocb        rd;
-    int                 fd, ret;
+    struct aiocb rd;
+    int fd, ret;
     const struct aiocb *aiocb_list[MAX_LIST];
     fd = open(filename, O_RDONLY);
     assert(fd > 0);
@@ -119,7 +119,8 @@ suspend_test(const char *filename)
     ret = aio_read(&rd);
     assert(ret >= 0);
 
-    ret = aio_suspend(aiocb_list, sizeof(aiocb_list) / sizeof(aiocb_list[0]), NULL);
+    ret = aio_suspend(aiocb_list, sizeof(aiocb_list) / sizeof(aiocb_list[0]),
+                      NULL);
     printf("%s", rd.aio_buf);
     free((void *)rd.aio_buf);
     close(fd);
@@ -130,7 +131,7 @@ int
 read_test(const char *filename)
 {
     struct aiocb rd;
-    int          fd, ret, counter;
+    int fd, ret, counter;
     fd = open(filename, O_RDONLY);
     assert(fd > 0);
 
@@ -160,9 +161,9 @@ int
 write_test(const char *filename)
 {
     struct aiocb wr;
-    int          ret, fd, counter;
-    char         str[] = "This is a test txt.\n";
-    fd                 = open(filename, O_CREAT | O_WRONLY | O_APPEND, FILE_MODE);
+    int ret, fd, counter;
+    char str[] = "This is a test txt.\n";
+    fd         = open(filename, O_CREAT | O_WRONLY | O_APPEND, FILE_MODE);
     assert(fd > 0);
 
     memset(&wr, 0, sizeof(wr));

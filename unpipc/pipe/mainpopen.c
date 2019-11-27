@@ -16,8 +16,8 @@ main(int argc, char *argv[])
 {
 
     size_t n;
-    char   buf[MAXLINE], command[MAXLINE];
-    FILE * fp;
+    char buf[MAXLINE], command[MAXLINE];
+    FILE *fp;
 
     if (fgets(buf, MAXLINE, stdin) < 0) {
         fprintf(stderr, "fgets failed: %s\n", strerror(errno));

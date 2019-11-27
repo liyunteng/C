@@ -26,7 +26,7 @@ parseStory(xmlDocPtr doc, xmlNodePtr cur)
 static void
 parseDoc(char *docname)
 {
-    xmlDocPtr  doc;
+    xmlDocPtr doc;
     xmlNodePtr cur;
 
     doc = xmlParseFile(docname);

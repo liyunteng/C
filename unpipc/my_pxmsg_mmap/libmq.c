@@ -34,18 +34,18 @@ struct mq_attr defattr = {0, 128, 1024, 0};
 mqd_t
 mq_open(const char *pathname, int oflag, ...)
 {
-    int                 i, fd, nonblock, created, save_errno;
-    long                msgsize, filesize, index;
-    va_list             ap;
-    mode_t              mode;
-    int8_t *            mptr;
-    struct stat         statbuf;
-    struct mq_hdr *     mqhdr;
-    struct msg_hdr *    msghdr;
-    struct mq_attr *    attr;
-    struct mq_info *    mqinfo;
+    int i, fd, nonblock, created, save_errno;
+    long msgsize, filesize, index;
+    va_list ap;
+    mode_t mode;
+    int8_t *mptr;
+    struct stat statbuf;
+    struct mq_hdr *mqhdr;
+    struct msg_hdr *msghdr;
+    struct mq_attr *attr;
+    struct mq_info *mqinfo;
     pthread_mutexattr_t mattr;
-    pthread_condattr_t  cattr;
+    pthread_condattr_t cattr;
 
     created  = 0;
     nonblock = oflag & O_NONBLOCK;
@@ -82,7 +82,8 @@ again:
         }
         /* calculate and set the file size */
         msgsize  = MSGSIZE(attr->mq_msgsize);
-        filesize = sizeof(struct mq_hdr) + (attr->mq_maxmsg * (sizeof(struct msg_hdr) + msgsize));
+        filesize = sizeof(struct mq_hdr)
+                   + (attr->mq_maxmsg * (sizeof(struct msg_hdr) + msgsize));
 
         if (lseek(fd, filesize - 1, SEEK_SET) == -1) {
             goto err;
@@ -218,8 +219,8 @@ err:
 int
 mq_close(mqd_t mqd)
 {
-    long            msgsize, filesize;
-    struct mq_hdr * mqhdr;
+    long msgsize, filesize;
+    struct mq_hdr *mqhdr;
     struct mq_attr *attr;
     struct mq_info *mqinfo;
 
@@ -238,7 +239,8 @@ mq_close(mqd_t mqd)
     }
 
     msgsize  = MSGSIZE(attr->mq_msgsize);
-    filesize = sizeof(struct mq_hdr) + (attr->mq_maxmsg * (sizeof(struct msg_hdr) + msgsize));
+    filesize = sizeof(struct mq_hdr)
+               + (attr->mq_maxmsg * (sizeof(struct msg_hdr) + msgsize));
 
     if (munmap(mqinfo->mqi_hdr, filesize) == -1) {
         return (-1);
@@ -252,8 +254,8 @@ mq_close(mqd_t mqd)
 int
 mq_getattr(mqd_t mqd, struct mq_attr *mqstat)
 {
-    int             n;
-    struct mq_hdr * mqhdr;
+    int n;
+    struct mq_hdr *mqhdr;
     struct mq_attr *attr;
     struct mq_info *mqinfo;
 
@@ -282,9 +284,9 @@ mq_getattr(mqd_t mqd, struct mq_attr *mqstat)
 int
 mq_notify(mqd_t mqd, const struct sigevent *notification)
 {
-    int             n;
-    pid_t           pid;
-    struct mq_hdr * mqhdr;
+    int n;
+    pid_t pid;
+    struct mq_hdr *mqhdr;
     struct mq_info *mqinfo;
 
     mqinfo = mqd;
@@ -324,11 +326,11 @@ err:
 ssize_t
 mq_receive(mqd_t mqd, char *ptr, size_t maxlen, unsigned int *prio)
 {
-    int             n;
-    long            index;
-    int8_t *        mptr;
-    ssize_t         len;
-    struct mq_hdr * mqhdr;
+    int n;
+    long index;
+    int8_t *mptr;
+    ssize_t len;
+    struct mq_hdr *mqhdr;
     struct mq_attr *attr;
     struct msg_hdr *msghdr;
     struct mq_info *mqinfo;
@@ -392,14 +394,14 @@ err:
 int
 mq_send(mqd_t mqd, const char *ptr, size_t len, unsigned int prio)
 {
-    int              n;
-    long             index, freeindex;
-    int8_t *         mptr;
+    int n;
+    long index, freeindex;
+    int8_t *mptr;
     struct sigevent *sigev;
-    struct mq_hdr *  mqhdr;
-    struct mq_attr * attr;
-    struct msg_hdr * msghdr, *nmsghdr, *pmsghdr;
-    struct mq_info * mqinfo;
+    struct mq_hdr *mqhdr;
+    struct mq_attr *attr;
+    struct msg_hdr *msghdr, *nmsghdr, *pmsghdr;
+    struct mq_info *mqinfo;
 
     mqinfo = mqd;
     if (mqinfo->mqi_magic != MQI_MAGIC) {
@@ -425,7 +427,8 @@ mq_send(mqd_t mqd, const char *ptr, size_t len, unsigned int prio)
         if (mqhdr->mqh_pid != 0 && mqhdr->mqh_nwait == 0) {
             sigev = &mqhdr->mqh_event;
             if (sigev->sigev_notify == SIGEV_SIGNAL) {
-                sigqueue(mqhdr->mqh_pid, sigev->sigev_signo, sigev->sigev_value);
+                sigqueue(mqhdr->mqh_pid, sigev->sigev_signo,
+                         sigev->sigev_value);
             }
             mqhdr->mqh_pid = 0;
         }
@@ -484,8 +487,8 @@ err:
 int
 mq_setattr(mqd_t mqd, const struct mq_attr *mqstat, struct mq_attr *omqstat)
 {
-    int             n;
-    struct mq_hdr * mqhdr;
+    int n;
+    struct mq_hdr *mqhdr;
     struct mq_attr *attr;
     struct mq_info *mqinfo;
 

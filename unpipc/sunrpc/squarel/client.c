@@ -27,9 +27,9 @@
 int
 main(int argc, char *argv[])
 {
-    CLIENT *    cl;
-    square_in   in;
-    square_out  out;
+    CLIENT *cl;
+    square_in in;
+    square_out out;
     square_out *outp;
 
     if (argc != 3)

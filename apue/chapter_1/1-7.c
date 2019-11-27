@@ -15,5 +15,6 @@ main(void)
 }
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -o 1-7 1-7.c -g -I../include -L../lib -lourhdr" */
+/* compile-command: "clang -Wall -o 1-7 1-7.c -g -I../include -L../lib -lourhdr"
+ */
 /* End: */

@@ -17,10 +17,10 @@
 int
 system_1(const char *cmdstring)
 {
-    pid_t            pid;
-    int              status;
+    pid_t pid;
+    int status;
     struct sigaction ignore, saveintr, savequit;
-    sigset_t         chldmask, savemask;
+    sigset_t chldmask, savemask;
 
     if (cmdstring == NULL)
         return 1;

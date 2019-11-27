@@ -16,7 +16,7 @@ volatile sig_atomic_t quitflag;
 int
 main(void)
 {
-    void     sig_int(int);
+    void sig_int(int);
     sigset_t newmask, oldmask, zeromask;
 
     if (signal(SIGINT, sig_int) == SIG_ERR)

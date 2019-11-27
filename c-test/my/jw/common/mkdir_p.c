@@ -17,7 +17,7 @@
 int
 mkdir_p(const char *path)
 {
-    int  n;
+    int n;
     char buf[PATH_MAX], *p = buf;
 
     assert(path);

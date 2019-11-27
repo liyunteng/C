@@ -14,7 +14,7 @@
 
 #define ERROR_QUIT() kill(getpid(), SIGUSR1)
 
-int                       sock_fd       = -1;
+int sock_fd                             = -1;
 static unsigned long long error_counter = 0;
 
 void
@@ -48,7 +48,7 @@ log_daemon()
 {
     /* for socket */
     struct sockaddr_un local_addr;
-    size_t             addr_len;
+    size_t addr_len;
 
     /* for db */
     sqlite3 *db_handle;
@@ -96,10 +96,10 @@ log_daemon()
     for (;;) {
 #define MSG_MAX 900
 #define CMD_MAX (MSG_MAX + 100)
-        ssize_t        n;
-        char           mesg[MSG_MAX], sql_cmd[CMD_MAX];
+        ssize_t n;
+        char mesg[MSG_MAX], sql_cmd[CMD_MAX];
         msg_request_t *msg;
-        char *         errmsg;
+        char *errmsg;
 
         n = recvfrom(sock_fd, mesg, MSG_MAX, 0, NULL, 0);
         if (n <= 0) {
@@ -123,9 +123,11 @@ log_daemon()
             sprintf(msg->user, "INTERNAL");
         sprintf(sql_cmd,
                 "INSERT INTO %s(date, user, module, category, event, content) "
-                "VALUES(datetime('now', 'localtime'), '%s', '%s', '%s', '%s' , '%s');",
-                LOG_TABLE, msg->user, LogModuleStr(msg->module), LogCategorystr(msg->category),
-                LogEventStr(mgs->event), msg->content);
+                "VALUES(datetime('now', 'localtime'), '%s', '%s', '%s', '%s' , "
+                "'%s');",
+                LOG_TABLE, msg->user, LogModuleStr(msg->module),
+                LogCategorystr(msg->category), LogEventStr(mgs->event),
+                msg->content);
         if (SQLITE_OK != sqlite3_exec(db_handle, sql_cmd, NULL, NULL, &errmsg))
             syslog(LOG_ERR, "insert error: %s\n", errmsg);
     }

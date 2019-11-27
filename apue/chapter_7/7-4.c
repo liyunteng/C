@@ -9,9 +9,9 @@
 
 #define TOK_ADD 5
 jmp_buf jmpbuffer;
-void    do_line(char *);
-void    cmd_add(void);
-int     get_token(void);
+void do_line(char *);
+void cmd_add(void);
+int get_token(void);
 
 int
 main(void)

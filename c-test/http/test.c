@@ -42,14 +42,14 @@
 int
 main(void)
 {
-    int                sockfd, ret, i, h;
+    int sockfd, ret, i, h;
     struct sockaddr_in servaddr;
-    char               str1[4096], buf[BUFSIZE];
-    fd_set             t_set1;
-    struct timeval     tv;
-    struct hostent *   host;
-    struct in_addr     addr;
-    char *             ip = NULL;
+    char str1[4096], buf[BUFSIZE];
+    fd_set t_set1;
+    struct timeval tv;
+    struct hostent *host;
+    struct in_addr addr;
+    char *ip = NULL;
 
     if ((host = gethostbyname("www.streamocean.com"))) {
         char *p = host->h_addr_list[0];
@@ -81,7 +81,9 @@ main(void)
 
     //发送数据
     memset(str1, 0, 4096);
-    strcat(str1, "GET /SOTP/index.php/Interface/estimate/estimate/dev/dtest20150326-3/user/bjdx_2 "
+    strcat(str1, "GET "
+                 "/SOTP/index.php/Interface/estimate/estimate/dev/"
+                 "dtest20150326-3/user/bjdx_2 "
                  "HTTP/1.1\r\n");
     /* strcat(str1, "GET
      * /SOTP/index.php/Interface/content/content/dev/dtest20150326-3/user/bjdx_2/vsp/http%3A%2F%2F172.16.3.121%3A8080%2F/
@@ -97,7 +99,8 @@ main(void)
 
     ret = write(sockfd, str1, strlen(str1));
     if (ret < 0) {
-        printf("发送失败！错误代码是%d，错误信息是'%s'\n", errno, strerror(errno));
+        printf("发送失败！错误代码是%d，错误信息是'%s'\n", errno,
+               strerror(errno));
         exit(0);
     } else {
         printf("消息发送成功，共发送了%d个字节！\n\n", ret);

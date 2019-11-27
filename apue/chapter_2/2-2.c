@@ -45,9 +45,9 @@ path_alloc(int *size)
 int
 main(void)
 {
-    char *p    = NULL;
-    int   size = 0;
-    p          = path_alloc(&size);
+    char *p  = NULL;
+    int size = 0;
+    p        = path_alloc(&size);
     printf("pathmax: %d\n", size);
     return 0;
 }

@@ -16,14 +16,15 @@ kdb_hello_cmd(int argc, const char **argv)
 }
 
 static int __init
-           kdb_hello_cmd_init(void)
+kdb_hello_cmd_init(void)
 {
-    kdb_register("hello", kdb_hello_cmd, "[string]", "Say Hello World or Hello [string]", 0);
+    kdb_register("hello", kdb_hello_cmd, "[string]",
+                 "Say Hello World or Hello [string]", 0);
     return 0;
 }
 
 static void __exit
-            kdb_hello_cmd_exit(void)
+kdb_hello_cmd_exit(void)
 {
     kdb_unregister("hello");
 }

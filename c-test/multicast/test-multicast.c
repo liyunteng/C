@@ -37,8 +37,8 @@ main(int argc, char *argv[])
     mcast_addr.sin_port        = htons(MCAST_PORT);
 
     while (1) {
-        int n = sendto(s, MCAST_DATA, sizeof(MCAST_DATA), 0, (struct sockaddr *)&mcast_addr,
-                       sizeof(mcast_addr));
+        int n = sendto(s, MCAST_DATA, sizeof(MCAST_DATA), 0,
+                       (struct sockaddr *)&mcast_addr, sizeof(mcast_addr));
 
         if (n < 0) {
             perror("sendto()");

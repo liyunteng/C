@@ -14,8 +14,8 @@
 int
 main(int argc, char *argv[])
 {
-    int            i;
-    struct stat    statbuf;
+    int i;
+    struct stat statbuf;
     struct utimbuf timebuf;
 
     for (i = 1; i < argc; i++) {

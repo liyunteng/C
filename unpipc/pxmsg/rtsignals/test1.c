@@ -25,14 +25,14 @@
 #include <signal.h>
 
 static void sig_rt(int, siginfo_t *, void *);
-int         signal_rt(int, void (*)(int, siginfo_t *, void *), sigset_t *);
+int signal_rt(int, void (*)(int, siginfo_t *, void *), sigset_t *);
 
 int
 main(int argc, char *argv[])
 {
-    int          i, j;
-    pid_t        pid;
-    sigset_t     newset;
+    int i, j;
+    pid_t pid;
+    sigset_t newset;
     union sigval val;
 
     printf("SIGRTMIN = %d, SIGRTMAX = %d\n", (int)SIGRTMIN, (int)SIGRTMAX);

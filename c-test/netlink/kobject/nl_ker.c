@@ -18,7 +18,7 @@ static int
 init_hotplug_sock()
 {
     const int buffersize = 1024;
-    int       ret;
+    int ret;
 
     struct sockaddr_nl snl;
     bzero(&snl, sizeof(struct sockaddr_nl));

@@ -26,8 +26,8 @@ msg_recv(int fd, struct msg *mptr)
 void
 client(int readfd, int writefd)
 {
-    size_t     len;
-    ssize_t    n;
+    size_t len;
+    ssize_t n;
     struct msg msg;
 
     if (fgets(msg.msg_data, MSGDATA, stdin) < 0)
@@ -53,9 +53,9 @@ client(int readfd, int writefd)
 void
 server(int readfd, int writefd)
 {
-    int        fd;
-    ssize_t    n;
-    size_t     times;
+    int fd;
+    ssize_t n;
+    size_t times;
     struct msg msg;
 
     if ((n = msg_recv(readfd, &msg)) == 0) {
@@ -66,7 +66,8 @@ server(int readfd, int writefd)
     msg.msg_data[n] = '\0';
 
     if ((fd = open(msg.msg_data, O_RDONLY)) < 0) {
-        snprintf(msg.msg_data + n, sizeof(msg.msg_data) - n, ":can't open, %s\n", strerror(errno));
+        snprintf(msg.msg_data + n, sizeof(msg.msg_data) - n,
+                 ":can't open, %s\n", strerror(errno));
         msg.msg_len  = strlen(msg.msg_data);
         msg.msg_type = 1;
         if (msg_send(writefd, &msg) < 0) {

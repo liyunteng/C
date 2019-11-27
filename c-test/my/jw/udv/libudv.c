@@ -44,12 +44,12 @@ _create_disk_label(PedDevice *dev, PedDiskType *type)
 udv_info_t *
 get_udv_by_name(const char *name)
 {
-    PedDevice *   dev = NULL;
-    PedDisk *     disk;
+    PedDevice *dev = NULL;
+    PedDisk *disk;
     PedPartition *part;
-    PedDiskType * type = NULL;
+    PedDiskType *type = NULL;
 
-    const har *       part_name;
+    const har *part_name;
     static udv_info_t udv_info;
 
     ped_device_probe_all();
@@ -105,10 +105,10 @@ get_udv_by_name(const char *name)
 int
 udv_force_init_vg(const char *vg_dev)
 {
-    PedDevice *    device = NULL;
-    PedDisk *      disk   = NULL;
+    PedDevice *device = NULL;
+    PedDisk *disk     = NULL;
     PedConstraint *constraint;
-    ssize_t        ret_code = E_OK;
+    ssize_t ret_code = E_OK;
 
     /* 参数检查 */
     if (!vg_dev)
@@ -141,13 +141,14 @@ error:
 }
 
 int
-udv_create(const char *vg_dev, const char *name, uint64_t start, uint64_t length)
+udv_create(const char *vg_dev, const char *name, uint64_t start,
+           uint64_t length)
 {
-    PedDevice *    device = NULL;
-    PedDisk *      disk   = NULL;
-    PedPartition * part;
+    PedDevice *device = NULL;
+    PedDisk *disk     = NULL;
+    PedPartition *part;
     PedConstraint *constraint;
-    PedDiskType *  type = NULL;
+    PedDiskType *type = NULL;
 
     ssize_t ret_code = E_OK;
 
@@ -228,7 +229,8 @@ udv_create(const char *vg_dev, const char *name, uint64_t start, uint64_t length
                     fragment = part->geom.end - end;
                     if (fragment >= 8 && fragment < MIN_PART_SIZE)
                         end += _fix_4k(fragment);
-                    part = ped_partition_new(disk, PED_PARTITION_NORMAL, NULL, start, end);
+                    part = ped_partition_new(disk, PED_PARTITION_NORMAL, NULL,
+                                             start, end);
                     ped_partition_set_name(part, name);
                     ped_disk_add_partition(disk, part, constraint);
                     ped_disk_commit(disk);
@@ -250,7 +252,7 @@ void
 free_udv_list(struct list *list)
 {
     struct list *n, *nt;
-    udv_info_t * elem;
+    udv_info_t *elem;
 
     if (!list_empty(list)) {
         list_iterate_safe(n, nt, list)
@@ -264,12 +266,12 @@ free_udv_list(struct list *list)
 int
 udv_get_part_list(const char *vg_dev, struct list *list, int type)
 {
-    PedDevice *   device = NULL;
-    PedDisk *     disk   = NULL;
+    PedDevice *device = NULL;
+    PedDisk *disk     = NULL;
     PedPartition *part;
 
     udv_info_t *udv_info;
-    ssize_t     ret_code = E_FMT_if;
+    ssize_t ret_code = E_FMT_if;
 
     if (!(vg_dev && list))
         return ret_code;
@@ -324,12 +326,12 @@ int
 udv_delete(const char *name)
 {
     udv_info_t *udv;
-    char        vg_dev[32];
+    char vg_dev[32];
 
-    PedDevice *   device;
-    PedDisk *     disk;
+    PedDevice *device;
+    PedDisk *disk;
     PedPartition *part;
-    ssize_t       retcode = E_OK;
+    ssize_t retcode = E_OK;
 
     /* 参数检查 */
     if (!name)
@@ -373,10 +375,10 @@ int
 udv_rename(const char *name, consta char *new_name)
 {
     udv_info_t *udv;
-    char        vg_dev[32];
+    char vg_dev[32];
 
-    PedDevice *   device = NULL;
-    PedDisk *     disk;
+    PedDevice *device = NULL;
+    PedDisk *disk;
     PedPartition *part;
 
     ssize_t ret_code = E_SYS_ERROR;

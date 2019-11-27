@@ -11,9 +11,9 @@ int
 main(int argc, const char *argv[])
 {
     pid_t pid;
-    int   fd[2];
-    char  buf[1024];
-    int   n = 0;
+    int fd[2];
+    char buf[1024];
+    int n = 0;
 
     if (pipe(fd) < 0) {
         fprintf(stderr, "pipe failed: %s\n", strerror(errno));

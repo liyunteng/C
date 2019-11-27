@@ -19,12 +19,12 @@
 
 struct mon_io {
     ev_io io;
-    int   sockfd;
+    int sockfd;
 };
 
-static void            mon_io_cb(EV_P_ ev_io *w, int r);
-static int             mon_serv_create();
-static struct mon_io   mon_io;
+static void mon_io_cb(EV_P_ ev_io *w, int r);
+static int mon_serv_create();
+static struct mon_io mon_io;
 static struct ev_loop *mon_loop = NULL;
 
 void
@@ -44,10 +44,10 @@ mon_release(int sig)
 static void
 mon_io_cb(EV_P_ ev_io *w, int r)
 {
-    ssize_t             n;
-    sys_event_t         ev;
-    sys_event_conf_t *  ec;
-    char                buff[1024];
+    ssize_t n;
+    sys_event_t ev;
+    sys_event_conf_t *ec;
+    char buff[1024];
     struct json_object *obj;
 
     struct mon_io *mi = (struct mon_io *)w;
@@ -76,8 +76,8 @@ int
 mon_serv_create()
 {
     struct sockaddr_un localaddr;
-    size_t             addr_len;
-    int                sockfd;
+    size_t addr_len;
+    int sockfd;
 
     if ((sockfd = socket(PF_UNIX, SOCK_DGRAM, 0)) < 0) {
         syslog(LOG_ERR, "fail to create local socket!\n");

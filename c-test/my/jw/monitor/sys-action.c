@@ -33,7 +33,7 @@ _action_alarm_release(sys_action_t *a)
 void
 sys_action_release()
 {
-    struct list * n, *nt;
+    struct list *n, *nt;
     sys_action_t *a;
 
     list_iterate_safe(n, nt, &_gaction_list)
@@ -77,7 +77,9 @@ _sys_action_default_alarm_add(const char *action)
             return;
         }
     }
-    syslog(LOG_NOTICE, "_sys_action_default_alarm_add('%s'): add default alarm fail", action);
+    syslog(LOG_NOTICE,
+           "_sys_action_default_alarm_add('%s'): add default alarm fail",
+           action);
 }
 
 bool
@@ -102,7 +104,7 @@ sys_action_add(const char *name)
 sys_action_t *
 sys_action_get(const char *name)
 {
-    struct list * n, *nt;
+    struct list *n, *nt;
     sys_action_t *action;
 
     list_iterate_safe(n, nt, &_gaction_list)
@@ -142,7 +144,8 @@ sys_action_alarm_add(const char *name, sys_alarm_t *alarm)
         return true;
     }
 
-    syslog(LOG_NOTICE, "sys_action_alarm_add('%s', '%s'): fail", name, alarm->name);
+    syslog(LOG_NOTICE, "sys_action_alarm_add('%s', '%s'): fail", name,
+           alarm->name);
     return false;
 }
 
@@ -150,8 +153,8 @@ sys_alarm_t *
 sys_action_alarm_get(const char *action, const char *alarm)
 {
     sys_action_t *ac;
-    sys_alarm_t * al;
-    struct list * n, *nt;
+    sys_alarm_t *al;
+    struct list *n, *nt;
 
     if ((ac = sys_action_get(action)) == NULL)
         return NULL;
@@ -163,7 +166,8 @@ sys_action_alarm_get(const char *action, const char *alarm)
             return al;
     }
 
-    syslog(LOG_NOTICE, "sys_action_alarm_get('%s', '%s'): not found", action, alarm);
+    syslog(LOG_NOTICE, "sys_action_alarm_get('%s', '%s'): not found", action,
+           alarm);
     return NULL;
 }
 
@@ -202,7 +206,7 @@ _dump_alarm(sys_action_t *action)
 void
 dump_action_alarm()
 {
-    struct list * n, *nt;
+    struct list *n, *nt;
     sys_action_t *action;
 
     printf("----------dump actions-------------\n");

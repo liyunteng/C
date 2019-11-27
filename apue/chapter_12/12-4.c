@@ -17,7 +17,7 @@ static void lockabyte(const char *, int, off_t);
 int
 main(void)
 {
-    int   fd;
+    int fd;
     pid_t pid;
 
     if ((fd = creat("templock", FILE_MODE)) < 0)

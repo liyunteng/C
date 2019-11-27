@@ -19,10 +19,10 @@
 static ev_io us_server_io;
 
 struct us_session {
-    ev_io    us_io;
+    ev_io us_io;
     ev_timer us_timer;
-    char     buf[MAX_BUF];
-    int      buf_len;
+    char buf[MAX_BUF];
+    int buf_len;
 };
 
 static inline int
@@ -45,8 +45,8 @@ us_sess_release(struct us_session *sess)
 static int
 us_parse(struct us_session *sess)
 {
-    int        i;
-    int        eol = 0;
+    int i;
+    int eol = 0;
     extern int us_do_cmd(int fd, char *buf);
 
     for (i = sess->buf_len; i--;) {
@@ -77,8 +77,8 @@ us_sess_on_io(EV_P_ ev_io *w, int r)
 {
     struct us_session *sess = container_of(w, struct us_session, us_io);
 
-    int   ret;
-    int   l;
+    int ret;
+    int l;
     char *buf = &sess->buf[sess->buf_len];
 
     l   = sizeof(sess->buf) - sess->buf_len;
@@ -126,8 +126,8 @@ us_sess_new(int fd)
 static int
 new_server(int port)
 {
-    int                fd;
-    int                opt = 1;
+    int fd;
+    int opt = 1;
     struct sockaddr_in addr;
 
     fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -158,7 +158,7 @@ new_server(int port)
 static void
 us_server_io_cb(EV_P_ ev_io *w, int r)
 {
-    int                sock;
+    int sock;
     struct us_session *sess;
 
     sock = accept(w->fd, NULL, NULL);

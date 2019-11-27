@@ -42,7 +42,7 @@ main(void)
 
     while (1) {
         zmq_msg_t message;
-        int       more;
+        int more;
 
         zmq_poll(items, 2, -1);
         if (items[0].revents & ZMQ_POLLIN) {

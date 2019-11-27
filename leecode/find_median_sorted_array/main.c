@@ -12,9 +12,9 @@ double
 findMedianSortedArray(int *nums1, int nums1Size, int *nums2, int nums2Size)
 {
     int *m = (int *)malloc(sizeof(int) * (nums1Size + nums2Size));
-    int  i = 0, j = 0;
-    int  x     = 0;
-    int  total = nums1Size + nums2Size;
+    int i = 0, j = 0;
+    int x     = 0;
+    int total = nums1Size + nums2Size;
     while (i < nums1Size && j < nums2Size) {
         m[x++] = nums1[i] > nums2[j] ? nums2[j++] : nums1[i++];
     }

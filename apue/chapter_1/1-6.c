@@ -18,5 +18,6 @@ main(int argc, char *argv[])
 }
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -o 1-6 1-6.c -g -I../include -L../lib -lourhdr" */
+/* compile-command: "clang -Wall -o 1-6 1-6.c -g -I../include -L../lib -lourhdr"
+ */
 /* End: */

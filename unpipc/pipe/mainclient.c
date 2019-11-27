@@ -10,11 +10,11 @@
 int
 main(int argc, char *argv[])
 {
-    int     readfifo, writefifo;
-    size_t  len;
+    int readfifo, writefifo;
+    size_t len;
     ssize_t n;
-    char *  ptr, fifoname[MAXLINE], buf[MAXLINE];
-    pid_t   pid;
+    char *ptr, fifoname[MAXLINE], buf[MAXLINE];
+    pid_t pid;
 
     pid = getpid();
     snprintf(fifoname, sizeof(fifoname), "/tmp/fifo.%ld", (long)pid);

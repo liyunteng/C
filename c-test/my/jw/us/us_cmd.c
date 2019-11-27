@@ -110,8 +110,8 @@ make_argv(char *s, char *argv[], int argvsz)
 int
 us_do_cmd(int fd, char *buf)
 {
-    int             argc;
-    char *          argv[MAX_ARGS + 1];
+    int argc;
+    char *argv[MAX_ARGS + 1];
     struct cmd_tbl *cmd;
 
     argc = make_argv(buf, argv, ARRAY_SIZE(argv));

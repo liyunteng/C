@@ -26,17 +26,19 @@ bool
 log_db_exist()
 {
     sqlite3 *tmp_handle;
-    char *   errmsg;
-    int      col, row;
-    char **  result;
+    char *errmsg;
+    int col, row;
+    char **result;
 
     if (access(LOG_FILE, F_OK))
         return false;
     if (access(LOG_FILE, R_OK | W_OK))
         return false;
-    if (SQLITE_OK != sqlite3_open_v2(LOG_FILE, &tmp_handle, SQLITE_OPEN_READONLY, NULL))
+    if (SQLITE_OK
+        != sqlite3_open_v2(LOG_FILE, &tmp_handle, SQLITE_OPEN_READONLY, NULL))
         return false;
-    if (sqlite3_get_table(tmp_handle, "select count(*) from jwlog", &result, &col, &row, &errmsg))
+    if (sqlite3_get_table(tmp_handle, "select count(*) from jwlog", &result,
+                          &col, &row, &errmsg))
         return false;
     sqlite3_free_table(result);
     sqlite3_close(tmp_handle);
@@ -47,10 +49,10 @@ bool
 log_db_create()
 {
     sqlite3 *tmp_handle;
-    char *   errmsg;
-    char     sql_cmd[1024];
-    bool     retcode = false;
-    char     _conf_dir[PATH_MAX], *p = NULL;
+    char *errmsg;
+    char sql_cmd[1024];
+    bool retcode = false;
+    char _conf_dir[PATH_MAX], *p = NULL;
 
     strcpy(_conf_dir, LOG_FILE);
     if (!(p = strchr(_conf_dir, '/')))
@@ -62,8 +64,10 @@ log_db_create()
     if (SQLITE_OK != sqlite3_open(LOG_FILE, &tmp_handle))
         return false;
     sprintf(sql_cmd,
-            "CREATE TABLE %s(ID integer primary key autoincrement, date datetime, user char(32) "
-            "null, module char(20), category char(20), event char(20), content varchar(2048));",
+            "CREATE TABLE %s(ID integer primary key autoincrement, date "
+            "datetime, user char(32) "
+            "null, module char(20), category char(20), event char(20), content "
+            "varchar(2048));",
             LOG_TABLE);
     if (SQLITE_OK == sqlite3_exec(tmp_handle, sql_cmd, NULL, NULL, &errmsg))
         retcode = true;

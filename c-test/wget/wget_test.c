@@ -18,7 +18,9 @@ thread(void *arg)
         perror("vfork error.");
         return (void *)-1;
     } else if (pid == 0) {
-        if (execl("/usr/bin/wget", "wget", "-T", "10", "-t", "2", "api.twilio.com", NULL) == -1) {
+        if (execl("/usr/bin/wget", "wget", "-T", "10", "-t", "2",
+                  "api.twilio.com", NULL)
+            == -1) {
             perror("execl error.\n");
             return (void *)-1;
         }
@@ -35,7 +37,7 @@ int
 main(int argc, char *argv[])
 {
     pthread_t tid;
-    int       i, ret;
+    int i, ret;
 
     for (i = 0; i < 5; i++) {
         if ((ret = pthread_create(&tid, NULL, thread, NULL)) < 0) {

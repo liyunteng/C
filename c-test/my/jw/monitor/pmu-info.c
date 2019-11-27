@@ -16,10 +16,10 @@
 
 #define VOUT_EXP (-9)
 
-#define CHECK_FAULT(sts, bit, set) \
-    if ((sts) & (bit))             \
-        (set) = 1;                 \
-    else                           \
+#define CHECK_FAULT(sts, bit, set)                                             \
+    if ((sts) & (bit))                                                         \
+        (set) = 1;                                                             \
+    else                                                                       \
         (set) = 0;
 
 enum {
@@ -53,8 +53,8 @@ extern int global_case_temp;
 int
 pmu_get_info(const char *dev, struct pmu_info *info1, int check_temp)
 {
-    FILE *        fp;
-    char          line[128];
+    FILE *fp;
+    char line[128];
     unsigned long sts, vin, vout, fan, temp_amb, temp_hs;
 
     fp = fopen(dev, "r");
@@ -65,7 +65,8 @@ pmu_get_info(const char *dev, struct pmu_info *info1, int check_temp)
     fread(line, sizeof(line), 1, fp);
     fclose(fp);
 
-    sscanf(line, "%lx %lx %lx %lx %lx %lx", &sts, &vin, &vout, &fan, &temp_amb, &temp_hs);
+    sscanf(line, "%lx %lx %lx %lx %lx %lx", &sts, &vin, &vout, &fan, &temp_amb,
+           &temp_hs);
     bzero(info1, sizeof(struct pmu_info));
     CHECK_FAULT(sts, STS_TEMP_FAULT, info1->is_temp_fault);
     CHECK_FAULT(sts, STS_VIN_FAULT, info1->is_vin_fault);
@@ -85,8 +86,9 @@ pmu_get_info(const char *dev, struct pmu_info *info1, int check_temp)
 #ifdef _DEBUG
     printf("power-module%c, sts: 0x%x, vin: %.1f(0x%x), vout: %.1f(0x%x),"
            "fan_speed: %.1f(0x%x), temp_amb: %.1f(0x%x), temp_hs: %.1f(0x%x)",
-           dev[strlen(dev) - 1], sts, info1->vin, vin, info1->vout, vout, info1->fan_speed, fan,
-           info1->temp, temp_amb, pmu_linear_to_real(temp_hs), temp_hs);
+           dev[strlen(dev) - 1], sts, info1->vin, vin, info1->vout, vout,
+           info1->fan_speed, fan, info1->temp, temp_amb,
+           pmu_linear_to_real(temp_hs), temp_hs);
 #endif
 
 #define POWER_TEMP_HI 50
@@ -94,9 +96,9 @@ pmu_get_info(const char *dev, struct pmu_info *info1, int check_temp)
 #define POWER_TEMP_LO 40
 #define POWER_FAN_LO 8000
 
-    char buf[64]       = {'\0'};
-    int  power_temp_mi = POWER_TEMP_MI;
-    int  power_temp_lo = POWER_TEMP_LO;
+    char buf[64]      = {'\0'};
+    int power_temp_mi = POWER_TEMP_MI;
+    int power_temp_lo = POWER_TEMP_LO;
 
     if (!check_temp)
         return 0;

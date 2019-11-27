@@ -37,7 +37,7 @@ sleep2(unsigned int nsecs)
 static void
 sig_int(int signo)
 {
-    int          i;
+    int i;
     volatile int j;
 
     printf("\n sig_int stating\n");

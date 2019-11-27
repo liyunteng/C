@@ -19,7 +19,7 @@ main(int argc, char *argv[])
         ip = argv[1];
     }
 
-    char          c;
+    char c;
     unsigned long val  = 0;
     unsigned long addr = 0x0;
     unsigned long base = 10;

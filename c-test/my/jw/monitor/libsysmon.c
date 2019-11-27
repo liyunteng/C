@@ -8,14 +8,15 @@
 #define SYSMON_ADDR "/root/soket/unix/test.domain"
 
 int
-sysmon_event(const char *module, const char *event, const char *param, const char *msg)
+sysmon_event(const char *module, const char *event, const char *param,
+             const char *msg)
 {
     struct sockaddr_un servaddr;
-    socklen_t          addr_len;
-    size_t             msg_len;
-    int                sockfd, ret;
-    char               msg_buf[1024];
-    json_object *      jmsg;
+    socklen_t addr_len;
+    size_t msg_len;
+    int sockfd, ret;
+    char msg_buf[1024];
+    json_object *jmsg;
 
     if ((sockfd = socket(PF_UNIX, SOCK_DGRAM, 0)) < 0) {
         return -1;

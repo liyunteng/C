@@ -4,7 +4,7 @@
 
 struct test {
     struct list list;
-    int         count;
+    int count;
 };
 struct test root;
 int
@@ -13,7 +13,7 @@ main(int argc, char *argv[])
     struct list *ptr;
     struct list *n;
     struct test *tp;
-    int          i;
+    int i;
 
     init_list(&root.list);
     for (i = 0; i < 10; i++) {

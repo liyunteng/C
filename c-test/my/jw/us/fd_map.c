@@ -12,7 +12,7 @@ static int
 sock_connect(int sock, const char *host, int port)
 {
     struct sockaddr_in addr;
-    int                ret;
+    int ret;
 
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -27,10 +27,10 @@ sock_connect(int sock, const char *host, int port)
 int
 fd_map(int out_fd, int argc, char *argv[])
 {
-    int   sock;
-    char  cmd[4096];
+    int sock;
+    char cmd[4096];
     char *p = cmd;
-    int   i;
+    int i;
 
     if (argc <= 0)
         return -1;
@@ -51,7 +51,7 @@ fd_map(int out_fd, int argc, char *argv[])
     write(sock, cmd, strlen(cmd));
 
     for (;;) {
-        int  ret;
+        int ret;
         char buf[4096];
 
         ret = read(sock, buf, sizeof(buf));

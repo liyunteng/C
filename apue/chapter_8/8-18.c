@@ -30,8 +30,8 @@ static void
 do_cmd(char *cmd)
 {
     struct tms tmsstart, tmsend;
-    clock_t    start, end;
-    int        status;
+    clock_t start, end;
+    int status;
 
     fprintf(stderr, "\ncommand: %s\n", cmd);
     if ((start = times(&tmsstart)) == -1)
@@ -57,8 +57,10 @@ pr_times(clock_t real, struct tms *tmsstart, struct tms *tmsend)
     }
 
     fprintf(stderr, "  real:  %7.2f\n", real / (double)clktck);
-    fprintf(stderr, "  user:  %7.2f\n", (tmsend->tms_utime - tmsstart->tms_utime) / (double)clktck);
-    fprintf(stderr, "  sys:   %7.f\n", (tmsend->tms_stime - tmsstart->tms_stime) / (double)clktck);
+    fprintf(stderr, "  user:  %7.2f\n",
+            (tmsend->tms_utime - tmsstart->tms_utime) / (double)clktck);
+    fprintf(stderr, "  sys:   %7.f\n",
+            (tmsend->tms_stime - tmsstart->tms_stime) / (double)clktck);
     fprintf(stderr, "  child user: %7.2f\n",
             (tmsend->tms_cutime - tmsstart->tms_cutime) / (double)clktck);
     fprintf(stderr, "  child sys:  %7.2f\n",

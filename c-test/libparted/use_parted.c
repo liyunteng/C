@@ -7,11 +7,11 @@
 int
 main(int argc, char *argv[])
 {
-    PedDevice *    device = NULL;
-    PedDisk *      disk   = NULL;
-    PedPartition * part;
+    PedDevice *device = NULL;
+    PedDisk *disk     = NULL;
+    PedPartition *part;
     PedConstraint *constraint = NULL;
-    PedDiskType *  type       = NULL;
+    PedDiskType *type         = NULL;
 
     device = ped_device_get("/dev/sda");
     if (!device) {
@@ -47,14 +47,17 @@ main(int argc, char *argv[])
             if (part->geom.end >= end && part->geom.start <= start) {
 
                 part = ped_partition_new(disk, PED_PARTITION_LOGICAL,
-                                         ped_file_system_type_get("ext2"), start, end);
+                                         ped_file_system_type_get("ext2"),
+                                         start, end);
                 if (!part) {
                     printf("create part failed.\n");
                     ped_device_destroy(device);
                     return -1;
                 }
-                //                              ped_partition_set_name(part, "test");
-                //                              ped_disk_add_partition(disk,  part, constraint);
+                //                              ped_partition_set_name(part,
+                //                              "test");
+                //                              ped_disk_add_partition(disk,
+                //                              part, constraint);
                 ped_disk_commit(disk);
                 ped_disk_destroy(disk);
                 ped_device_destroy(device);

@@ -40,8 +40,8 @@ const char *
 __read_file_line(const char *file)
 {
     static char line[1024];
-    char *      p;
-    int         fd;
+    char *p;
+    int fd;
 
     line[0] = '\0';
     if ((fd = open(file, O_RDONLY)) > 0) {
@@ -151,10 +151,13 @@ capture_cpu_fan(char *msg)
 int
 _power_check(int module_no, struct pmu_info *info, char *msg)
 {
-    if (info->is_vin_fault || info->is_vout_fault || info->is_temp_fault || info->is_fan_fault) {
+    if (info->is_vin_fault || info->is_vout_fault || info->is_temp_fault
+        || info->is_fan_fault) {
         sprintf(msg, "%s电源模块%d%s%s%s%s异常", msg, module_no,
-                info->is_vin_fault ? "输入电压" : "", info->is_vout_fault ? "输出电压" : "",
-                info->is_fan_fault ? "风扇" : "", info->is_temp_fault ? "温度" : "");
+                info->is_vin_fault ? "输入电压" : "",
+                info->is_vout_fault ? "输出电压" : "",
+                info->is_fan_fault ? "风扇" : "",
+                info->is_temp_fault ? "温度" : "");
         return -1;
     } else
         return 0;
@@ -165,10 +168,10 @@ _power_check(int module_no, struct pmu_info *info, char *msg)
 int
 capture_power(char *msg)
 {
-    int             fail_cnt = 0;
+    int fail_cnt = 0;
     struct pmu_info info;
-    int             check_temp = 0;
-    static time_t   last_time  = 0;
+    int check_temp          = 0;
+    static time_t last_time = 0;
 
     if (!msg)
         return VAL_ERROR;
@@ -236,7 +239,7 @@ sys_capture_init()
 void
 sys_capture_release()
 {
-    struct list *  n, *nt;
+    struct list *n, *nt;
     sys_capture_t *c;
 
     list_iterate_safe(n, nt, &_g_capture)

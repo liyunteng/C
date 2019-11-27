@@ -9,7 +9,7 @@
 #include <stdarg.h>
 
 static void err_doit(int, const char *, va_list);
-char *      pname = NULL;
+char *pname = NULL;
 
 void
 err_ret(const char *fmt, ...)
@@ -70,7 +70,7 @@ err_quit(const char *fmt, ...)
 static void
 err_doit(int errnoflag, const char *fmt, va_list ap)
 {
-    int  errno_save;
+    int errno_save;
     char buf[MAXLINE];
 
     errno_save = errno;

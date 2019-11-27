@@ -8,7 +8,7 @@
 static char *
 outstr(const char *str, unsigned start, unsigned end)
 {
-    unsigned    n = end - start;
+    unsigned n = end - start;
     static char stbuf[256];
     strncpy(stbuf, str + start, n);
     stbuf[n] = 0;
@@ -18,12 +18,12 @@ outstr(const char *str, unsigned start, unsigned end)
 int
 main(int argc, char *argv[])
 {
-    int          x, z, lno = 0;
-    char         ebuf[128], lbuf[256];
-    regex_t      reg;
-    regmatch_t   pm[10];
+    int x, z, lno = 0;
+    char ebuf[128], lbuf[256];
+    regex_t reg;
+    regmatch_t pm[10];
     const size_t nmatch = 10;
-    FILE *       fp;
+    FILE *fp;
 
     z = regcomp(&reg, REG, REG_EXTENDED);
     if (z != 0) {
@@ -49,7 +49,8 @@ main(int argc, char *argv[])
 
             printf(" %d : %s\n", lno, lbuf);
             for (x = 0; x < nmatch && pm[x].rm_so != -1; x++) {
-                printf("  $%d='%s'\n", x, outstr(lbuf, pm[x].rm_so, pm[x].rm_eo));
+                printf("  $%d='%s'\n", x,
+                       outstr(lbuf, pm[x].rm_so, pm[x].rm_eo));
             }
         }
     }

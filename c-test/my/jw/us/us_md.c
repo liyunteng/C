@@ -12,13 +12,13 @@
 #include "us_mon.h"
 
 struct us_disk {
-    int              ref;
-    int              slot;
-    int              is_exist : 1;
-    int              is_raid : 1;
-    char             dev_node[64];
+    int ref;
+    int slot;
+    int is_exist : 1;
+    int is_raid : 1;
+    char dev_node[64];
     struct disk_info di;
-    char             raid_uuid[64];
+    char raid_uuid[64];
 };
 
 struct us_disk_pool {
@@ -60,7 +60,8 @@ dump_sd(struct us_disk *disk)
     if (!disk->is_exist)
         return;
     di = &disk->di;
-    printf("	%u - %s - %llu\n", disk->slot, disk->dev_node, (unsigned long long)disk->di.size);
+    printf("	%u - %s - %llu\n", disk->slot, disk->dev_node,
+           (unsigned long long)disk->di.size);
 
     printf("	Model: [%s]\n", di->model);
     printf("	Serial: [%s]\n", di->serial);
@@ -70,9 +71,13 @@ dump_sd(struct us_disk *disk)
 
         printf("	S.M.A.R.T:\n");
         printf("	Status: %s\n",
-               di->si.health_good ? (di->si.bad_sectors ? "Bad Sectors" : "Good") : "BAD");
-        printf("	Bad Sectors: %llu\n", (unsigned long long)di->si.bad_sectors);
-        printf("	Power on hours: %llu\n", (unsigned long long)(di->si.power_on / 1000 / 3600));
+               di->si.health_good ?
+                   (di->si.bad_sectors ? "Bad Sectors" : "Good") :
+                   "BAD");
+        printf("	Bad Sectors: %llu\n",
+               (unsigned long long)di->si.bad_sectors);
+        printf("	Power on hours: %llu\n",
+               (unsigned long long)(di->si.power_on / 1000 / 3600));
         printf("	Temperatur: %.1f C\n", ((double)di->si.temperature) / 1000);
     }
 
@@ -118,7 +123,8 @@ do_update_disk(struct us_disk *disk, const char *dev)
     if (disk_get_info(dev, &disk->di) < 0) {
         clog(LOG_ERR, "%s: get disk info failed.\n", __func__);
     }
-    if (disk_get_raid_info(dev, &disk->raid_uuid[0], sizeof(disk->raid_uuid)) == 0) {
+    if (disk_get_raid_info(dev, &disk->raid_uuid[0], sizeof(disk->raid_uuid))
+        == 0) {
         disk->is_raid = 1;
     } else {
         disk->is_raid = 0;
@@ -129,7 +135,7 @@ do_update_disk(struct us_disk *disk, const char *dev)
 static void
 update_disk(struct us_disk_pool *dp, const char *dev)
 {
-    int             slot = find_disk(dp, dev);
+    int slot = find_disk(dp, dev);
     struct us_disk *disk;
 
     if (slot < 0) {
@@ -144,10 +150,10 @@ update_disk(struct us_disk_pool *dp, const char *dev)
 static void
 add_disk(struct us_disk_pool *dp, const char *dev)
 {
-    int             slot;
+    int slot;
     struct us_disk *disk;
-    size_t          n;
-    extern int      disk_get_size(const char *dev, uint64_t *sz);
+    size_t n;
+    extern int disk_get_size(const char *dev, uint64_t *sz);
 
     slot = find_free_slot(dp);
     if (slot < 0) {
@@ -168,7 +174,7 @@ add_disk(struct us_disk_pool *dp, const char *dev)
 static vodi
 remove_disk(struct us_disk_pool *dp, const char *dev)
 {
-    int             slot = find_disk(dp, dev);
+    int slot = find_disk(dp, dev);
     struct us_disk *disk;
 
     if (slot < 0) {

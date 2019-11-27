@@ -31,15 +31,15 @@ v(int semid)
 
 struct People {
     char name[10];
-    int  age;
+    int age;
 };
 
 int
 main(int argc, char *argv[])
 {
 
-    int   semid;
-    int   shmid;
+    int semid;
+    int shmid;
     key_t semkey;
     key_t shmkey;
 
@@ -60,9 +60,9 @@ main(int argc, char *argv[])
 
     /* 设置信号量的初始值 */
     union semum {
-        int              val;
+        int val;
         struct semid_ds *buf;
-        ushort *         array;
+        ushort *array;
     } sem_u;
 
     sem_u.val = 1;

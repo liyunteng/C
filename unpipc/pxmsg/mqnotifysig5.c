@@ -26,16 +26,16 @@
 #include <signal.h>
 
 static void sig_usr1(int);
-static int  fd[2];
+static int fd[2];
 
 int
 main(int argc, char *argv[])
 {
-    int             c, n, err;
-    mqd_t           mqd;
-    void *          buf;
-    fd_set          rfd;
-    struct mq_attr  attr;
+    int c, n, err;
+    mqd_t mqd;
+    void *buf;
+    fd_set rfd;
+    struct mq_attr attr;
     struct sigevent sigev;
 
     if (argc != 2) {

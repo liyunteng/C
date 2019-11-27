@@ -18,7 +18,7 @@ xmlXPathObjectPtr
 getnodeset(xmlDocPtr doc, xmlChar *xpath)
 {
     xmlXPathContextPtr context;
-    xmlXPathObjectPtr  result;
+    xmlXPathObjectPtr result;
 
     context = xmlXPathNewContext(doc);
     result  = xmlXPathEvalExpression(xpath, context);
@@ -34,13 +34,13 @@ getnodeset(xmlDocPtr doc, xmlChar *xpath)
 int
 main(int argc, char *argv[])
 {
-    char *            docname;
-    xmlDocPtr         doc;
-    xmlChar *         xpath = ("//*");
-    xmlNodeSetPtr     nodeset;
+    char *docname;
+    xmlDocPtr doc;
+    xmlChar *xpath = ("//*");
+    xmlNodeSetPtr nodeset;
     xmlXPathObjectPtr result;
-    int               i;
-    xmlChar *         value;
+    int i;
+    xmlChar *value;
 
     if (argc <= 1) {
         printf("Usage: %s docname\n", argv[0]);
@@ -54,7 +54,8 @@ main(int argc, char *argv[])
     if (result) {
         nodeset = result->nodesetval;
         for (i = 0; i < nodeset->nodeNr; i++) {
-            value = xmlNodeListGetString(doc, nodeset->nodeTab[i]->xmlChildrenNode, 1);
+            value = xmlNodeListGetString(
+                doc, nodeset->nodeTab[i]->xmlChildrenNode, 1);
             printf("%s: %s\n", nodeset->nodeTab[i]->name, value);
             xmlFree(value);
         }

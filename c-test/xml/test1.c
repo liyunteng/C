@@ -9,12 +9,12 @@
 int
 main(int argc, char *argv[])
 {
-    xmlDocPtr  doc;
+    xmlDocPtr doc;
     xmlNodePtr node;
     xmlNodePtr cur;
-    int        ata_low, ata_up, slot;
-    char       buf[10];
-    xmlChar *  xmlatalow, *xmlataup, *xmlslot;
+    int ata_low, ata_up, slot;
+    char buf[10];
+    xmlChar *xmlatalow, *xmlataup, *xmlslot;
 
     if ((doc = xmlReadFile(XML_CONF, "UTF-8", XML_PARSE_RECOVER)) == NULL)
         return -1;
@@ -27,9 +27,12 @@ main(int argc, char *argv[])
 
     while (node) {
         if ((!xmlStrcmp(node->name, (const xmlChar *)"map"))
-            && ((xmlatalow = xmlGetProp(node, (const xmlChar *)"ata_lower")) != NULL)
-            && ((xmlataup = xmlGetProp(node, (const xmlChar *)"ata_upper")) != NULL)
-            && ((xmlslot = xmlGetProp(node, (const xmlChar *)"slot_lower")) != NULL)) {
+            && ((xmlatalow = xmlGetProp(node, (const xmlChar *)"ata_lower"))
+                != NULL)
+            && ((xmlataup = xmlGetProp(node, (const xmlChar *)"ata_upper"))
+                != NULL)
+            && ((xmlslot = xmlGetProp(node, (const xmlChar *)"slot_lower"))
+                != NULL)) {
             ata_low = atoi((const char *)xmlatalow);
             ata_up  = atoi((const char *)xmlataup);
             slot    = atoi((const char *)xmlslot);

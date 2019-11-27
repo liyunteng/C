@@ -6,11 +6,11 @@
 #include <linux/module.h>
 #include <linux/uaccess.h>
 
-static struct class * cdev_class;
+static struct class *cdev_class;
 static struct device *cdev_class_dev;
 
-static char        info_buf[4096] = {0};
-static const char *msg            = "This is a cdev.";
+static char info_buf[4096] = {0};
+static const char *msg     = "This is a cdev.";
 
 static int
 cdev_open(struct inode *inode, struct file *file)
@@ -45,7 +45,8 @@ cdev_read(struct file *file, char __user *buf, size_t count, loff_t *offset)
 }
 
 static ssize_t
-cdev_write(struct file *file, const char __user *buf, size_t count, loff_t *offset)
+cdev_write(struct file *file, const char __user *buf, size_t count,
+           loff_t *offset)
 {
     int ret = 0;
     int len = 0;
@@ -80,7 +81,8 @@ cdev_init(void)
 
     cdev_class = class_create(THIS_MODULE, "cdev");
 
-    cdev_class_dev = device_create(cdev_class, NULL, MKDEV(major, 0), NULL, "lyt");
+    cdev_class_dev =
+        device_create(cdev_class, NULL, MKDEV(major, 0), NULL, "lyt");
 
     memset(info_buf, 0, sizeof(info_buf));
     snprintf(info_buf, sizeof(info_buf), "%s", msg);

@@ -13,8 +13,8 @@
 #include <signal.h>
 #include <time.h>
 
-static void                  sig_usr1(int), sig_alrm(int);
-static sigjmp_buf            jmpbuf;
+static void sig_usr1(int), sig_alrm(int);
+static sigjmp_buf jmpbuf;
 static volatile sig_atomic_t canjump;
 
 int

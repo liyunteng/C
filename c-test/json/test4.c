@@ -20,7 +20,7 @@ create(json_object *obj, json_object *arr, char *name, int age, char *sex)
 int
 main(void)
 {
-    int          i;
+    int i;
     json_object *root = NULL, *new = NULL, *tmp = NULL;
     setlocale(LC_ALL, "");
 
@@ -38,7 +38,8 @@ main(void)
     json_object_array_put_idx(new, 1, NULL);
     printf("%s\n", json_object_to_json_string(root));
 
-    printf("%s\n", json_object_to_json_string(json_object_array_get_idx(new, 0)));
+    printf("%s\n",
+           json_object_to_json_string(json_object_array_get_idx(new, 0)));
 
     json_object_object_foreach(root, key, val)
     {
@@ -46,7 +47,8 @@ main(void)
     }
 
     for (i = 0; i < json_object_array_length(new); i++) {
-        printf("%s\n", json_object_to_json_string(json_object_array_get_idx(new, i)));
+        printf("%s\n",
+               json_object_to_json_string(json_object_array_get_idx(new, i)));
     }
     return 0;
 }

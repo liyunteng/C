@@ -14,14 +14,14 @@
 
 #define NETLINK_TEST 23
 
-struct sock *             nl_sk = NULL;
+struct sock *nl_sk = NULL;
 struct netlink_kernel_cfg nlcfg;
 
 void
 kernel_fuc(struct sk_buff *skb)
 {
     struct nlmsghdr *nlhdr;
-    int              pid;
+    int pid;
 
     nlhdr = nlmsg_hdr(skb);
     if (nlhdr->nlmsg_type == NETLINK_TEST) {
@@ -44,7 +44,7 @@ kernel_fuc(struct sk_buff *skb)
 }
 
 static int __init
-           nl_test_init(void)
+nl_test_init(void)
 {
     nlcfg.groups = 0;
     nlcfg.flags  = 0;
@@ -60,7 +60,7 @@ static int __init
 }
 
 static void __exit
-            nl_test_exit(void)
+nl_test_exit(void)
 {
     if (nl_sk != NULL) {
         netlink_kernel_release(nl_sk);

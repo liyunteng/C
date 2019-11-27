@@ -23,21 +23,20 @@
 
 #ifndef PING_H
 #define PING_H
-#include <sys/types.h>
 #include <arpa/inet.h>
 #include <signal.h>
+#include <sys/types.h>
 
-#define ICMP_ECHOREPLY  0
-#define ICMP_ECHO       8
+#define ICMP_ECHOREPLY 0
+#define ICMP_ECHO 8
 
-#define BUFSIZE         1500
-#define DEFAULT_LEN     56
+#define BUFSIZE 1500
+#define DEFAULT_LEN 56
 
-#define COUNT           10
+#define COUNT 10
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-
 
 struct icmphdr {
     u8 type;
@@ -47,13 +46,13 @@ struct icmphdr {
         struct {
             u16 id;
             u16 sequence;
-        }echo;
+        } echo;
         u32 gateway;
         struct {
             u16 unused;
             u16 mtu;
-        }frag;
-    }un;
+        } frag;
+    } un;
     u8 data[0];
 #define icmp_id un.echo.id
 #define icmp_seq un.echo.sequence
@@ -62,7 +61,7 @@ struct icmphdr {
 #define ICMP_HSIZE sizeof(struct icmphdr)
 
 struct iphdr {
-    u8 hlen:4, ver:4;
+    u8 hlen : 4, ver : 4;
     u8 tos;
     u16 tot_len;
     u16 id;

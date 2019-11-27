@@ -51,7 +51,7 @@ main(int argc, char *argv[])
         int ret = zmq_send(requester, "hello", 5, 0);
         assert(ret == 5);
 
-        char      buf[10];
+        char buf[10];
         zmq_msg_t reply;
         zmq_msg_init(&reply);
         zmq_msg_recv(&reply, requester, 0);

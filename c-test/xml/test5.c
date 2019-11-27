@@ -7,7 +7,7 @@
 xmlDocPtr
 parseDoc(char *docname, char *uri)
 {
-    xmlDocPtr  doc;
+    xmlDocPtr doc;
     xmlNodePtr cur;
     xmlNodePtr newnode;
     xmlAttrPtr newattr;
@@ -38,8 +38,8 @@ parseDoc(char *docname, char *uri)
 int
 main(int argc, char *argv[])
 {
-    char *    docname;
-    char *    uri;
+    char *docname;
+    char *uri;
     xmlDocPtr doc;
 
     if (argc <= 2) {

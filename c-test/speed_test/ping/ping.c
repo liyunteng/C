@@ -73,8 +73,8 @@ main(int argc, char *argv[])
 
     set_sighandler();
 
-    printf("Ping %s(%s): %d bytes data in ICMP packets.\n", argv[1], inet_ntoa(dest.sin_addr),
-           datalen);
+    printf("Ping %s(%s): %d bytes data in ICMP packets.\n", argv[1],
+           inet_ntoa(dest.sin_addr), datalen);
 
     if ((setitimer(ITIMER_REAL, &val_alarm, NULL)) == -1)
         bail("setitimer fail.");
@@ -88,7 +88,7 @@ void
 send_ping(void)
 {
     struct icmphdr *icmp_hdr;
-    int             len;
+    int len;
 
     icmp_hdr           = (struct icmphdr *)sendbuf;
     icmp_hdr->type     = ICMP_ECHO;
@@ -109,15 +109,16 @@ send_ping(void)
 void
 recv_reply()
 {
-    int       n;
-    int       errno;
+    int n;
+    int errno;
     socklen_t len;
 
     n = nrecv = 0;
     len       = sizeof(from);
 
     while (nrecv < COUNT) {
-        if ((n = recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0, (struct sockaddr *)&from, &len))
+        if ((n = recvfrom(sockfd, recvbuf, sizeof(recvbuf), 0,
+                          (struct sockaddr *)&from, &len))
             < 0) {
             if (errno == EINTR)
                 continue;
@@ -137,7 +138,7 @@ recv_reply()
 u16
 checksum(u8 *buf, int len)
 {
-    u32  sum = 0;
+    u32 sum = 0;
     u16 *cbuf;
 
     cbuf = (u16 *)buf;
@@ -158,12 +159,12 @@ checksum(u8 *buf, int len)
 int
 handle_pkt()
 {
-    struct iphdr *  ip;
+    struct iphdr *ip;
     struct icmphdr *icmp;
 
-    int             ip_hlen;
-    u16             ip_datalen;
-    double          rtt;
+    int ip_hlen;
+    u16 ip_datalen;
+    double rtt;
     struct timeval *sendtime;
 
     ip = (struct iphdr *)recvbuf;

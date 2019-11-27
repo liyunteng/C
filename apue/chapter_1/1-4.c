@@ -14,5 +14,6 @@ main(void)
 }
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -o 1-4 1-4.c -g -I../include -L../lib -lourhdr" */
+/* compile-command: "clang -Wall -o 1-4 1-4.c -g -I../include -L../lib -lourhdr"
+ */
 /* End: */

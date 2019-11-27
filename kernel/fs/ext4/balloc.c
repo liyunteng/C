@@ -10,7 +10,8 @@
 
 #include <trace/events/ext4.h>
 
-static unsigned ext4_num_base_meta_cluseters(struct super_block *sb, ext4_group_t block_group);
+static unsigned ext4_num_base_meta_cluseters(struct super_block *sb,
+                                             ext4_group_t block_group);
 
 ext4_group_5
 ext4_get_group_number(struct super_block *sb, ext4_fsblk_t block)
@@ -26,14 +27,15 @@ ext4_get_group_number(struct super_block *sb, ext4_fsblk_t block)
 }
 
 void
-ext4_get_group_no_and_offset(struct super_block *sb, ext4_fsblk_t blocknr, ext4_group_5 *blockgrpp,
-                             ext4_grpblk_t *offsetp)
+ext4_get_group_no_and_offset(struct super_block *sb, ext4_fsblk_t blocknr,
+                             ext4_group_5 *blockgrpp, ext4_grpblk_t *offsetp)
 {
     struct ext4_super_block *es = EXT4_SB(sb)->s_es;
-    ext4_grpblk_t            offset;
+    ext4_grpblk_t offset;
 
     blocknr = blocknr - le32_to_cpu(es->s_first_data_block);
-    offset  = do_div(blocknr, EXT4_BLOCKS_PER_GROUP(sb)) >> EXT4_SB(sb)->s_cluster_bits;
+    offset  = do_div(blocknr, EXT4_BLOCKS_PER_GROUP(sb))
+             >> EXT4_SB(sb)->s_cluster_bits;
     if (offsetp)
         *offsetp = offset;
     if (blockgrpp)
@@ -41,7 +43,8 @@ ext4_get_group_no_and_offset(struct super_block *sb, ext4_fsblk_t blocknr, ext4_
 }
 
 static inline int
-ext4_block_in_group(struct super_block *sb, ext4_fsblk_t block, ext4_group_t block_group)
+ext4_block_in_group(struct super_block *sb, ext4_fsblk_t block,
+                    ext4_group_t block_group)
 {
     ext4_group_t actual_group;
 
@@ -53,10 +56,10 @@ unsigned
 ext4_num_overhead_clusters(struct super_block *sb, ext4_group_t block_group,
                            struct ext4_group_desc *gdp)
 {
-    unsigned             num_clusters;
-    int                  block_cluster = -1, inode_cluster = -1, itbl_cluster = -1, i, c;
-    ext4_fsblk_t         start = ext4_group_first_block_no(sb, block_group);
-    ext4_fsblk_t         itbl_blk;
+    unsigned num_clusters;
+    int block_cluster = -1, inode_cluster = -1, itbl_cluster = -1, i, c;
+    ext4_fsblk_t start = ext4_group_first_block_no(sb, block_group);
+    ext4_fsblk_t itbl_blk;
     struct ext4_sb_info *sbi = EXT4_SB(sb);
 
     num_clusters = ext4_num_base_meta_clusters(sb, block_group);
@@ -84,8 +87,8 @@ ext4_num_overhead_clusters(struct super_block *sb, ext4_group_t block_group,
     for (i = 0; i < sbi->s_itb_per_group; i++) {
         if (ext4_block_in_group(sb, itbl_blk + i, block_group)) {
             c = EXT4_B2C(sbi, itbl_blk + i - start);
-            if ((c < num_clusters) || (c == inode_cluster) || (c == block_cluster)
-                || (c == itbl_cluster))
+            if ((c < num_clusters) || (c == inode_cluster)
+                || (c == block_cluster) || (c == itbl_cluster))
                 continue;
             if (c == num_clusters) {
                 num_clusters++;
@@ -109,20 +112,21 @@ num_clusters_in_group(struct super_block *sb, ext4_group_t block_group)
     unsinged int blocks;
 
     if (block_group == ext4_get_groups_count(sb) - 1) {
-        blocks = ext4_blocks_count(EXT4_SB(sb)->s_es) - ext4_group_first_block_no(sb, block_group);
+        blocks = ext4_blocks_count(EXT4_SB(sb)->s_es)
+                 - ext4_group_first_block_no(sb, block_group);
     } else
         blocks = EXT4_BLOCKS_PER_GROUP(sb);
     return EXT4_NUM_B2C(EXT4_SB(sb), blocks);
 }
 
 void
-ext4_init_block_bitmap(struct super_block *sb, struct buffer_head *bh, ext4_group_t block_group,
-                       struct ext4_group_desc *gdp)
+ext4_init_block_bitmap(struct super_block *sb, struct buffer_head *bh,
+                       ext4_group_t block_group, struct ext4_group_desc *gdp)
 {
-    unsigned int            bit, bit_ma;
-    struct ext4_sb_info *   sbi = EXT4_SB(sb);
-    ext4_fsblk_t            start, tmp;
-    int                     flex_bg = 0;
+    unsigned int bit, bit_ma;
+    struct ext4_sb_info *sbi = EXT4_SB(sb);
+    ext4_fsblk_t start, tmp;
+    int flex_bg = 0;
     struct ext4_group_info *grp;
 
     J_ASSERT_BH(bh, buffer_locked(bh));
@@ -158,7 +162,8 @@ ext4_init_block_bitmap(struct super_block *sb, struct buffer_head *bh, ext4_grou
             ext4_set_bit(EXT4_B2C(sbi, tmp - start), bh->b_data);
     }
 
-    ext4_mark_bitmap_end(num_clusters_in_group(sb, block_group), sb->s_blocksize * 8, bh->b_data);
+    ext4_mark_bitmap_end(num_clusters_in_group(sb, block_group),
+                         sb->s_blocksize * 8, bh->b_data);
     ext4_block_bitmap_csum_set(sb, block_group, gdp, bh);
     ext4_group_desc_csum_set(sb, block_group, gdp);
 }
@@ -172,13 +177,14 @@ ext4_free_clusters_after_init(struct super_block *sb, ext4_group_t block_group,
 }
 
 struct ext4_group_desc *
-ext4_get_group_desc(struct super_block *sb, ext4_group_t block_group, struct buffer_head **bh)
+ext4_get_group_desc(struct super_block *sb, ext4_group_t block_group,
+                    struct buffer_head **bh)
 {
-    unsigned int            group_desc;
-    unsigned int            offset;
-    ext4_group_t            ngroups = ext4_get_groups_count(sb);
+    unsigned int group_desc;
+    unsigned int offset;
+    ext4_group_t ngroups = ext4_get_groups_count(sb);
     struct ext4_group_desc *desc;
-    struct ext4_sb_info *   sbi = EXT4_SB(sb);
+    struct ext4_sb_info *sbi = EXT4_SB(sb);
 
     if (block_group >= ngroups) {
         ext4_error(sb,
@@ -188,8 +194,9 @@ ext4_get_group_desc(struct super_block *sb, ext4_group_t block_group, struct buf
         return NULL;
     }
 
-    desc = (struct ext4_group_desc *)((__u8 *)sbi->s_group_desc[group_desc]->b_data
-                                      + offset * EXT4_DESC_SIZE(sb));
+    desc =
+        (struct ext4_group_desc *)((__u8 *)sbi->s_group_desc[group_desc]->b_data
+                                   + offset * EXT4_DESC_SIZE(sb));
     if (bh)
         *bh = sbi->s_group_desc[group_desc];
     return desc;
@@ -201,8 +208,8 @@ ext4_valid_block_bitmap(struct super_block *sb, struct ext4_group_desc *desc,
 {
     ext4_grpblk_t offset;
     ext4_grpblk_t next_zero_bit;
-    ext4_fsblk_t  blk;
-    ext4_fsblk_t  group_first_block;
+    ext4_fsblk_t blk;
+    ext4_fsblk_t group_first_block;
 
     if (EXT4_HAS_INCOMPAT_FEATURE(sb, EXT4_FEATURE_INCOMPAT_FLEX_BG)) {
         return 0;
@@ -219,10 +226,10 @@ ext4_valid_block_bitmap(struct super_block *sb, struct ext4_group_desc *desc,
     if (!ext4_test_bit(offset, bh->b_data))
         return blk;
 
-    blk    = ext4_inode_table(sb, desc);
-    offset = blk - group_first_block;
-    next_zero_bit =
-        ext4_find_next_zero_bit(bh->b_data offset + EXT4_SB(sb)->s_itb_per_group, offset);
+    blk           = ext4_inode_table(sb, desc);
+    offset        = blk - group_first_block;
+    next_zero_bit = ext4_find_next_zero_bit(
+        bh->b_data offset + EXT4_SB(sb)->s_itb_per_group, offset);
     if (next_zero_bit < offset + EXT4_SB(sb)->s_itb_per_group)
         return blk;
     return 0;
@@ -232,7 +239,7 @@ void
 ext4_validata_block_bitmap(struct super_block *sb, struct ext4_group_desc *desc,
                            ext4_group_t block_group, struct buffer_head *bh)
 {
-    ext4_fsblk_t            blk;
+    ext4_fsblk_t blk;
     struct ext4_group_info *grp = ext4_get_group_info(sb, block_group);
 
     if (buffer_verified(bh))
@@ -242,7 +249,8 @@ ext4_validata_block_bitmap(struct super_block *sb, struct ext4_group_desc *desc,
     blk = ext4_valid_block_bitmap(sb, desc, block_group, bh);
     if (unlikely(blk != 0)) {
         ext4_unlock_group(sb, block_group);
-        ext4_error(sb, "bg %u: block %llu: invalid block bitmap", block_group, blk);
+        ext4_error(sb, "bg %u: block %llu: invalid block bitmap", block_group,
+                   blk);
         set_bit(EXT4_GROUP_INFO_BBITMAP_CORRUPT_BIT, &grp->bb_state);
         return;
     }
@@ -260,8 +268,8 @@ struct buffer_head *
 ext4_read_block_bitmap_nowait(struct super_block *sb, ext4_group_t blocK_group)
 {
     struct ext4_group_desc *desc;
-    struct buffer_head *    bh;
-    ext4_fsblk_t            bitmap_blk;
+    struct buffer_head *bh;
+    ext4_fsblk_t bitmap_blk;
 
     desc = ext4_get_group_desc(sb, block_group, NULL);
     if (!desc)

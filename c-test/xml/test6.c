@@ -25,7 +25,7 @@ getReference(xmlDocPtr doc, xmlNodePtr cur)
 void
 parseDoc(char *docname)
 {
-    xmlDocPtr  doc;
+    xmlDocPtr doc;
     xmlNodePtr cur;
 
     doc = xmlParseFile(docname);

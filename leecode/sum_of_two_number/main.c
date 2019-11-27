@@ -31,8 +31,8 @@ struct hash_data {
 
 struct hash_table {
     struct hash_data *element;
-    const int *       nums;
-    int               count;
+    const int *nums;
+    int count;
 };
 
 int
@@ -42,7 +42,8 @@ hash_init(struct hash_table *table, int count)
         return -1;
     }
 
-    table->element = (struct hash_data *)malloc(sizeof(struct hash_data) * count);
+    table->element =
+        (struct hash_data *)malloc(sizeof(struct hash_data) * count);
     if (table->element == NULL) {
         return -1;
     }
@@ -133,8 +134,8 @@ main(void)
     for (int i = 0; i < 100; i++) {
         test[i] = i;
     }
-    int  size = 0;
-    int *r    = twoSum(test, 100, 98 + 99, &size);
+    int size = 0;
+    int *r   = twoSum(test, 100, 98 + 99, &size);
     if (r != NULL) {
         printf("%d %d", r[0], r[1]);
     }

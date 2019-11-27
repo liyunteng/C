@@ -1,23 +1,23 @@
-#include "sys-global.h"
 #include "list.h"
+#include "sys-global.h"
 
 #ifndef __SYS_ACTION_H__
-#define __SYS_ACTION_H__
+#    define __SYS_ACTION_H__
 
 typedef void (*sys_alarm_handler)(void *event);
 
 typedef struct _sys_alarm sys_alarm_t;
 struct _sys_alarm {
-	struct list alarm_list;
-	char name[128];
-	sys_alarm_handler handler;
+    struct list alarm_list;
+    char name[128];
+    sys_alarm_handler handler;
 };
 
 typedef struct _sys_action sys_action_t;
 struct _sys_action {
-	struct list list;
-	struct list alarm_list;
-	char name[128];
+    struct list list;
+    struct list alarm_list;
+    char name[128];
 };
 
 extern struct list _gaction_list;

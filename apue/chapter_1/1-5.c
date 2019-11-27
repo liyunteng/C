@@ -12,9 +12,9 @@
 int
 main(void)
 {
-    char  buf[MAXLINE];
+    char buf[MAXLINE];
     pid_t pid;
-    int   status;
+    int status;
 
     printf("%% ");
     while (fgets(buf, MAXLINE, stdin) != NULL) {
@@ -37,5 +37,6 @@ main(void)
 }
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -o 1-5 1-5.c -g -I../include -L../lib -lourhdr" */
+/* compile-command: "clang -Wall -o 1-5 1-5.c -g -I../include -L../lib -lourhdr"
+ */
 /* End: */

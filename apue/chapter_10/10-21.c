@@ -21,8 +21,8 @@ unsigned int
 sleep_1(unsigned int nsecs)
 {
     struct sigaction newact, oldact;
-    sigset_t         newmask, oldmask, suspmask;
-    unsigned int     unslept;
+    sigset_t newmask, oldmask, suspmask;
+    unsigned int unslept;
 
     newact.sa_handler = sig_alrm;
     sigemptyset(&newact.sa_mask);

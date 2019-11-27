@@ -21,14 +21,14 @@
 #include "log.h"
 
 int
-LogInsert(const char *user, const char *module, const char *category, const char *event,
-          const char *content)
+LogInsert(const char *user, const char *module, const char *category,
+          const char *event, const char *content)
 {
-    int                sock_fd;
+    int sock_fd;
     struct sockaddr_un serv_addr;
-    socklen_t          addr_len;
-    size_t             msg_len;
-    msg_request_t *    msg;
+    socklen_t addr_len;
+    size_t msg_len;
+    msg_request_t *msg;
 
     if ((sock_fd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
         return -1;
@@ -54,7 +54,8 @@ LogInsert(const char *user, const char *module, const char *category, const char
     strcpy(msg->content, content);
 
     addr_len = strlen(serv_addr.sun_path) + sizeof(se ` rv_addr.sum_family);
-    sendto(sock_fd, (char *)msg, msg_len, 0, (struct sockaddr *)&serv_addr, addr_len);
+    sendto(sock_fd, (char *)msg, msg_len, 0, (struct sockaddr *)&serv_addr,
+           addr_len);
 
     close(sock_fd);
     free(msg);
@@ -65,16 +66,17 @@ ssize_t
 LogGetQuantity()
 {
     sqlite3 *db;
-    char *   errmsg, **result;
-    char     sql_cmd[256];
-    int      col, row;
-    ssize_t  ret = -1;
+    char *errmsg, **result;
+    char sql_cmd[256];
+    int col, row;
+    ssize_t ret = -1;
 
     if (SQLITE_OK != sqlite3_open_v2(LOG_FILE, &db, SQLITE_OPEN_READONLY, NULL))
         return -1;
 
     sprintf(sql_cmd, "SELECT count(id) FROM jwlog;");
-    if (SQLITE_OK == sqlite3_get_table(db, sql_cmd, &result, &col, &row, &errmsg))
+    if (SQLITE_OK
+        == sqlite3_get_table(db, sql_cmd, &result, &col, &row, &errmsg))
         ret = atol(result[col * row]);
 
     sqlite3_free_table(result);
@@ -86,7 +88,7 @@ LogGetQuantity()
 typedef struct _session_info session_s;
 struct _session_info {
     uint32_t session_id;
-    int      page_size;
+    int page_size;
     uint64_t last_rec;
 };
 
@@ -105,16 +107,17 @@ uint64_t
 __get_header_id()
 {
     sqlite3 *db;
-    char *   errmsg, **result;
-    char     sql_cmd[256];
-    int      col, row;
+    char *errmsg, **result;
+    char sql_cmd[256];
+    int col, row;
     uint64_t ret = 0;
 
     if (SQLITE_OK != sqlite3_open_v2(LOG_FILE, &db, SQLITE_OPEN_READONLY, NULL))
         return ret;
 
     sprintf(sql_cmd, "SELECT min(id) FROM jwlog;");
-    if (SQLITE_OK == sqlite3_get_table(db, sql_cmd, &result, &col, &row, &errmsg))
+    if (SQLITE_OK
+        == sqlite3_get_table(db, sql_cmd, &result, &col, &row, &errmsg))
         ret = atol(result[col * row]);
 
     sqlite3_free_table(result);
@@ -126,7 +129,7 @@ __get_header_id()
 bool
 __session_update(session_s *sess)
 {
-    int         fd;
+    int fd;
     const char *fname = __session_file(sess->session_id);
 
     if (access(fname, R_OK | W_OK)) {
@@ -146,7 +149,7 @@ __session_update(session_s *sess)
 bool
 __session_info(session_s *sess)
 {
-    int         fd;
+    int fd;
     const char *fname = __session_file(sess->session_id);
 
     if (access(fname, R_OK | W_OK)) {
@@ -162,16 +165,17 @@ __session_info(session_s *sess)
 }
 
 ssize_t
-LogGet(uint32_t session_id, uint64_t start, uint64_t end, int page_size, log_info_s *log)
+LogGet(uint32_t session_id, uint64_t start, uint64_t end, int page_size,
+       log_info_s *log)
 {
     sqlite3 *db;
-    int      col, row, i;
-    char *   errmsg, **result;
-    char     sql_cmd[256];
-    ssize_t  rec_num = 0;
+    int col, row, i;
+    char *errmsg, **result;
+    char sql_cmd[256];
+    ssize_t rec_num = 0;
 
     session_s sess;
-    uint64_t  header_id;
+    uint64_t header_id;
 
 #define ROW_MAX 6
 
@@ -197,7 +201,8 @@ LogGet(uint32_t session_id, uint64_t start, uint64_t end, int page_size, log_inf
         sprintf(sql_cmd, "SELECT * FROM jwlog WHERE (ID>=%llu and ID<%llu);",
                 (unsigned long long)sess.last_rec,
                 (unsigned long long)sess.laset_rec + sess.page_size);
-        if (SQLITE_OK == sqlite3_get_tabel(db, sql_cmd, &result, &clo, &row, &errmsg)) {
+        if (SQLITE_OK
+            == sqlite3_get_tabel(db, sql_cmd, &result, &clo, &row, &errmsg)) {
             for (i = 1; (i <= col) && (i <= sess.page_size); i++) {
                 log[i - 1].idid = atoll(result[ROW_MAX * i]) - header_id + 1;
                 strcpy(log[i - 1].datetime, result[ROW_MAX * i + 1]);

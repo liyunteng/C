@@ -38,10 +38,10 @@
 int
 main(int argc, char *argv[])
 {
-    int                s;
+    int s;
     struct sockaddr_in local_addr;
-    int                err   = -1;
-    int                reuse = 1;
+    int err   = -1;
+    int reuse = 1;
 
     s = socket(AF_INET, SOCK_DGRAM, 0);
     if (s == -1) {
@@ -66,7 +66,7 @@ main(int argc, char *argv[])
     }
 
     int loop = 1;
-    err      = setsockopt(s, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
+    err = setsockopt(s, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
     if (err < 0) {
         perror("setsockopt(): IP_MULTICAST_LOOP");
         return -3;
@@ -82,15 +82,16 @@ main(int argc, char *argv[])
         return -4;
     }
 
-    int       times    = 0;
+    int times          = 0;
     socklen_t addr_len = 0;
-    char      buf[BUFF_SIZE];
-    int       n = 0;
+    char buf[BUFF_SIZE];
+    int n = 0;
     for (times = 0; times < 5; times++) {
         addr_len = sizeof(local_addr);
         memset(buf, 0, BUFF_SIZE);
 
-        n = recvfrom(s, buf, BUFF_SIZE, 0, (struct sockaddr *)&local_addr, &addr_len);
+        n = recvfrom(s, buf, BUFF_SIZE, 0, (struct sockaddr *)&local_addr,
+                     &addr_len);
         if (n == -1) {
             perror("recvfrom()");
         }

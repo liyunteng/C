@@ -9,10 +9,11 @@
 MODULE_AUTHOR("liyunteng");
 MODULE_LICENSE("GPL");
 
-void    obj_test_release(struct kobject *kobject);
-ssize_t kobj_test_show(struct kobject *kobject, struct attribute *attr, char *buf);
-ssize_t kobj_test_store(struct kobject *kobject, struct attribute *attr, const char *buf,
-                        size_t count);
+void obj_test_release(struct kobject *kobject);
+ssize_t kobj_test_show(struct kobject *kobject, struct attribute *attr,
+                       char *buf);
+ssize_t kobj_test_store(struct kobject *kobject, struct attribute *attr,
+                        const char *buf, size_t count);
 
 static char attr_buf[] = "abc";
 
@@ -52,7 +53,8 @@ kobj_test_show(struct kobject *kobject, struct attribute *attr, char *buf)
 }
 
 ssize_t
-kobj_test_store(struct kobject *kobject, struct attribute *attr, const char *buf, size_t count)
+kobj_test_store(struct kobject *kobject, struct attribute *attr,
+                const char *buf, size_t count)
 {
     printk("store attrname: %s\n", attr->name);
     printk("write: %s\n", buf);
@@ -63,7 +65,7 @@ kobj_test_store(struct kobject *kobject, struct attribute *attr, const char *buf
 struct kobject kobj;
 
 static int __init
-           kobj_test_init(void)
+kobj_test_init(void)
 {
     printk("kobject test init.\n");
     kobject_init_and_add(&kobj, &ktype, NULL, "kobject_test");
@@ -71,7 +73,7 @@ static int __init
 }
 
 static void __exit
-            kobj_test_exit(void)
+kobj_test_exit(void)
 {
     printk("kobject test exit.\n");
     kobject_del(&kobj);

@@ -7,25 +7,24 @@
 #ifndef OURHDR_H
 #define OURHDR_H
 
-#include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #define MAXLINE 4096
 #define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
-#define DIR_MODE  (FILE_MODE | S_IXUSR | S_XGRP | S_IXOTH)
+#define DIR_MODE (FILE_MODE | S_IXUSR | S_XGRP | S_IXOTH)
 
 typedef void Sigfunc(int);
 
 #if defined(SI_IGN) && !defined(SIG_ERR)
-#define SIG_ERR ((Sigfunc *) -1)
+#    define SIG_ERR ((Sigfunc *)-1)
 #endif
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))
-
 
 void err_dump(const char *, ...);
 void err_msg(const char *, ...);
@@ -51,15 +50,15 @@ void pr_mask(const char *str);
 
 int lock_reg(int fd, int cmd, int type, off_t offset, int whence, off_t len);
 pid_t lock_test(int fd, int type, off_t offset, int whence, off_t len);
-#define read_lock(fd, offset, whence, len) \
+#define read_lock(fd, offset, whence, len)                                     \
     lock_reg(fd, F_SETLK, F_RDLCK, offset, whence, len)
-#define readw_lock(fd, offset, whence, len) \
+#define readw_lock(fd, offset, whence, len)                                    \
     lock_reg(fd, F_SETLKW, F_RDLCK, offset, whence, len)
-#define write_lock(fd, offset, whence, len) \
+#define write_lock(fd, offset, whence, len)                                    \
     lock_reg(fd, F_SETLK, F_WRLCK, offset, whence, len)
-#define writew_lock(fd, offset, whence, len) \
+#define writew_lock(fd, offset, whence, len)                                   \
     lock_reg(fd, F_SETLKW, F_WRLCK, offset, whence, len)
-#define un_lock(fd, offset, whence, len) \
+#define un_lock(fd, offset, whence, len)                                       \
     lock_reg(fd, F_SETLK, F_UNLCK, offset, whence, len)
 
 ssize_t writen(int fd, const void *ptr, size_t n);

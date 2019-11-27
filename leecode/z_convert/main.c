@@ -26,11 +26,11 @@ convert(char *s, int numRows)
     if (numRows <= 1) {
         return s;
     }
-    char *r     = malloc(length + 1);
-    int   base  = numRows * 2 - 2;
-    int   left  = 0;
-    int   right = 0;
-    int   index = 0;
+    char *r   = malloc(length + 1);
+    int base  = numRows * 2 - 2;
+    int left  = 0;
+    int right = 0;
+    int index = 0;
     for (i = 0; i < numRows; i++) {
         left  = base - i * 2;
         right = i * 2;
@@ -64,9 +64,10 @@ main(void)
     /*
      * char *s = "LEETCODEISHIRING";
      */
-    char *s = "Apalindromeisaword,phrase,number,"
-              "orothersequenceofunitsthatcanbereadthesamewayineitherdirection,"
-              "withgeneralallowancesforadjustmentstopunctuationandworddividers.";
+    char *s =
+        "Apalindromeisaword,phrase,number,"
+        "orothersequenceofunitsthatcanbereadthesamewayineitherdirection,"
+        "withgeneralallowancesforadjustmentstopunctuationandworddividers.";
     printf("%s\n", convert(s, 2));
     return 0;
 }

@@ -22,7 +22,7 @@
  */
 #include <stdio.h>
 union T {
-    char           c[2];
+    char c[2];
     unsigned short i;
 };
 

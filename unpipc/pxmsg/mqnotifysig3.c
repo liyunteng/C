@@ -26,17 +26,17 @@
 #include <signal.h>
 
 volatile sig_atomic_t mqflag;
-static void           sig_usr1(int);
+static void sig_usr1(int);
 
 int
 main(int argc, char *argv[])
 {
-    mqd_t           mqd;
-    void *          buf;
-    ssize_t         n;
-    sigset_t        zeromask, newmask, oldmask;
+    mqd_t mqd;
+    void *buf;
+    ssize_t n;
+    sigset_t zeromask, newmask, oldmask;
     struct sigevent sigev;
-    struct mq_attr  attr;
+    struct mq_attr attr;
 
     if (argc != 2) {
         err_quit("usage: mqnotifysig3 <name>\n");

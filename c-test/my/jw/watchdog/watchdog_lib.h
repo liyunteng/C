@@ -6,4 +6,4 @@ int watchdog_disable(void);
 int watchdog_set_timeout(unsigned char timeout);
 int watchdog_feed(void);
 
-#endif // __JW_WATCHDOG_H__
+#endif  // __JW_WATCHDOG_H__

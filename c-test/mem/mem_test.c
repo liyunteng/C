@@ -16,14 +16,15 @@ int
 main(int argc, char *argv[])
 {
     unsigned char *map_base;
-    FILE *         f;
-    int            n, fd;
+    FILE *f;
+    int n, fd;
 
     fd = open("/dev/mem", O_RDWR | O_SYNC);
     if (fd == -1)
         return -1;
 
-    map_base = mmap(NULL, 0x0f, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0x002000);
+    map_base =
+        mmap(NULL, 0x0f, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0x002000);
 
     if (map_base == 0) {
         printf("NULL pointer!\n");
@@ -42,7 +43,8 @@ main(int argc, char *argv[])
 
         map_base[i] = (unsigned char)i;
         content     = map_base[i];
-        printf("updated address: 0x%lx	content 0x%x\n", addr, (unsigned int)content);
+        printf("updated address: 0x%lx	content 0x%x\n", addr,
+               (unsigned int)content);
     }
     close(fd);
     munmap(map_base, 0x0f);

@@ -35,7 +35,7 @@ static void
 charatatime(char *str)
 {
     char *ptr;
-    int   c;
+    int c;
 
     setbuf(stdout, NULL);
     for (ptr = str; c = *ptr++;)

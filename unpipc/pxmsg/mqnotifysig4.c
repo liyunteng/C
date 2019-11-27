@@ -28,12 +28,12 @@
 int
 main(int argc, char *argv[])
 {
-    int             signo, err;
-    mqd_t           mqd;
-    void *          buf;
-    ssize_t         n;
-    sigset_t        newmask;
-    struct mq_attr  attr;
+    int signo, err;
+    mqd_t mqd;
+    void *buf;
+    ssize_t n;
+    sigset_t newmask;
+    struct mq_attr attr;
     struct sigevent sigev;
 
     if (argc != 2)

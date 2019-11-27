@@ -16,7 +16,7 @@ static jmp_buf jmpbuffer;
 int
 main(void)
 {
-    int          count;
+    int count;
     register int val;
     volatile int sum;
 
@@ -25,7 +25,8 @@ main(void)
     sum   = 4;
 
     if (setjmp(jmpbuffer) != 0) {
-        printf("after longjmp: count = %d, val = %d, sum = %d\n", count, val, sum);
+        printf("after longjmp: count = %d, val = %d, sum = %d\n", count, val,
+               sum);
         return 0;
     }
 

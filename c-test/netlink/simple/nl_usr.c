@@ -20,17 +20,17 @@
 
 struct netlink_info {
     struct nlmsghdr nlhdr;
-    char            buf[20];
+    char buf[20];
 };
 
 int
 main(void)
 {
 
-    int                  fd, len1, len2;
-    struct sockaddr_nl   src_addr, dst_addr;
-    struct nlmsghdr *    nlhdr;
-    struct msghdr        hdr;
+    int fd, len1, len2;
+    struct sockaddr_nl src_addr, dst_addr;
+    struct nlmsghdr *nlhdr;
+    struct msghdr hdr;
     struct netlink_info *info;
 
     fd = socket(PF_NETLINK, SOCK_RAW, NETLINK_TEST);
@@ -62,7 +62,8 @@ main(void)
     strcpy((char *)NLMSG_DATA(nlhdr), "hello, you!");
 
     memset(&hdr, 0, sizeof(hdr));
-    sendto(fd, nlhdr, nlhdr->nlmsg_len, 0, (struct sockaddr *)&dst_addr, sizeof(dst_addr));
+    sendto(fd, nlhdr, nlhdr->nlmsg_len, 0, (struct sockaddr *)&dst_addr,
+           sizeof(dst_addr));
 
     free(nlhdr);
 
@@ -74,10 +75,11 @@ main(void)
 
     while (1) {
         len1 = sizeof(struct sockaddr_nl);
-        len2 = recvfrom(fd, info, sizeof(struct netlink_info), 0, (struct sockaddr *)&dst_addr,
-                        (socklen_t *)&len1);
+        len2 = recvfrom(fd, info, sizeof(struct netlink_info), 0,
+                        (struct sockaddr *)&dst_addr, (socklen_t *)&len1);
         if (len2 > 0) {
-            printf("process %d received %s\n", info->nlhdr.nlmsg_pid, info->buf);
+            printf("process %d received %s\n", info->nlhdr.nlmsg_pid,
+                   info->buf);
             return 0;
         }
     }

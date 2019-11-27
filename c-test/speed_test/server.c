@@ -40,8 +40,8 @@
 
 pthread_t tids[MAX_THREAD];
 typedef struct {
-    int                connfd;
-    int                id;
+    int connfd;
+    int id;
     struct sockaddr_in addr;
 } thread_arg;
 thread_arg args[MAX_THREAD];
@@ -49,12 +49,12 @@ thread_arg args[MAX_THREAD];
 void *
 thread(void *a)
 {
-    char               buf[BUFFSIZE];
-    thread_arg         arg = *(thread_arg *)a;
-    int                n;
+    char buf[BUFFSIZE];
+    thread_arg arg = *(thread_arg *)a;
+    int n;
     unsigned long long count = 0;
     unsigned long long nrecv = 0;
-    struct timeval     tv1, tv2;
+    struct timeval tv1, tv2;
 
     fprintf(stderr, "connection from: %s:%d\n", inet_ntoa(arg.addr.sin_addr),
             ntohs(arg.addr.sin_port));
@@ -78,12 +78,14 @@ thread(void *a)
     }
 
     gettimeofday(&tv2, NULL);
-    unsigned long long t = (tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec - tv1.tv_usec) / 1000;
+    unsigned long long t =
+        (tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec - tv1.tv_usec) / 1000;
     if (t == 0)
         t = 1;
-    fprintf(stderr, "%s:%d Upload size: %llu nrecv: %llu time: %llu speed: %llu kB/s\n",
-            inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port), count, nrecv, t,
-            count / t * 1000 / 1024);
+    fprintf(stderr,
+            "%s:%d Upload size: %llu nrecv: %llu time: %llu speed: %llu kB/s\n",
+            inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port), count,
+            nrecv, t, count / t * 1000 / 1024);
 
     count                    = 0;
     unsigned long long nsent = 0;
@@ -115,9 +117,11 @@ thread(void *a)
         t = 1;
     if (nsent == 0)
         count = 0;
-    fprintf(stderr, "%s:%d Download size: %llu  nsent %llu time: %llu speed: %llu kB/s\n",
-            inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port), count, nsent, t,
-            count / t * 1000 / 1024);
+    fprintf(
+        stderr,
+        "%s:%d Download size: %llu  nsent %llu time: %llu speed: %llu kB/s\n",
+        inet_ntoa(arg.addr.sin_addr), ntohs(arg.addr.sin_port), count, nsent, t,
+        count / t * 1000 / 1024);
 
     close(arg.connfd);
     tids[arg.id] = 0;
@@ -137,7 +141,7 @@ tcp_speed_test(int port)
         return -1;
     }
 
-    int                listenfd, connfd;
+    int listenfd, connfd;
     struct sockaddr_in serveraddr;
 
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -150,7 +154,8 @@ tcp_speed_test(int port)
     serveraddr.sin_port        = htons(port);
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    if (bind(listenfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) == -1) {
+    if (bind(listenfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr))
+        == -1) {
         fprintf(stderr, "bind failed: %s\n", strerror(errno));
         return -1;
     }
@@ -162,8 +167,10 @@ tcp_speed_test(int port)
 
     while (1) {
         struct sockaddr_in cliaddr;
-        socklen_t          cliaddr_len = sizeof(cliaddr);
-        if ((connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &cliaddr_len)) == -1) {
+        socklen_t cliaddr_len = sizeof(cliaddr);
+        if ((connfd =
+                 accept(listenfd, (struct sockaddr *)&cliaddr, &cliaddr_len))
+            == -1) {
             fprintf(stderr, "accept failed: %s\n", strerror(errno));
             continue;
         }

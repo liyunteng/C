@@ -57,9 +57,9 @@ void
 disk_get_smart_info(const char *dev, struct disk_info *info)
 {
     SkDisk *d = NULL;
-    int     ret;
-    SkBool  avail;
-    SkBool  good;
+    int ret;
+    SkBool avail;
+    SkBool good;
 
     info->is_smart_avail = 0;
     memset(&info->si, 0, sizeof(info->si));
@@ -89,8 +89,8 @@ finish:
 int
 disk_get_info(const char *dev, struct disk_info *info)
 {
-    SkDisk *                    d = NULL;
-    int                         ret;
+    SkDisk *d = NULL;
+    int ret;
     const SkIdentifyParsedData *ipd;
 
     ret = sk_disk_open(dev, &d);
@@ -128,11 +128,11 @@ extern int child_read(const char *cmd, char *buf, size_t *len);
 static void
 disk_read_role(struct disk_md_info *mi, const char *dev)
 {
-    char        cmd[128];
-    char        buf[1024];
-    size_t      len = sizeof(buf) - 1;
-    int         ret;
-    char *      s;
+    char cmd[128];
+    char buf[1024];
+    size_t len = sizeof(buf) - 1;
+    int ret;
+    char *s;
     const char *base;
 
     base = strrchr(dev, '/');
@@ -204,11 +204,11 @@ disk_update_uuid(struct disk_md_info *mi, const char *buf, regmatch_t *p)
 static int
 disk_read_mdinfo(const char *cmd, struct disk_md_info *mi)
 {
-    FILE *     fp;
-    char       buf[4096];
-    int        r;
+    FILE *fp;
+    char buf[4096];
+    int r;
     regmatch_t pmatch[5];
-    int        ret = -1;
+    int ret = -1;
 
     memset(pmatch, 0, sizeof(pmatch));
     fp = fopen(cmd, "r");
@@ -239,7 +239,7 @@ int
 disk_get_raid_info(const char *dev, struct disk_md_info *mi)
 {
     char cmd[128];
-    int  ret;
+    int ret;
 
     snprintf(cmd, sizeof(cmd), SH_GET_MD_DISK, dev);
     mi->is_raid    = 0;

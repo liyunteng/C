@@ -15,7 +15,7 @@
 int
 main(int argc, char *argv[])
 {
-    char  line[MAXLINE];
+    char line[MAXLINE];
     FILE *fpin, *fpout;
 
     if (argc != 2)

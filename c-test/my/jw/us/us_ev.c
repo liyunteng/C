@@ -57,7 +57,7 @@ int
 us_shell_cmd_init(struct us_shell_cmd *scmd, struct us_shell_cmd_ops *ops)
 {
     struct sp_child sc;
-    int             ret;
+    int ret;
     struct ev_loop *loop = us_main_loop;
 
     if (ops->on_done == NULL)

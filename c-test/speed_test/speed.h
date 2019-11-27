@@ -24,11 +24,11 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#include "comm.h"
+#include <arpa/inet.h>
 #include <sys/types.h>
 #include <time.h>
-#include <arpa/inet.h>
-#include "comm.h"
 
 void speed_alarm_handle(int sig);
-int tcp_speed_test(const char *h, const int port,  int interval);
+int tcp_speed_test(const char *h, const int port, int interval);
 #endif

@@ -98,7 +98,7 @@ list_next(const struct list *head, const struct list *elem)
 unsigned int
 list_size(const struct list *head)
 {
-    unsigned int       s = 0;
+    unsigned int s = 0;
     const struct list *v;
 
     list_iterate(v, head) s++;

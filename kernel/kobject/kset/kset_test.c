@@ -11,11 +11,12 @@ MODULE_AUTHOR("liyunteng");
 MODULE_LICENSE("GPL");
 
 struct kset *kset_p;
-struct kset  kset_c;
+struct kset kset_c;
 
-void    obj_test_release(struct kobject *);
+void obj_test_release(struct kobject *);
 ssize_t kobj_test_show(struct kobject *, struct attribute *, char *);
-ssize_t kobj_test_store(struct kobject *, struct attribute *, const char *, size_t);
+ssize_t kobj_test_store(struct kobject *, struct attribute *, const char *,
+                        size_t);
 
 static char attr_buf[128] = "abc";
 
@@ -55,7 +56,8 @@ kobj_test_show(struct kobject *kobject, struct attribute *attr, char *buf)
 }
 
 ssize_t
-kobj_test_store(struct kobject *kobject, struct attribute *attr, const char *buf, size_t size)
+kobj_test_store(struct kobject *kobject, struct attribute *attr,
+                const char *buf, size_t size)
 {
     printk("store attrname: %s.\n", attr->name);
     printk("write: %s.\n", buf);
@@ -80,7 +82,8 @@ kset_name(struct kset *kset, struct kobject *kobj)
 }
 
 static int
-kset_uevent(struct kset *kset, struct kobject *kobj, struct kobj_uevent_env *env)
+kset_uevent(struct kset *kset, struct kobject *kobj,
+            struct kobj_uevent_env *env)
 {
     int i = 0;
     printk("Uevent: %s.\n", kobj->name);
@@ -100,7 +103,7 @@ static struct kset_uevent_ops uevent_ops = {
 };
 
 static int __init
-           kset_test_init(void)
+kset_test_init(void)
 {
     int ret = 0;
 
@@ -120,7 +123,7 @@ static int __init
     return 0;
 }
 static void __exit
-            kset_test_exit(void)
+kset_test_exit(void)
 {
     printk("kset test exit.\n");
     kset_unregister(kset_p);

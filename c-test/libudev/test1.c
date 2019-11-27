@@ -12,12 +12,12 @@
 int
 main(int argc, char *argv[])
 {
-    struct udev *        udev;
+    struct udev *udev;
     struct udev_monitor *mon;
-    struct udev_device * dev;
-    const char *         path;
-    const char *         dev_node;
-    const char *         action;
+    struct udev_device *dev;
+    const char *path;
+    const char *dev_node;
+    const char *action;
 
     udev = udev_new();
     if (udev == NULL) {
@@ -31,7 +31,8 @@ main(int argc, char *argv[])
         return -1;
     }
 
-    if (udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk") < 0) {
+    if (udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk")
+        < 0) {
         printf("udev monitor add match failed!\n");
         udev_unref(udev);
         return -1;
@@ -45,7 +46,7 @@ main(int argc, char *argv[])
         return -1;
     }
 
-    struct udev_enumerate * uenum;
+    struct udev_enumerate *uenum;
     struct udev_list_entry *devs, *dev_list;
     uenum = udev_enumerate_new(udev);
     if (uenum == NULL) {

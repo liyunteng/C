@@ -16,13 +16,13 @@
 
 struct mem_dev {
     struct cdev cdev;
-    int         size;
-    void *      data;
+    int size;
+    void *data;
 };
 
-static int            mem_major = MEMDEV_MAJOR;
-struct mem_dev *      mem_devp;
-static struct class * memdev_class;
+static int mem_major = MEMDEV_MAJOR;
+struct mem_dev *mem_devp;
+static struct class *memdev_class;
 static struct device *memdev_device;
 
 /* 文件打开函数 */
@@ -54,9 +54,9 @@ mem_release(struct inode *inode, struct file *filp)
 static ssize_t
 mem_read(struct file *filp, char __user *buf, size_t size, loff_t *ppos)
 {
-    unsigned long p     = *ppos;
-    unsigned int  count = size;
-    int           ret   = 0;
+    unsigned long p    = *ppos;
+    unsigned int count = size;
+    int ret            = 0;
 
     struct mem_dev *dev = filp->private_data; /* 获取设备结构提指
                                                * 针
@@ -73,7 +73,8 @@ mem_read(struct file *filp, char __user *buf, size_t size, loff_t *ppos)
         *ppos += count; /* 读后，改写读指针位置 */
         ret = count;
 
-        printk(KERN_INFO "read %d bytes form %ld\n%s\n", count, p, (char *)dev->data + p);
+        printk(KERN_INFO "read %d bytes form %ld\n%s\n", count, p,
+               (char *)dev->data + p);
     }
     return ret;
 }
@@ -82,9 +83,9 @@ mem_read(struct file *filp, char __user *buf, size_t size, loff_t *ppos)
 static ssize_t
 mem_write(struct file *filp, const char __user *buf, size_t size, loff_t *ppos)
 {
-    unsigned long p     = *ppos;
-    unsigned int  count = size;
-    int           ret   = 0;
+    unsigned long p    = *ppos;
+    unsigned int count = size;
+    int ret            = 0;
 
     struct mem_dev *dev = filp->private_data;
 
@@ -100,7 +101,8 @@ mem_write(struct file *filp, const char __user *buf, size_t size, loff_t *ppos)
         *ppos += count;
         ret = count;
 
-        printk(KERN_INFO "written %d bytes from %ld\n%s\n", count, p, (char *)dev->data + p);
+        printk(KERN_INFO "written %d bytes from %ld\n%s\n", count, p,
+               (char *)dev->data + p);
     }
 
     return ret;
@@ -146,8 +148,8 @@ static const struct file_operations mem_fops = {
 static int
 memdev_init(void)
 {
-    int  result;
-    int  i;
+    int result;
+    int i;
     char buf[20];
     /* 利用主设备号，次设备号构造设备号 */
     dev_t devno = MKDEV(mem_major, 0);
@@ -184,7 +186,8 @@ memdev_init(void)
         memset(mem_devp[i].data, 0, MEMDEV_SIZE);
 
         sprintf(buf, "memdev%d", i);
-        memdev_device = device_create(memdev_class, NULL, MKDEV(mem_major, i), NULL, buf);
+        memdev_device =
+            device_create(memdev_class, NULL, MKDEV(mem_major, i), NULL, buf);
     }
     printk("init done\n");
     return 0;

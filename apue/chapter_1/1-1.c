@@ -12,7 +12,7 @@
 int
 main(int argc, char *argv[])
 {
-    DIR *          dp;
+    DIR *dp;
     struct dirent *dirp;
 
     if (argc != 2) {
@@ -29,5 +29,6 @@ main(int argc, char *argv[])
 }
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -o ls ls.c -g -I../include -L../lib -lourhdr" */
+/* compile-command: "clang -Wall -o ls ls.c -g -I../include -L../lib -lourhdr"
+ */
 /* End: */

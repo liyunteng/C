@@ -6,9 +6,9 @@ int
 main(int argc, char **argv)
 {
     unsigned char *content, *out;
-    xmlDocPtr      doc;
-    xmlNodePtr     rootnode;
-    char *         encoding = "ISO-8859-1";
+    xmlDocPtr doc;
+    xmlNodePtr rootnode;
+    char *encoding = "ISO-8859-1";
     if (argc <= 1) {
         printf("Usage: %s content\n", argv[0]);
         return (0);
@@ -26,7 +26,7 @@ char *
 convert(char *instr, char *encoding)
 {
     xmlCharEncodingHandlerPtr handler;
-    xmlBufferPtr              in, out;
+    xmlBufferPtr in, out;
     handler = xmlFindCharEncodingHandler(encoding);
     if (NULL != handler) {
         in = xmlBufferCreate();

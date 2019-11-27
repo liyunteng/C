@@ -27,7 +27,7 @@
 int
 mkdir_p(const char *path)
 {
-    int  n;
+    int n;
     char buf[PATH_MAX], *p = buf;
 
     assert(path);
@@ -53,30 +53,30 @@ mkdir_p(const char *path)
 
 #define DIRPTR _ptr
 #define STAT _stat
-#define _DIR_LIST_BEGIN(dir)                                 \
-    do {                                                     \
-        DIR *          _dir;                                 \
-        struct dirent *_ptr;                                 \
-        struct stat    _stat;                                \
-        char           _file[PATH_MAX];                      \
-        if ((_dir = opendir(dir))) {                         \
-            while ((_ptr = readdir(_dir))) {                 \
-                sprintf(_file, "%s%s", dir, DIRPTR->d_name); \
-                if (lstat(_file, &_stat))                    \
+#define _DIR_LIST_BEGIN(dir)                                                   \
+    do {                                                                       \
+        DIR *_dir;                                                             \
+        struct dirent *_ptr;                                                   \
+        struct stat _stat;                                                     \
+        char _file[PATH_MAX];                                                  \
+        if ((_dir = opendir(dir))) {                                           \
+            while ((_ptr = readdir(_dir))) {                                   \
+                sprintf(_file, "%s%s", dir, DIRPTR->d_name);                   \
+                if (lstat(_file, &_stat))                                      \
                     continue;
-#define _DIR_LIST_END \
-    }                 \
-    closedir(_dir);   \
-    }                 \
-    }                 \
-    while (0)         \
+#define _DIR_LIST_END                                                          \
+    }                                                                          \
+    closedir(_dir);                                                            \
+    }                                                                          \
+    }                                                                          \
+    while (0)                                                                  \
         ;
 
 int
 tmpfs_msg_count(const char *level)
 {
     char msg_dir[PATH_MAX];
-    int  _count = 0;
+    int _count = 0;
 
     if (level) {
         sprintf(msg_dir, "%s/%s/", TMPFS_MSG_ROOT, level);
@@ -112,9 +112,9 @@ _dir_max_file_num(const char *dir_path)
 const char *
 tmpfs_msg_insert(const char *level, const char *msg)
 {
-    char        msg_dir[PATH_MAX], msg_content[1024];
+    char msg_dir[PATH_MAX], msg_content[1024];
     static char msg_file[PATH_MAX];
-    int         fd;
+    int fd;
 
     sprintf(msg_dir, "%s/%s/", TMPFS_MSG_ROOT, level);
     if (!mkdir_p(msg_dir)) {
@@ -137,9 +137,9 @@ tmpfs_msg_insert(const char *level, const char *msg)
 const char *
 tmpfs_msg_remove_oldest(const char *level)
 {
-    time_t      oldest = 0;
-    bool        o_set  = false;
-    char        msg_dir[PATH_MAX];
+    time_t oldest = 0;
+    bool o_set    = false;
+    char msg_dir[PATH_MAX];
     static char oldest_file[PATH_MAX] = {0};
 
     sprintf(msg_dir, "%s/%s/", TMPFS_MSG_ROOT, level);
@@ -184,7 +184,7 @@ void
 tmpfs_write_alarm(const char *fname, const char *msg)
 {
     char fpath[PATH_MAX];
-    int  fd;
+    int fd;
 
     if (fname && mkdir_p(TMPFS_ALARM_ROOT)) {
         sprintf(fpath, "%s%s", TMPFS_ALARM_ROOT, fname);
@@ -215,7 +215,7 @@ tmpfs_msg_sorted_unlink(const char *file)
         if (!S_ISLNK(STAT.st_mode))
             continue;
 
-        char    _link[PATH_MAX], _file[PATH_MAX];
+        char _link[PATH_MAX], _file[PATH_MAX];
         ssize_t _sz;
 
         sprintf(_link, "%s%s", _SORTED_ROOT, DIRPTR->d_name);

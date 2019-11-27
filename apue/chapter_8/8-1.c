@@ -10,13 +10,13 @@
 #include "ourhdr.h"
 #include <sys/types.h>
 
-int  glob  = 6;
+int glob   = 6;
 char buf[] = "a write to stdout\n";
 
 int
 main(void)
 {
-    int   var;
+    int var;
     pid_t pid;
 
     var = 88;

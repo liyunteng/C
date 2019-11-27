@@ -17,9 +17,9 @@
 int
 main(void)
 {
-    int         fd;
-    pid_t       pid;
-    char        buf[5];
+    int fd;
+    pid_t pid;
+    char buf[5];
     struct stat statbuf;
 
     if ((fd = open("templock", O_RDWR | O_CREAT | O_TRUNC, FILE_MODE)) < 0)

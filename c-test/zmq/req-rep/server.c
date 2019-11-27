@@ -35,7 +35,7 @@ void *req;
 void *
 run(void *arg)
 {
-    int  ret;
+    int ret;
     char buf[256];
     while (1) {
         zmq_recv(rep, buf, sizeof(buf), 0);
@@ -50,7 +50,7 @@ int
 main(void)
 {
 
-    int   ret;
+    int ret;
     void *context = zmq_ctx_new();
 
     rep = zmq_socket(context, ZMQ_REP);
@@ -68,7 +68,7 @@ main(void)
 
     sleep(2);
     struct timeval tv;
-    char           buf[256];
+    char buf[256];
     while (1) {
         tv.tv_sec  = 1;
         tv.tv_usec = 0;

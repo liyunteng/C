@@ -11,8 +11,8 @@
 int
 main(int argc, char *argv[])
 {
-    int                sockfd, n;
-    char               recvbuf[1024], sendbuf[1024];
+    int sockfd, n;
+    char recvbuf[1024], sendbuf[1024];
     struct sockaddr_in servaddr;
 
     if (argc != 2) {

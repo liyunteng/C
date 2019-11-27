@@ -11,11 +11,11 @@ void us_disk_dump(int fd, char *slot, int detail);
 ssize_t disk_name2slot(const char *name, char *slot);
 
 enum {
-	DISK_UPDATE_SMART	= (1 << 0),
-	DISK_UPDATE_RAID	= (1 << 1),
-	DISK_UPDATE_STATE       = (1 << 2),
+    DISK_UPDATE_SMART = (1 << 0),
+    DISK_UPDATE_RAID  = (1 << 1),
+    DISK_UPDATE_STATE = (1 << 2),
 
-	DISK_UPDATE_ALL		= 0xff,
+    DISK_UPDATE_ALL = 0xff,
 };
 
-#endif // US_DISK__H__
+#endif  // US_DISK__H__

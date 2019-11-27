@@ -27,16 +27,15 @@
 
 #define BUFFSIZE 4096
 
-#define MSG_SEND        0
-#define MSG_RECV        1
+#define MSG_SEND 0
+#define MSG_RECV 1
 
 struct myhdr {
-        uint8_t type;
-        uint32_t seq;
-        uint16_t id;
-        uint8_t data[0];
+    uint8_t type;
+    uint32_t seq;
+    uint16_t id;
+    uint8_t data[0];
 #define HSIZE 5
 };
-
 
 #endif

@@ -4,8 +4,8 @@
 #define REG_UDEV_MD "/block/md[[:digit:]]+$"
 #define REG_UDEV_USB "/usb[0-9]+/"
 
-#define REG_MD_DISK_INFO                                         \
-    "\\s*Array UUID \\s*:\\s*(([[:xdigit:]]+:)+[[:xdigit:]]+).*" \
+#define REG_MD_DISK_INFO                                                       \
+    "\\s*Array UUID \\s*:\\s*(([[:xdigit:]]+:)+[[:xdigit:]]+).*"               \
     "\\s*Device Role\\s*:\\s*([[:alpha:]]+)\\s*"
 
 #define REG_ATA_DISK_SLOT ".*/ata([0-9]+)/.*/block/sd[a-z]$"

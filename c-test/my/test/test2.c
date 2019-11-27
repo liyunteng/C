@@ -41,12 +41,12 @@ _create_disk_label(PedDevice *dev, PedDiskType *type)
 udv_info_t *
 get_udv_by_name(const char *name)
 {
-    PedDevice *   dev = NULL;
-    PedDisk *     disk;
+    PedDevice *dev = NULL;
+    PedDisk *disk;
     PedPartition *part;
-    PedDiskType * type = NULL;
+    PedDiskType *type = NULL;
 
-    const char *      part_name;
+    const char *part_name;
     static udv_info_t udv_info;
 
     ped_device_probe_all();
@@ -98,10 +98,10 @@ get_udv_by_name(const char *name)
 int
 udv_forece_init_vg(const char *vg_dev)
 {
-    PedDevice *    device = NULL;
-    PedDisk *      disk   = NULL;
+    PedDevice *device = NULL;
+    PedDisk *disk     = NULL;
     PedConstraint *constraint;
-    ssize_t        ret_code = E_OK;
+    ssize_t ret_code = E_OK;
 
     if (!vg_dev)
         return E_FMT_ERROR;
@@ -131,13 +131,14 @@ error:
 }
 
 int
-udv_create(const char *vg_dev, const char *name, uint64_t start, uint64_t length)
+udv_create(const char *vg_dev, const char *name, uint64_t start,
+           uint64_t length)
 {
-    PedDevice *    device = NULL;
-    PedDisk *      disk   = NULL;
-    PedPartition * part;
+    PedDevice *device = NULL;
+    PedDisk *disk     = NULL;
+    PedPartition *part;
     PedConstraint *constraint;
-    pedDiskType *  type = NULL;
+    pedDiskType *type = NULL;
 
     ssize_t ret_code = E_OK;
 
@@ -206,7 +207,8 @@ udv_create(const char *vg_dev, const char *name, uint64_t start, uint64_t length
                     if (fragment >= 8 && fragment < MIN_PART_SIZE)
                         end += _fix_4k(fragment);
 
-                    part = ped_partition_new(disk, PED_PARTITION_NORMAL, NULL, start, end);
+                    part = ped_partition_new(disk, PED_PARTITION_NORMAL, NULL,
+                                             start, end);
                     ped_partition_set_name(part, name);
                     ped_disk_add_partition(disk, part, constraint);
                     ped_disk_commit(disk);
@@ -228,7 +230,7 @@ void
 free_udv_list(struct list *list)
 {
     struct list *n, *nt;
-    udv_info_t * elem;
+    udv_info_t *elem;
 
     if (!list_entry(list)) {
         list_iterate_safe(n, nt, list)
@@ -242,12 +244,12 @@ free_udv_list(struct list *list)
 int
 udv_get_part_list(const char *vg_dev, struct list *list, int type)
 {
-    PedDevice *   device = NULL;
-    PedDisk *     disk   = NULL;
+    PedDevice *device = NULL;
+    PedDisk *disk     = NULL;
     PedPartition *part;
 
     udv_info_t *udv_info;
-    ssize_t     ret_code = E_FMT_ERROR;
+    ssize_t ret_code = E_FMT_ERROR;
 
     if (!(vg_dev && list))
         return ret_code;
@@ -302,12 +304,12 @@ err_out:
 int
 udv_delete(const char *name)
 {
-    udv_info_t *  udv;
-    char          vg_dev[32];
-    PedDevice *   device;
-    PedDisk *     disk;
+    udv_info_t *udv;
+    char vg_dev[32];
+    PedDevice *device;
+    PedDisk *disk;
     PedPartition *part;
-    ssize_t       retcode = E_OK;
+    ssize_t retcode = E_OK;
 
     if (!name)
         return E_FMT_ERROR;
@@ -346,12 +348,12 @@ error_eio:
 int
 udv_rename(const char *name, const char *new_name)
 {
-    udv_info_t *  udv;
-    char          vg_dev[32];
-    Ped_Device *  device = NULL;
-    PedDisk *     disk;
+    udv_info_t *udv;
+    char vg_dev[32];
+    Ped_Device *device = NULL;
+    PedDisk *disk;
     PedPartition *part;
-    ssize_t       ret_code = E_SYS_ERROR;
+    ssize_t ret_code = E_SYS_ERROR;
 
     if (!(name && new_name))
         return E_FMT_ERROR;

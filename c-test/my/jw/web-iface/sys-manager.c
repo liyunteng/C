@@ -57,8 +57,8 @@ input_wrong()
 int
 main(int argc, char *argv[])
 {
-    int             offset = 1;
-    struct cmd_map *p      = &cmd_map[0];
+    int offset        = 1;
+    struct cmd_map *p = &cmd_map[0];
 
     if (argc < 2)
         usage();

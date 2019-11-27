@@ -79,7 +79,7 @@ static struct bus_attribute my_attr = {
 };
 
 static int __init
-           my_bus_init(void)
+my_bus_init(void)
 {
     int ret;
 
@@ -94,7 +94,7 @@ static int __init
 }
 
 static void __exit
-            my_bus_exit(void)
+my_bus_exit(void)
 {
     bus_unregister(&my_bus_type);
 }

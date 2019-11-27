@@ -23,7 +23,7 @@ safe_system(const char *cmd)
 int
 safe_popen(struct sp_child *c, const char *cmd)
 {
-    int   pfd[2];
+    int pfd[2];
     pid_t pid;
 
     if (pipe(pfd) < 0)

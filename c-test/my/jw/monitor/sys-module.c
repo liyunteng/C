@@ -19,7 +19,7 @@ sys_module_init()
 void
 _module_event_release(sys_module_t *m)
 {
-    struct list *     n, *nt;
+    struct list *n, *nt;
     sys_event_conf_t *e;
 
     list_iterate_safe(n, nt, &m->event_list)
@@ -33,7 +33,7 @@ _module_event_release(sys_module_t *m)
 void
 sys_module_release(void)
 {
-    struct list * n, *nt;
+    struct list *n, *nt;
     sys_module_t *m;
 
     list_iterate_safe(n, nt, &_gmodule_list)
@@ -64,7 +64,8 @@ sys_module_add(const char *name)
         return true;
     }
 
-    syslog(LOG_NOTICE, "sys_module_add('%s'): add fail, module memory alloc faile", name);
+    syslog(LOG_NOTICE,
+           "sys_module_add('%s'): add fail, module memory alloc faile", name);
 
     return false;
 }
@@ -73,7 +74,7 @@ sys_module_t *
 sys_module_get(const char *name)
 {
     sys_module_t *module;
-    struct list * n, *nt;
+    struct list *n, *nt;
 
     list_iterate_safe(n, nt, &_gmodule_list)
     {
@@ -92,7 +93,8 @@ sys_module_event_add(const char *name, sys_event_conf_t *event)
     sys_module_t *module = sys_module_get(name);
 
     if ((module = sys_module_get(name)) == NULL) {
-        syslog(LOG_NOTICE, "sys_module_event_add('%s', '%s'): module not exist!", name,
+        syslog(LOG_NOTICE,
+               "sys_module_event_add('%s', '%s'): module not exist!", name,
                event->event);
         return false;
     }
@@ -104,12 +106,14 @@ sys_module_event_add(const char *name, sys_event_conf_t *event)
 sys_event_conf_t *
 sys_module_event_get(const char *name, const char *event)
 {
-    struct list *     n, *nt;
+    struct list *n, *nt;
     sys_event_conf_t *ec;
-    sys_module_t *    module;
+    sys_module_t *module;
 
     if ((module = sys_module_get(name)) == NULL) {
-        syslog(LOG_NOTICE, "sys_module_event_get('%s', '%s'): module not exist!", name, event);
+        syslog(LOG_NOTICE,
+               "sys_module_event_get('%s', '%s'): module not exist!", name,
+               event);
 
         return NULL;
     }
@@ -122,7 +126,8 @@ sys_module_event_get(const char *name, const char *event)
         }
     }
 
-    syslog(LOG_NOTICE, "sys_module_event_get('%s', '%s'): not found!", name, event);
+    syslog(LOG_NOTICE, "sys_module_event_get('%s', '%s'): not found!", name,
+           event);
     return NULL;
 }
 
@@ -136,21 +141,21 @@ sys_module_event_update(sys_event_conf_t *ec)
 void
 _dump_event(sys_module_t *module)
 {
-    struct list *     n, *nt;
+    struct list *n, *nt;
     sys_event_conf_t *ec;
 
     list_iterate_safe(n, nt, &module->event_list)
     {
         ec = list_struct_base(n, sys_event_conf_t, event_list);
-        printf("\tevent: %s, level: %s, count: %d, action: %p\n", ec->event, ec->level, ec->count,
-               ec->action);
+        printf("\tevent: %s, level: %s, count: %d, action: %p\n", ec->event,
+               ec->level, ec->count, ec->action);
     }
 }
 
 void
 dump_module_event()
 {
-    struct list * n, *nt;
+    struct list *n, *nt;
     sys_module_t *module;
 
     printf("--------------dump modules-------------------\n");

@@ -33,7 +33,7 @@ main(void)
     void *context = zmq_ctx_new();
 
     void *frontend = zmq_socket(context, ZMQ_ROUTER);
-    int   rc       = zmq_bind(frontend, "tcp://*:5559");
+    int rc         = zmq_bind(frontend, "tcp://*:5559");
     assert(rc == 0);
 
     void *backend = zmq_socket(context, ZMQ_DEALER);

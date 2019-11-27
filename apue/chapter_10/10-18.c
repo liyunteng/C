@@ -18,7 +18,7 @@
 void
 abort_1(void)
 {
-    sigset_t         mask;
+    sigset_t mask;
     struct sigaction action;
     sigaction(SIGABRT, NULL, &action);
     if (action.sa_handler == SIG_IGN) {

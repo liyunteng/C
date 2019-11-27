@@ -25,9 +25,9 @@
 #include <mqueue.h>
 #include <signal.h>
 
-mqd_t           mqd;
-void *          buf;
-struct mq_attr  attr;
+mqd_t mqd;
+void *buf;
+struct mq_attr attr;
 struct sigevent sigev;
 
 static void sig_usr1(int);

@@ -4,7 +4,7 @@ int
 main(int argc, char *argv[])
 {
     FILE *fp = NULL;
-    char  buf[4096];
+    char buf[4096];
 
     strcpy(buf, "mem is char dev!\n");
     printf("buf: %s\n", buf);

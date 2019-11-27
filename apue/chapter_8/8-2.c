@@ -15,7 +15,7 @@ int glob = 6;
 int
 main(void)
 {
-    int   var;
+    int var;
     pid_t pid;
 
     var = 88;

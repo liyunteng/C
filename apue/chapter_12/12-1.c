@@ -17,7 +17,7 @@ char buf[100000];
 int
 main(void)
 {
-    int   ntowrite, nwrite;
+    int ntowrite, nwrite;
     char *ptr;
 
     ntowrite = read(STDIN_FILENO, buf, sizeof(buf));

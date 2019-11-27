@@ -27,11 +27,11 @@
 int
 main(int argc, char *argv[])
 {
-    int            c, flags;
-    mqd_t          mqd;
-    ssize_t        n;
-    uint32_t       prio;
-    void *         buf;
+    int c, flags;
+    mqd_t mqd;
+    ssize_t n;
+    uint32_t prio;
+    void *buf;
     struct mq_attr attr;
 
     flags = O_RDONLY;

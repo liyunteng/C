@@ -52,7 +52,7 @@ static struct driver_attribute my_attr = {
 };
 
 static int __init
-           my_driver_init(void)
+my_driver_init(void)
 {
     int ret = 0;
 
@@ -63,7 +63,7 @@ static int __init
 }
 
 static void __exit
-            my_driver_exit(void)
+my_driver_exit(void)
 {
     driver_unregister(&my_driver);
 }

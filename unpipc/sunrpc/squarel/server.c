@@ -46,7 +46,8 @@ squareproc_2_svc(square_in *inp, struct svc_req *rqstp)
 }
 
 /*
- * bool_t squareproc_3_svc(square_in *inp, square_out *outp, struct svc_req *rqstp)
+ * bool_t squareproc_3_svc(square_in *inp, square_out *outp, struct svc_req
+ **rqstp)
  * {
  *	printf("thread %ld started ,arg = %ld\n",
  *	       (long)pthread_self(), inp->argl);

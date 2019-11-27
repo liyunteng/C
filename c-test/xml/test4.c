@@ -15,7 +15,7 @@ parseStory(xmlDocPtr doc, xmlNodePtr cur, char *keyword)
 xmlDocPtr
 parseDoc(char *docname, char *keyword)
 {
-    xmlDocPtr  doc;
+    xmlDocPtr doc;
     xmlNodePtr cur;
 
     doc = xmlParseFile(docname);
@@ -51,8 +51,8 @@ parseDoc(char *docname, char *keyword)
 int
 main(int argc, char *argv[])
 {
-    char *    docname;
-    char *    keyword;
+    char *docname;
+    char *keyword;
     xmlDocPtr doc;
 
     if (argc <= 2) {

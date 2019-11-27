@@ -8,17 +8,17 @@
 
 #define GPIO_BASE_ADDR (0x500)
 
-#define GPIO_VALUE(fd, base, op, data) \
-    {                                  \
-        lseek(fd, (base), SEEK_SET);   \
-        op(fd, &data, sizeof(data));   \
+#define GPIO_VALUE(fd, base, op, data)                                         \
+    {                                                                          \
+        lseek(fd, (base), SEEK_SET);                                           \
+        op(fd, &data, sizeof(data));                                           \
     }
 
 bool
 sb_gpio28_set(bool sw)
 {
     uint32_t bit28, tmpval;
-    int      fd;
+    int fd;
 
     fd = open("/dev/port", O_RDWR);
     if (fd) {

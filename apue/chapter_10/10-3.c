@@ -39,7 +39,7 @@ static void
 sig_cld(int signo)
 {
     pid_t pid;
-    int   status;
+    int status;
 
     printf("SIGCLD received\n");
     if (signal(SIGCLD, sig_cld) == SIG_ERR) {

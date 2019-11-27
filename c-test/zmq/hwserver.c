@@ -37,7 +37,7 @@ main(int argc, char *argv[])
 
     while (1) {
         /* wait for next request from client */
-        char      buf[10];
+        char buf[10];
         zmq_msg_t request;
         zmq_msg_init(&request);
         zmq_msg_recv(&request, responder, 0);

@@ -18,7 +18,7 @@ main(void)
     assert(fd > 0);
 
     char buf[128];
-    int  n = read(fd, buf, 128);
+    int n = read(fd, buf, 128);
     assert(n > 0);
     buf[n] = 0;
     printf("%s\n", buf);

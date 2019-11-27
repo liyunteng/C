@@ -13,8 +13,8 @@ static int
 init_hotplug_sock(void)
 {
     struct sockaddr_nl snl;
-    const int          buffersize = 16 * 1024 * 1024;
-    int                retval;
+    const int buffersize = 16 * 1024 * 1024;
+    int retval;
 
     memset(&snl, 0x00, sizeof(struct sockaddr_nl));
     snl.nl_family    = AF_NETLINK;
@@ -26,8 +26,10 @@ init_hotplug_sock(void)
         return -1;
     }
 
-    setsockopt(hotplug_sock, SOL_SOCKET, SO_RCVBUFFORCE, &buffersize, sizeof(buffersize));
-    retval = bind(hotplug_sock, (struct sockaddr *)&snl, sizeof(struct sockaddr_nl));
+    setsockopt(hotplug_sock, SOL_SOCKET, SO_RCVBUFFORCE, &buffersize,
+               sizeof(buffersize));
+    retval =
+        bind(hotplug_sock, (struct sockaddr *)&snl, sizeof(struct sockaddr_nl));
     if (retval < 0) {
         printf("bind failed: %s\n", strerror(errno));
         close(hotplug_sock);
@@ -41,14 +43,14 @@ init_hotplug_sock(void)
 int
 main(int argc, char *argv[])
 {
-    int                  hotplug_sock = init_hotplug_sock();
-    struct udev *        udev;
+    int hotplug_sock = init_hotplug_sock();
+    struct udev *udev;
     struct udev_monitor *mon;
 
     struct udv_device *dev;
-    const char *       path;
-    const char *       dev_node;
-    const char *       action;
+    const char *path;
+    const char *dev_node;
+    const char *action;
 
     udev = udev_new();
     if (udev == NULL) {
@@ -62,7 +64,8 @@ main(int argc, char *argv[])
         return -1;
     }
 
-    if (udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk") < 0) {
+    if (udev_monitor_filter_add_match_subsystem_devtype(mon, "block", "disk")
+        < 0) {
         printf("udev monitor add match failed!\n");
         udev_unref(udev);
         return -1;
@@ -75,7 +78,7 @@ main(int argc, char *argv[])
         udev_unref(udev);
         return -1;
     }
-    struct udev_enumerate * uenum;
+    struct udev_enumerate *uenum;
     struct udev_list_entry *devs, *dev_list;
     uenum = udev_enumerate_new(udev);
     if (uenum == NULL) {

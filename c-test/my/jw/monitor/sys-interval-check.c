@@ -18,7 +18,7 @@ struct list _g_capture;
 static const char *
 MOD_NAME(const char *mod)
 {
-    int         i;
+    int i;
     static char _not_found[2] = "";
 
     for (i = 0; mod_cap_list[i]; i++) {
@@ -78,7 +78,7 @@ _capture(sys_capture_t *cap)
 {
     char msg[256]     = {0};
     char log_msg[256] = {0};
-    int  _cur_error   = VAL_ERROR;
+    int _cur_error    = VAL_ERROR;
 
 #ifndef _DEBUG
     if (!isExpried(cap))
@@ -105,14 +105,16 @@ _capture(sys_capture_t *cap)
 
     switch (_cur_error) {
     case VAL_EMERG:
-        sprintf(log_msg, "监控模块%s告警: %s, 自动关闭系统", MOD_NAME(cap->name), msg);
+        sprintf(log_msg, "监控模块%s告警: %s, 自动关闭系统",
+                MOD_NAME(cap->name), msg);
         LogInsert(NULL, "SysMon", "Auto", "Error", log_msg);
         sprintf(msg, "监控模块%s告警", MOD_NAME(cap->name));
         alarm_email_send(msg, log_msg);
         system("poweroff&");
         break;
     case VAL_CRIT:
-        sprintf(log_msg, "监控模块%s告警: %s, 自动重启系统", MOD_NAME(cap->name), msg);
+        sprintf(log_msg, "监控模块%s告警: %s, 自动重启系统",
+                MOD_NAME(cap->name), msg);
         LogInsert(NULL, "SysMon", "Auto", "Error", log_msg);
         sprintf(msg, "监控模块%s告警", MOD_NAME(cap->name));
         alarm_email_send(msg, log_msg);
@@ -138,7 +140,8 @@ _capture(sys_capture_t *cap)
     case VAL_NORMAL:
         if (cap->_error != VAL_NORMAL) {
             if (VAL_ERROR == cap->_error)
-                sysmon_event("self_run", "env_exception_backout", cap->name, "good");
+                sysmon_event("self_run", "env_exception_backout", cap->name,
+                             "good");
             cap->_error = VAL_NORMAL;
             sprintf(log_msg, "监控模块%s告警解除", MOD_NAME(cap->name));
             LogInsert(NULL, "SysMon", "Auto", "Error", log_msg);
@@ -152,7 +155,7 @@ _capture(sys_capture_t *cap)
 void
 _check_interval()
 {
-    struct list *  n, *nt;
+    struct list *n, *nt;
     sys_capture_t *cap;
 
 #ifdef _DEBUG
@@ -160,8 +163,8 @@ _check_interval()
 #endif
     if (unlikely(global_print_on)) {
         static int print_header = 1;
-        time_t     now_t        = time(NULL);
-        struct tm  now_tm;
+        time_t now_t            = time(NULL);
+        struct tm now_tm;
         localtime_r(&now_t, &now_tm);
         if (print_header) {
             printf("时间， cpu温度， 机箱温度， 机箱风扇1， 机箱风扇2，"
@@ -172,8 +175,9 @@ _check_interval()
             print_header = 0;
         }
 
-        printf("%d%02d%02d-%02d%02d%02d,", now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday,
-               now_tm.tm_hour, now_tm.tm_min, now_tm.tm_sec);
+        printf("%d%02d%02d-%02d%02d%02d,", now_tm.tm_year + 1900,
+               now_tm.tm_mon + 1, now_tm.tm_mday, now_tm.tm_hour, now_tm.tm_min,
+               now_tm.tm_sec);
     }
 
     list_iterate_safe(n, nt, &_g_capture)
@@ -204,7 +208,7 @@ do_interval_check(int sig)
 void
 dump_self_run()
 {
-    struct list *  n, *nt;
+    struct list *n, *nt;
     sys_capture_t *cap;
 
     puts("-----------------dump capture-----------------\n");

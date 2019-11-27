@@ -72,18 +72,18 @@ pic_release(void)
     }
 }
 
-#define PIC_CHECK_INIT()      \
-    do {                      \
-        int ret = pic_init(); \
-        if (ret < 0)          \
-            return ret;       \
+#define PIC_CHECK_INIT()                                                       \
+    do {                                                                       \
+        int ret = pic_init();                                                  \
+        if (ret < 0)                                                           \
+            return ret;                                                        \
     } while (0)
 
 int
 pic_get_version(uint32_t *version)
 {
     uint8_t vl, vh;
-    int     ret;
+    int ret;
 
     PIC_CHECK_INIT();
     ret = __pic_read_reg(PIC_VERH, &vh);

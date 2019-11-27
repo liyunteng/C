@@ -10,7 +10,7 @@
 
 struct mon_io {
     ev_io io;
-    int   sockfd;
+    int sockfd;
 };
 
 struct mon_io mon_io;
@@ -20,8 +20,8 @@ static void
 sock_cb(struct ev_loop *loop, ev_io *w, int r)
 {
     struct mon_io *mi = (struct mon_io *)w;
-    char           buff[1024];
-    int            n;
+    char buff[1024];
+    int n;
 
     if ((n = read(mi->sockfd, buff, sizeof(buff) - 1)) <= 0) {
     }
@@ -34,16 +34,16 @@ sock_cb(struct ev_loop *loop, ev_io *w, int r)
 int
 main(int argc, char *argv[])
 {
-    socklen_t          addr_len;
-    int                listen_fd;
-    int                com_fd;
-    int                ret;
-    int                i;
-    static char        recv_buf[1024];
-    int                len, num;
+    socklen_t addr_len;
+    int listen_fd;
+    int com_fd;
+    int ret;
+    int i;
+    static char recv_buf[1024];
+    int len, num;
     struct sockaddr_un ctl_addr;
     struct sockaddr_un srv_addr;
-    struct ev_loop *   loop = EV_DEFAULT;
+    struct ev_loop *loop = EV_DEFAULT;
 
     listen_fd = socket(PF_UNIX, SOCK_DGRAM, 0);
     if (listen_fd < 0) {

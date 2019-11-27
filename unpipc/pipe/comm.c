@@ -14,7 +14,7 @@ msg_send(int fd, struct msg *mptr)
 ssize_t
 msg_recv(int fd, struct msg *mptr)
 {
-    size_t  len;
+    size_t len;
     ssize_t n;
 
     if ((n = read(fd, mptr, MSGHDRSIZE)) == 0) {
@@ -33,8 +33,8 @@ msg_recv(int fd, struct msg *mptr)
 void
 client(int readfd, int writefd)
 {
-    size_t     len;
-    ssize_t    n;
+    size_t len;
+    ssize_t n;
     struct msg msg;
 
     if (fgets(msg.msg_data, MSGDATA, stdin) < 0)
@@ -60,9 +60,9 @@ client(int readfd, int writefd)
 void
 server(int readfd, int writefd)
 {
-    int        fd;
-    ssize_t    n;
-    size_t     times;
+    int fd;
+    ssize_t n;
+    size_t times;
     struct msg msg;
 
     msg.msg_type = 1;
@@ -74,7 +74,8 @@ server(int readfd, int writefd)
     msg.msg_data[n] = '\0';
 
     if ((fd = open(msg.msg_data, O_RDONLY)) < 0) {
-        snprintf(msg.msg_data + n, sizeof(msg.msg_data) - n, ":can't open, %s\n", strerror(errno));
+        snprintf(msg.msg_data + n, sizeof(msg.msg_data) - n,
+                 ":can't open, %s\n", strerror(errno));
         msg.msg_len = strlen(msg.msg_data);
         if (msg_send(writefd, &msg) != (MSGHDRSIZE + msg.msg_len)) {
             err_ret("message send failed");

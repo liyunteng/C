@@ -18,7 +18,7 @@
 int
 main(void)
 {
-    int  fd, val;
+    int fd, val;
     char buf[10];
 
     if ((fd = open(PIDFILE, O_WRONLY | O_CREAT, FILE_MODE)) < 0)
