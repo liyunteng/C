@@ -64,7 +64,7 @@ cdev_write(struct file *file, const char __user *buf, size_t count,
 }
 
 static struct file_operations cdev_fops = {
-    .owner = THIS_MODULE, /* 宏， 指向编译模块时自动创建
+    .owner   = THIS_MODULE, /* 宏， 指向编译模块时自动创建
                            * 的__this_module变量 */
     .open    = cdev_open,
     .write   = cdev_write,
