@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <string.h>
 
+static void sig_tt(int);
 static void sig_hup(int);
 static void pr_ids(char *);
 
@@ -35,6 +36,9 @@ main(void)
     } else {
         pr_ids("child");
         signal(SIGHUP, sig_hup);
+        signal(SIGTTIN, sig_tt);
+        signal(SIGTTOU, sig_tt);
+        signal(SIGCONT, sig_tt);
         kill(getpid(), SIGTSTP);
         pr_ids("child");
         if (read(STDIN_FILENO, &c, 1) != 1) {
@@ -42,10 +46,16 @@ main(void)
         } else {
             printf("read %d(%c)\n", c, c);
         }
-
         exit(0);
     }
     return 0;
+}
+
+static void
+sig_tt(int signo)
+{
+    printf("%s received, pid = %d\n", strsignal(signo), getpid());
+    return;
 }
 
 static void
@@ -58,7 +68,7 @@ sig_hup(int signo)
 static void
 pr_ids(char *name)
 {
-    printf("%s: pid = %d, ppid = %d, pgrp = %d\n", name, getpid(), getppid(),
-           getpgrp());
+    printf("%s: pid = %d, ppid = %d, pgrp = %d, sid = %d\n", name, getpid(), getppid(),
+           getpgrp(), getsid(getpid()));
     fflush(stdout);
 }
