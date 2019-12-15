@@ -2,7 +2,7 @@
  * Description: ls
  *
  * Copyright (C) 2019 liyunteng
- * Last-Updated: <2019/08/03 06:56:14>
+ * Last-Updated: <2019/12/15 16:28:43>
  */
 #include "ourhdr.h"
 #include <dirent.h>
@@ -27,8 +27,3 @@ main(int argc, char *argv[])
         printf("%s\n", dirp->d_name);
     }
 }
-
-/* Local Variables: */
-/* compile-command: "clang -Wall -o ls ls.c -g -I../include -L../lib -lourhdr"
- */
-/* End: */

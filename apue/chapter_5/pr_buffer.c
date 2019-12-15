@@ -14,7 +14,7 @@ main(void)
 {
     FILE *fp;
 
-    fputs("entry any character\n", stdout);
+    fputs("entry any character: ", stdout);
     if (getchar() == EOF)
         err_sys("getchar error");
     fputs("one line to standard error\n", stderr);
@@ -44,5 +44,6 @@ pr_stdio(const char *name, FILE *fp)
         printf("line buffered");
     else
         printf("fully buffered");
-    printf(", buffer size = %d\n", __fbufsize(fp));
+#include <stdio_ext.h>
+    printf(", buffer size = %lu\n", __fbufsize(fp));
 }

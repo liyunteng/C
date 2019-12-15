@@ -48,6 +48,7 @@ main(void)
 
     /* xxxxx */
     sleep(10);
+    unlink(PIDFILE);
 
     exit(0);
 }

@@ -27,6 +27,7 @@ main(void)
         err_sys("wait error");
     pr_exit(status);
 
+    sleep(1);
     if ((pid = fork()) < 0)
         err_sys("fork error");
     else if (pid == 0)
@@ -36,6 +37,7 @@ main(void)
         err_sys("wait error");
     pr_exit(status);
 
+    sleep(1);
     if ((pid = fork()) < 0)
         err_sys("fork error");
     else if (pid == 0)

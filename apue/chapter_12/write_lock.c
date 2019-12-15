@@ -34,5 +34,6 @@ main(void)
         if (write(fd, &fd, 1) != 1)
             err_sys("write error");
     }
+    unlink("temp.lock");
     return 0;
 }

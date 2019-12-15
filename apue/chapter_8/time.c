@@ -33,7 +33,7 @@ do_cmd(char *cmd)
     clock_t start, end;
     int status;
 
-    fprintf(stderr, "\ncommand: %s\n", cmd);
+    fprintf(stderr, "command: %s\n", cmd);
     if ((start = times(&tmsstart)) == -1)
         err_sys("times error");
 

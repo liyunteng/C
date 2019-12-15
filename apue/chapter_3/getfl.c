@@ -2,7 +2,7 @@
  * Description: 3-4 test fctnl F_GETFL
  *
  * Copyright (C) 2019 liyunteng
- * Last-Updated: <2019/06/12 01:04:06 liyunteng>
+ * Last-Updated: <2019/12/15 16:40:27>
  */
 #include "ourhdr.h"
 #include <fcntl.h>
@@ -14,7 +14,7 @@ main(int argc, char *argv[])
     int accmode, val;
 
     if (argc != 2)
-        err_quit("usage: %s <descriptor#", argv[0]);
+        err_quit("usage: %s <fd>", argv[0]);
 
     if ((val = fcntl(atoi(argv[1]), F_GETFL, 0)) < 0)
         err_sys("fcntl error for fd %d", atoi(argv[1]));

@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <sys/types.h>
+#include <string.h>
 
 static void sig_hup(int);
 static void pr_ids(char *);
@@ -29,14 +30,19 @@ main(void)
 
     else if (pid > 0) {
         sleep(5);
+        printf("parent exit\n");
         exit(0);
     } else {
         pr_ids("child");
         signal(SIGHUP, sig_hup);
         kill(getpid(), SIGTSTP);
         pr_ids("child");
-        if (read(0, &c, 1) != 1)
-            printf("read error from control terminal, errno = %d\n", errno);
+        if (read(STDIN_FILENO, &c, 1) != 1) {
+            printf("read error from control terminal, errno = %d(%s)\n", errno, strerror(errno));
+        } else {
+            printf("read %d(%c)\n", c, c);
+        }
+
         exit(0);
     }
     return 0;

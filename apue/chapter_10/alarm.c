@@ -18,7 +18,13 @@ int
 main(void)
 {
     struct passwd *ptr;
-    signal(SIGALRM, my_alarm);
+    struct sigaction act, oact;
+    act.sa_handler = my_alarm;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = SA_INTERRUPT;
+    if (sigaction(SIGALRM, &act, &oact) < 0) {
+        err_sys("sigaction error");
+    }
     alarm(1);
 
     for (;;) {
@@ -36,8 +42,11 @@ my_alarm(int signo)
     struct passwd *rootptr;
 
     printf("in signal handler\n");
-    if ((rootptr = getpwnam("root")) == NULL)
-        err_sys("getpwnam(root) error");
+
+    /* if ((rootptr = getpwnam("root")) == NULL)
+     *     err_sys("getpwnam(root) error"); */
+    /* if (strcmp(rootptr->pw_name, "root") != 0) {
+     *     printf("#return value corrupted!, pw_name=%s\n", rootptr->pw_name);
+     * } */
     alarm(1);
-    return;
 }

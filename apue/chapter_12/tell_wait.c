@@ -39,6 +39,7 @@ main(void)
         WAIT_CHILD();
         lockabyte("parent", fd, 0);
     }
+    unlink("templock");
     return 0;
 }
 

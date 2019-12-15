@@ -60,5 +60,6 @@ main(void)
         else
             printf("read OK (no mandatory locking), buff = %2.2s\n", buf);
     }
+    unlink("templock");
     return 0;
 }

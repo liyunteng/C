@@ -9,7 +9,7 @@ DEP = $(SRC:%.c=%.d)
 TARGET = libourhdr.so
 
 all: $(TARGET)
-	@mv $(TARGET) ../lib
+# @mv $(TARGET) ../lib
 
 $(filter %.so,$(TARGET)): $(OBJECTS)
 	$(CC) $(CFLAGS) -shared $(CFLAGS) -o $@ $^

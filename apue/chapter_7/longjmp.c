@@ -10,7 +10,7 @@
 #define TOK_ADD 5
 jmp_buf jmpbuffer;
 void do_line(char *);
-void cmd_add(void);
+void do_jump(void);
 int get_token(void);
 
 int
@@ -19,7 +19,7 @@ main(void)
     char line[MAXLINE];
 
     if (setjmp(jmpbuffer) != 0) {
-        printf("error");
+        printf("after longjup\n");
     }
     while (fgets(line, MAXLINE, stdin) != NULL) {
         do_line(line);
@@ -34,26 +34,28 @@ do_line(char *ptr)
     int cmd;
 
     tok_ptr = ptr;
-    while ((cmd = get_token()) > 0) {
-        switch (cmd) {
-        case TOK_ADD:
-            cmd_add();
-            break;
-        }
+    cmd = get_token();
+    printf("# %d\n", cmd);
+    switch (cmd) {
+    case TOK_ADD:
+        do_jump();
+        break;
+    default:
+        break;
     }
+    return;
 }
+
 void
-cmd_add(void)
+do_jump(void)
 {
-    int token;
-    token = get_token();
-    if (token == 5)
-        longjmp(jmpbuffer, 1);
+    longjmp(jmpbuffer, 1);
 }
 
 int
 get_token(void)
 {
     /* TODO: */
-    return 5;
+    static int val = 1;
+    return val++;
 }

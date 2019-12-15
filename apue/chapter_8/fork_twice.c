@@ -30,7 +30,7 @@ main(void)
         exit(0);
     }
 
-    if (waitpid(pid, NULL, 0) != 0) {
+    if (waitpid(pid, NULL, 0) != pid) {
         err_sys("waitpid error");
     }
     return 0;

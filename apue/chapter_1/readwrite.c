@@ -2,7 +2,7 @@
  * Description: 1-2 unbuffer io
  *
  * Copyright (C) 2019 liyunteng
- * Last-Updated: <2019/06/11 00:01:20 liyunteng>
+ * Last-Updated: <2019/12/15 16:28:58>
  */
 #include "ourhdr.h"
 
@@ -26,8 +26,3 @@ main(void)
 
     return 0;
 }
-
-/* Local Variables: */
-/* compile-command: "clang -Wall -o 1-2 1-2.c -g -I../include -L../lib -lourhdr"
- */
-/* End: */
