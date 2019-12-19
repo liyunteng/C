@@ -137,6 +137,5 @@ main(int argc, char *argv[])
 }
 
 /* Local Variables: */
-/* compile-command: "clang -Wall -o libaio-epoll-test libaio-epoll-test.c -g
- * -laio" */
+/* compile-command: "clang -Wall -o libaio-epoll-test libaio-epoll-test.c -g -laio" */
 /* End: */
