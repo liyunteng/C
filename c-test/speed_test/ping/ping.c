@@ -69,8 +69,7 @@ main(int argc, char *argv[])
     }
 
     setuid(getuid());
-    pid = getpid();
-
+    pid = (u16)getpid();
     set_sighandler();
 
     printf("Ping %s(%s): %d bytes data in ICMP packets.\n", argv[1],
@@ -179,7 +178,7 @@ handle_pkt()
     }
 
     if (icmp->icmp_id != pid) {
-        perror("error id");
+        printf("error id icmp->icmp_id: %d pid: %d\n", icmp->icmp_id, pid);
         return -1;
     }
 
