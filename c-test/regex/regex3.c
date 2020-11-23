@@ -31,7 +31,7 @@ main(int argc, char *argv[])
         fprintf(stderr, "%s: pattern '%s'\n", ebuf, REG);
         return -1;
     }
-    fp = fopen("./out", "r");
+    fp = fopen("./regex_data1", "r");
     if (!fp) {
         fprintf(stderr, "fopen error!\n");
         return -1;

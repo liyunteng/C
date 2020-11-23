@@ -1,6 +1,6 @@
 include build/def.mk
 
-SUBDIRS += apue
+SUBDIRS += apue c-test
 
 include build/debug.mk
 include build/subdir.mk

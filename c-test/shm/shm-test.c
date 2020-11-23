@@ -5,8 +5,8 @@
 #include <unistd.h>
 
 /* 信号量的p操作 */
-void
-p()
+int
+p(int semid)
 {
     struct sembuf sem_p;
     sem_p.sem_num = 0;
@@ -15,10 +15,11 @@ p()
         printf("p operation failed.\n");
         return -1;
     }
+    return 0;
 }
 
-void
-v()
+int
+v(int semid)
 {
     struct sembuf sem_v;
     sem_v.sem_num = 0;
@@ -28,9 +29,10 @@ v()
         printf("v operation failed.\n");
         return -1;
     }
+    return 0;
 }
 
-struct Peopel {
+struct People {
     char name[10];
     int age;
 };
@@ -79,10 +81,10 @@ main(int argc, char *argv[])
         return -1;
     }
 
-    p();
+    p(semid);
     strcpy((*addr).name, "xioaming");
     (*addr).age = 10;
-    v();
+    v(semid);
 
     /* 将共享内存与当前进程断开 */
     if (shmdt(addr) == -1) {

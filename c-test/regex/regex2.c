@@ -22,7 +22,7 @@ main(int argc, char *argv[])
         return -1;
     }
 
-    if ((fp = fopen("./out2", "r")) == NULL) {
+    if ((fp = fopen("./regex_data2", "r")) == NULL) {
         fprintf(stderr, "fopen error!\n");
         return -1;
     }

@@ -7,8 +7,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <assert.h>
+#include <stdint.h>
 
 #include "curl/curl.h"
+#include <sys/stat.h>
+
 // #define MLOGE(...)
 #define MLOGE printf
 
@@ -251,9 +254,8 @@ void curl_uninit()
     curl_global_cleanup();
 }
 
-int read_image(const char *path, char **buf, int *bufLen)
+static int read_image(const char *path, char **buf, int *bufLen)
 {
-#include <sys/stat.h>
     struct stat st;
     FILE *fp = NULL;
 

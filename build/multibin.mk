@@ -46,11 +46,21 @@ BIN := $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_C))))
 BIN += $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_CXX))))
 
 # CreateDirectory
-ifeq ($(MAKECMDGOALS),all)
 OUT_OBJECT_DIRS := $(sort $(dir $(OBJECT_C)))
 OUT_OBJECT_DIRS += $(sort $(dir $(OBJECT_CXX)))
 CreateResult :=
-CreateResult := $(call CreateDirectory, $(OUT_ROOT))
+ifeq ($(MAKECMDGOALS),all)
+CreateResult += $(call CreateDirectory, $(OUT_ROOT))
+CreateResult += $(call CreateDirectory, $(OUT_DEPEND))
+CreateResult += $(call CreateDirectory, $(OUT_OBJECT))
+CreateResult += $(call CreateDirectory, $(OUT_BIN))
+dummy += $(foreach dir, $(OUT_OBJECT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
+ifneq ($(strip $(CreateResult)),)
+	err = $(error create directory failed: $(CreateResult))
+endif
+else ifeq ($(MAKECMDGOALS),)
+CreateResult += $(call CreateDirectory, $(OUT_ROOT))
+CreateResult += $(call CreateDirectory, $(OUT_DEPEND))
 CreateResult += $(call CreateDirectory, $(OUT_OBJECT))
 CreateResult += $(call CreateDirectory, $(OUT_BIN))
 dummy += $(foreach dir, $(OUT_OBJECT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
