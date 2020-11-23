@@ -75,10 +75,9 @@ success:
 
 $(DEPEND_C): $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.c
 	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
-	@set -e;$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
+	$(Q)set -e;$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
 	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
-
 ifeq ($(MAKECMDGOALS),all)
 sinclude $(DEPEND_C)
 endif
@@ -89,7 +88,7 @@ $(OBJECT_C):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.c
 
 $(DEPEND_CXX) : $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.cpp
 	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
-	@set -e;$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
+	$(Q)set -e;$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
 	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 ifeq ($(MAKECMDGOALS),all)
@@ -133,10 +132,11 @@ clean:
 # $(Q)$(RM) -rf $(OBJECT_C) $(OBJECT_CXX)
 # $(Q)$(RM) -rf $(BIN)
 # $(Q)$(RM) -rf $(DEPEND_C) $(DEPEND_CXX)
-# $(Q)[ -n $(OUT_OBJECT) ] && rm -rf $(OUT_OBJECT)
-# $(Q)[ -n $(OUT_BIN) ] && rm -rf $(OUT_BIN)
-# $(Q)[ -n $(OUT_DEPEND) ] && rm -rf $(OUT_DEPEND)
-	$(Q)[ -n $(OUT_ROOT) ] && rm -rf $(OUT_ROOT)
+# $(Q)[ "`ls $(OUT_OBJECT)`" ] || rm -rf $(OUT_OBJECT)
+# $(Q)[ "`ls $(OUT_BIN)`" ] || rm -rf $(OUT_BIN)
+# $(Q)[ "`ls $(OUT_DEPEND)`" ] || rm -rf $(OUT_DEPEND)
+# $(Q)[ "`ls $(OUT_ROOT)`" ] || rm -rf $(OUT_ROOT)
+	$(Q)$(RM) -rf $(OUT_ROOT)
 ifeq ($(MAKELEVEL),0)
 	@echo "clean done"
 endif

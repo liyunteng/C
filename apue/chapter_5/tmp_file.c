@@ -12,7 +12,7 @@ main(void)
     char name[L_tmpnam], line[MAXLINE];
     FILE *fp;
 
-#ifdef __GNU__
+#ifdef __GNUC__
     printf("%s\n", tmpnam_r(NULL));
 
     tmpnam_r(name);

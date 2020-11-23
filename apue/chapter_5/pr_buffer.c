@@ -44,7 +44,7 @@ pr_stdio(const char *name, FILE *fp)
         printf("line buffered");
     else
         printf("fully buffered");
-#ifdef __GNU__
+#ifdef __GNUC__
 #include <stdio_ext.h>
     printf(", buffer size = %lu\n", __fbufsize(fp));
 #endif

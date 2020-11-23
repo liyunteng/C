@@ -15,7 +15,7 @@
 
 #include "ourhdr.h"
 
-void
+static void
 abort_1(void)
 {
     sigset_t mask;

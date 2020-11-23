@@ -17,7 +17,7 @@ sig_alrm(int signo)
     return;
 }
 
-unsigned int
+static unsigned int
 sleep_1(unsigned int nsecs)
 {
     struct sigaction newact, oldact;

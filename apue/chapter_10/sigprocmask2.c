@@ -13,10 +13,19 @@
 
 volatile sig_atomic_t quitflag;
 
+static void
+sig_int(int signo)
+{
+    if (signo == SIGINT)
+        printf("\ninterrupt\n");
+    else if (signo == SIGQUIT)
+        quitflag = 1;
+    return;
+}
+
 int
 main(void)
 {
-    void sig_int(int);
     sigset_t newmask, oldmask, zeromask;
 
     if (signal(SIGINT, sig_int) == SIG_ERR)
@@ -40,14 +49,4 @@ main(void)
     if (sigprocmask(SIG_SETMASK, &oldmask, NULL) < 0)
         err_sys("SIG_SETMASK error");
     return 0;
-}
-
-void
-sig_int(int signo)
-{
-    if (signo == SIGINT)
-        printf("\ninterrupt\n");
-    else if (signo == SIGQUIT)
-        quitflag = 1;
-    return;
 }

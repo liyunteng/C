@@ -2,7 +2,7 @@
  * Description: 2-2 dynamic alloc for path
  *
  * Copyright (C) 2019 liyunteng
- * Last-Updated: <2020/11/23 19:59:27>
+ * Last-Updated: <2020/11/23 23:58:34>
  */
 #include "ourhdr.h"
 #include <errno.h>
@@ -48,6 +48,7 @@ main(void)
     char *p  = NULL;
     int size = 0;
     p        = path_alloc(&size);
+    (void )p;
     printf("pathmax: %d\n", size);
     return 0;
 }

@@ -34,7 +34,7 @@ signal(int signo, Sigfunc *func)
     return (oact.sa_handler);
 }
 
-Sigfunc *
+static Sigfunc *
 signal_intr(int signo, Sigfunc *func)
 {
     struct sigaction act, oact;

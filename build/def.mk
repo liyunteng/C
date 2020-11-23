@@ -9,13 +9,13 @@ FORMAT="%-6.6s [%s]  %s\n"
 
 BUILD_VERBOSE ?= 0
 ifeq ("$(origin V)", "command line")
-    $(info "here V = $(V) $(origin V)")
 	BUILD_VERBOSE = $(V)
 endif
 ifeq ($(BUILD_VERBOSE),1)
 	Q =
 else
 	Q = @
+    MAKEFLAGS += --no-print-directory -s
 endif
 
 BUILD_PWD    := $(realpath $(CURDIR))
@@ -24,7 +24,6 @@ ifeq ("$(origin O)", "command line")
     BUILD_OUTPUT = $(shell realpath $(O))
 endif
 
-MAKEFLAGS += --no-print-directory
 
 ifneq ($(BUILD_OUTPUT),$(BUILD_PWD))
 # MAKEFLAGS += --include-dir=$(BUILD_PWD)
