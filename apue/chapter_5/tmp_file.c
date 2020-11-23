@@ -12,10 +12,12 @@ main(void)
     char name[L_tmpnam], line[MAXLINE];
     FILE *fp;
 
+#ifdef __GNU__
     printf("%s\n", tmpnam_r(NULL));
 
     tmpnam_r(name);
     printf("%s\n", name);
+#endif
 
     if ((fp = tmpfile()) == NULL) {
         err_sys("tmpfile error");

@@ -1,28 +1,6 @@
-CC := clang
-CPPFLAGS = -I../include
-CFLAGS = -fPIC
-LDFLAGS =
+include ../../build/def.mk
 
-SRC=$(wildcard *.c)
-OBJECTS=$(SRC:%.c=%.o)
-DEP = $(SRC:%.c=%.d)
-TARGET = libourhdr.so
+SOURCE_DIRS = .
 
-all: $(TARGET)
-# @mv $(TARGET) ../lib
-
-$(filter %.so,$(TARGET)): $(OBJECTS)
-	$(CC) $(CFLAGS) -shared $(CFLAGS) -o $@ $^
-
-%.d: %.c
-	@set -e;rm -rf $@; \
-	$(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
-    sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-    rm -rf $@.$$$$
-
--include $(DEP)
-
-.PHONY: clean all
-clean:
-	rm -rf $(OBJECTS) $(DEP)
-	rm -rf $(TARGET)
+include ../../build/debug.mk
+include ../../build/library.mk

@@ -2,7 +2,7 @@
  * Description: 2-3
  *
  * Copyright (C) 2019 liyunteng
- * Last-Updated: <2019/06/11 23:40:32 liyunteng>
+ * Last-Updated: <2020/11/23 19:59:43>
  */
 #include "ourhdr.h"
 #include <errno.h>
@@ -16,7 +16,7 @@ static int openmax = 0;
 
 #define OPEN_MAX_GUESS 256
 
-int
+static int
 open_max(void)
 {
     if (openmax == 0) {

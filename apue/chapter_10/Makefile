@@ -1,17 +1,6 @@
-CC := clang
-CPPFLAGS = -I../include
-CFLAGS =
-LDFLAGS = -L../lib -lourhdr -Wl,-rpath=../lib
+include ../../build/def.mk
 
-SRC=$(wildcard *.c)
-OBJECTS=$(SRC:%.c=%.o)
-TARGET = $(SRC:%.c=%)
+SOURCE_OMIT += alarm.c sigcld.c
 
-all: $(TARGET)
-
-
-.PHONY: clean all
-clean:
-	rm -rf $(OBJECTS)
-	rm -rf $(TARGET)
-	rm -rf foo bar
+include ../../build/debug.mk
+include ../../build/multibin.mk

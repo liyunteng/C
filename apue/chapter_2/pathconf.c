@@ -2,7 +2,7 @@
  * Description: 2-2 dynamic alloc for path
  *
  * Copyright (C) 2019 liyunteng
- * Last-Updated: <2019/06/11 23:41:22 liyunteng>
+ * Last-Updated: <2020/11/23 19:59:27>
  */
 #include "ourhdr.h"
 #include <errno.h>
@@ -16,7 +16,7 @@ static int pathmax = 0;
 
 #define PATH_MAX_GUESS 1024
 
-char *
+static char *
 path_alloc(int *size)
 {
     char *ptr;
