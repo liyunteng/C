@@ -14,7 +14,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-int
+static int
 system_1(const char *cmdstring)
 {
     pid_t pid;

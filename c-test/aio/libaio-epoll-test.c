@@ -28,7 +28,7 @@ struct custom_iocb {
     int nth_request;
 };
 
-void
+static void
 aio_callback(io_context_t ctx, struct iocb *iocb, long res, long res2)
 {
     struct custom_iocb *ciocb = (struct custom_iocb *)iocb;
@@ -39,11 +39,11 @@ aio_callback(io_context_t ctx, struct iocb *iocb, long res, long res2)
            ciocb->iocb.u.c.offset, ciocb->iocb.u.c.nbytes, res, res2);
 
     char buf[BUF_SIZE + 1];
-    snprintf(buf, BUF_SIZE + 1, "%s", ciocb->iocb.u.c.buf);
+    snprintf(buf, BUF_SIZE + 1, "%s", (char *)ciocb->iocb.u.c.buf);
     printf("%s", buf);
 }
 
-void
+static void
 test(const char *filename)
 {
     int efd, fd, epfd;

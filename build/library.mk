@@ -6,6 +6,8 @@
 # SOURCE_OMIT:     Ignored files
 # INCLUDE_DIRS:    Include directories (default include)
 # EXPORT_DIRS:     Export include directories (default include)
+# CONFIG_FILES:    Files copy to OUT_CONFIG
+# ADDED_FILES:     Files copy to OUT_BIN
 # CFLAGS:          gcc -c Flags (added -fPIC)
 # CPPFLAGS:        cpp Flags
 # CXXFLAGS:        g++ -c Flags
@@ -41,18 +43,27 @@ SOURCE_CXX := $(filter-out $(SOURCE_OMIT), $(SOURCE_CXX))
 endif
 
 # Object FileList
-OBJECT_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_OBJECT)/$(MODULE_NAME)/%.o)
-OBJECT_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_OBJECT)/$(MODULE_NAME)/%.o)
-DEPEND_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_DEPEND)/$(MODULE_NAME)/%.d)
-DEPEND_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_DEPEND)/$(MODULE_NAME)/%.d)
+OBJECT_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_OBJECT)/%.o)
+OBJECT_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_OBJECT)/%.o)
+DEPEND_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_DEPEND)/%.d)
+DEPEND_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_DEPEND)/%.d)
 
-# Include Configure
+# Include FileList
 INCLUDE_DIRS ?= include
 INCLUDE_PATH += $(foreach dir, $(SOURCE_ROOT)/$(INCLUDE_DIRS), -I$(dir))
 CPPFLAGS += $(INCLUDE_PATH)
 CFLAGS += -fPIC
 
-# Export include dirs
+# Config FileList
+CONFIG_FILES  ?=
+OUT_CONFIG_FILES := $(addprefix $(OUT_CONFIG)/, $(CONFIG_FILES))
+CONFIG_FILES     := $(addprefix $(SOURCE_ROOT)/, $(CONFIG_FILES))
+
+# Added FileList
+ADDED_FILES  ?=
+OUT_ADDED_FILES := $(addprefix $(OUT_BIN)/, $(ADDED_FILES))
+ADDED_FILES     := $(addprefix $(SOURCE_ROOT)/, $(ADDED_FILES))
+# Export dirs
 EXPORT_DIRS ?= include
 
 # Lib Name
@@ -87,9 +98,9 @@ default:all
 
 all: library
 
-.PHONY: before after success
+.PHONY: before success
 ifeq ($(strip $(LIB_TYPE)),static)
-library: before header $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(LIB) after success
+library: before header $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(LIB)  after success
 else ifeq ($(strip $(LIB_TYPE)),dynamic)
 library: before header  $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(SOLIB) after success
 else ifeq ($(strip $(LIB_TYPE)),all)
@@ -98,7 +109,7 @@ endif
 
 before:
 
-after:
+after: $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)
 
 success:
 
@@ -109,7 +120,7 @@ header:
 		fi                                                        \
 	done
 
-$(DEPEND_C): $(OUT_DEPEND)/$(MODULE_NAME)/%.d : $(SOURCE_ROOT)/%.c
+$(DEPEND_C): $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.c
 	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
 	$(Q)set -e; \
 	$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
@@ -121,11 +132,11 @@ else ifeq ($(MAKECMDGOALS),)
 sinclude $(DEPEND_C)
 endif
 
-$(OBJECT_C):  $(OUT_OBJECT)/$(MODULE_NAME)/%.o : $(SOURCE_ROOT)/%.c
+$(OBJECT_C):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.c
 	@printf $(FORMAT) $(CCMSG) $(MODULE_NAME) $@
 	$(Q)$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
-$(DEPEND_CXX) : $(OUT_DEPEND)/$(MODULE_NAME)/%.d : $(SOURCE_ROOT)/%.cpp
+$(DEPEND_CXX) : $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.cpp
 	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
 	$(Q)set -e; \
 	$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
@@ -137,7 +148,7 @@ else ifeq ($(MAKECMDGOALS),)
 sinclude $(DEPEND_CXX)
 endif
 
-$(OBJECT_CXX): $(OUT_OBJECT)/$(MODULE_NAME)/%.o : $(SOURCE_ROOT)/%.cpp
+$(OBJECT_CXX): $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.cpp
 	@printf $(FORMAT) $(CXXMSG) $(MODULE_NAME) $@
 	$(Q) $(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
@@ -157,6 +168,15 @@ ifeq ($(BUILD_ENV),release)
 	$(Q)$(STRIP) $@
 endif
 
+$(OUT_CONFIG_FILES) : $(OUT_CONFIG)/% : $(SOURCE_ROOT)/%
+	$(Q) [ -d $(OUT_CONFIG) ] || $(MKDIR) $(OUT_CONFIG) || exit 1
+	$(Q)$(CP) $< $@
+
+$(OUT_ADDED_FILES) : $(OUT_BIN)/% : %(SOURCE_ROOT)/%
+	$(Q) [ -d $(OUT_BIN) ] || $(MKDIR) $(OUT_BIN) || exit 1
+	$(Q)$(CP) $^ $@
+
+
 .PHONY: install
 install:
 
@@ -174,9 +194,11 @@ help:
 	@echo "    SOURCE_DIRS         source directories (default src)"
 	@echo "    SOURCE_OMIT         ignored files"
 	@echo "    INCLUDE_DIRS        include directories (default include)"
-	@echo "    EXPORT_DIRS         Export include directories (default include)"
-
+	@echo "    EXPORT_DIRS         export include directories (default include)"
+	@echo "    CONFIG_FILES        files copy to OUT_CONFIG"
+	@echo "    ADDED_FILES         files copy to OUT_BIN "
 	@echo ""
+
 	@echo "    BUILD_VERBOSE       verbose output (MUST Before def.mk)"
 	@echo "    BUILD_OUTPUT        output dir (MUST Before def.mk)"
 	@echo ""

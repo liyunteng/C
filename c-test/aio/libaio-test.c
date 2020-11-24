@@ -36,7 +36,7 @@ wr_done(io_context_t ctx, struct iocb *iocb, long res, long res2)
     assert(iosize == res && res2 == 0);
 }
 
-void
+static void
 read_test(const char *filename)
 {
     io_context_t ctx;
@@ -67,7 +67,7 @@ read_test(const char *filename)
     close(fd);
 }
 
-void
+static void
 write_test(const char *filename)
 {
     int fd;

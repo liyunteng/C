@@ -19,7 +19,7 @@
 #define BUFFER_SIZE 4096
 #define MAX_LIST 2
 
-void
+static void
 aio_handler(__sigval_t sigval)
 {
     struct aiocb *prd;
@@ -29,11 +29,12 @@ aio_handler(__sigval_t sigval)
 
     if (aio_error(prd) == 0) {
         ret = aio_return(prd);
-        printf("%s", prd->aio_buf);
+        printf("%s", (char *)prd->aio_buf);
         printf("read: %d\n", ret);
     }
 }
-int
+
+static int
 async_test(const char *filename)
 {
     int fd, ret;
@@ -59,7 +60,8 @@ async_test(const char *filename)
     sleep(1); /* WAIT CALLBACK */
     return 0;
 }
-int
+
+static int
 lio_test(const char *filename)
 {
     struct aiocb *listio[MAX_LIST];
@@ -92,13 +94,13 @@ lio_test(const char *filename)
     ret = aio_return(&wr);
     printf("write: %d\n", ret);
     ret = aio_return(&rd);
-    printf("%s", rd.aio_buf);
+    printf("%s", (char *)rd.aio_buf);
     printf("read: %d\n", ret);
 
     return 0;
 }
 
-int
+static int
 suspend_test(const char *filename)
 {
     struct aiocb rd;
@@ -119,15 +121,14 @@ suspend_test(const char *filename)
     ret = aio_read(&rd);
     assert(ret >= 0);
 
-    ret = aio_suspend(aiocb_list, sizeof(aiocb_list) / sizeof(aiocb_list[0]),
-                      NULL);
-    printf("%s", rd.aio_buf);
+    ret = aio_suspend(aiocb_list, sizeof(aiocb_list) / sizeof(aiocb_list[0]), NULL);
+    printf("%s", (char *)rd.aio_buf);
     free((void *)rd.aio_buf);
     close(fd);
     return 0;
 }
 
-int
+static int
 read_test(const char *filename)
 {
     struct aiocb rd;
@@ -151,13 +152,13 @@ read_test(const char *filename)
 
     ret = aio_return(&rd);
     printf("ret: %d\n", ret);
-    printf("%s", rd.aio_buf);
+    printf("%s", (char *)rd.aio_buf);
     free((void *)rd.aio_buf);
     close(fd);
     return 0;
 }
 
-int
+static int
 write_test(const char *filename)
 {
     struct aiocb wr;
