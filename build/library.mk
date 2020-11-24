@@ -103,10 +103,14 @@ after:
 success:
 
 header:
-	$(Q)for dir in $(EXPORT_DIRS); do \
-		if [ -d $$dir ]; then \
-			cp -r $(SOURCE_ROOT)/$$dir/* $(OUT_INCLUDE) ;\
-		fi \
+	$(Q)for dir in $(EXPORT_DIRS); do                             \
+		if [ -d $$dir ]; then                                     \
+			if [ `uname` = "Darwin" ]; then                       \
+                rsync -a $(SOURCE_ROOT)/$$dir/* $(OUT_INCLUDE) ;  \
+            else                                                  \
+                cp -ru $(SOURCE_ROOT)/$$dir/* $(OUT_INCLUDE) ;    \
+            fi                                                    \
+		fi                                                        \
 	done
 
 $(DEPEND_C): $(OUT_DEPEND)/$(MODULE_NAME)/%.d : $(SOURCE_ROOT)/%.c
