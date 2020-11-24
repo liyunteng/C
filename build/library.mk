@@ -149,7 +149,7 @@ endif
 
 $(SOLIB): $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX)
 	@printf $(FORMAT) $(LDMSG) $(MODULE_NAME) $@
-	$(Q)$(CC) -shared $(LDFLAGS) $(OBJECT_C) $(OBJECT_CXX) -o $@
+	$(Q)$(CC) -o $@ $(OBJECT_C) $(OBJECT_CXX) -shared $(LDFLAGS)
 ifeq ($(BUILD_ENV),release)
 	@printf $(FORMAT) $(STRIPMSG) $(MODULE_NAME) $@
 	$(Q)$(STRIP) $@

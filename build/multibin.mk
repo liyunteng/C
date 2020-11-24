@@ -112,7 +112,7 @@ $(OBJECT_CXX):  $(OUT_OBJECT)/$(MODULE_NAME)/%.o : $(SOURCE_ROOT)/%.cpp
 
 $(BIN): $(filter-out $(notdir $(@)).o, $(OBJECT_C))
 	@printf $(FORMAT) $(LDMSG) $(MODULE_NAME) $@
-	$(Q)$(CC) $(LDFLAGS) $(LOADLIBES) $(LDLIBS) $< -o $@
+	$(Q)$(CC) -o $@ $<  $(LDFLAGS) $(LOADLIBES) $(LDLIBS)
 ifeq ($(BUILD_ENV),release)
 	@printf $(FORMAT) $(STRIPMSG) $(MODULE_NAME) $@
 	$(Q)$(STRIP) $@

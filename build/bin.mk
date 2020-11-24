@@ -113,7 +113,7 @@ $(OBJECT_CXX):  $(OUT_OBJECT)/$(MODULE_NAME)/%.o : $(SOURCE_ROOT)/%.cpp
 
 $(BIN): $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX)
 	@printf $(FORMAT) $(LDMSG) $(MODULE_NAME) $@
-	$(Q)$(CC) $(LDFLAGS) $(LOADLIBES) $(LDLIBS) $(OBJECT_C) $(OBJECT_CXX) -o $@
+	$(Q)$(CC) -o $@ $(OBJECT_C) $(OBJECT_CXX) $(LDFLAGS) $(LOADLIBES) $(LDLIBS)
 ifeq ($(BUILD_ENV),release)
 	@printf $(FORMAT) $(STRIPMSG) $(MODULE_NAME) $@
 	$(Q)$(STRIP) $@
