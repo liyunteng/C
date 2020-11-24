@@ -31,10 +31,10 @@ SOURCE_CXX := $(filter-out $(SOURCE_OMIT), $(SOURCE_CXX))
 endif
 
 # Object FileList
-OBJECT_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_OBJECT)/%.o)
-OBJECT_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_OBJECT)/%.o)
-DEPEND_C   := $(OBJECT_C:$(OUT_OBJECT)/%.o=$(OUT_DEPEND)/%.d)
-DEPEND_CXX := $(OBJECT_CXX:$(OUT_DOBJECT)/%.o=$(OUT_DEPEND)/%.d)
+OBJECT_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_OBJECT)/$(MODULE_NAME)/%.o)
+OBJECT_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_OBJECT)/$(MODULE_NAME)/%.o)
+DEPEND_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_DEPEND)/$(MODULE_NAME)/%.d)
+DEPEND_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_DEPEND)/$(MODULE_NAME)/%.d)
 
 # Include Configure
 INCLUDE_DIRS ?= $(SOURCE_ROOT)/include
@@ -48,25 +48,22 @@ BIN += $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_CXX))))
 # CreateDirectory
 OUT_OBJECT_DIRS := $(sort $(dir $(OBJECT_C)))
 OUT_OBJECT_DIRS += $(sort $(dir $(OBJECT_CXX)))
+OUT_OBJECT_DIRS += $(sort $(dir $(DEPEND_C)))
+OUT_OBJECT_DIRS += $(sort $(dir $(DEPEND_CXX)))
 CreateResult :=
 ifeq ($(MAKECMDGOALS),all)
 CreateResult += $(call CreateDirectory, $(OUT_ROOT))
-CreateResult += $(call CreateDirectory, $(OUT_DEPEND))
 CreateResult += $(call CreateDirectory, $(OUT_OBJECT))
 CreateResult += $(call CreateDirectory, $(OUT_BIN))
-dummy += $(foreach dir, $(OUT_OBJECT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
-ifneq ($(strip $(CreateResult)),)
-	err = $(error create directory failed: $(CreateResult))
-endif
+dummy := $(foreach dir, $(OUT_OBJECT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
 else ifeq ($(MAKECMDGOALS),)
 CreateResult += $(call CreateDirectory, $(OUT_ROOT))
-CreateResult += $(call CreateDirectory, $(OUT_DEPEND))
 CreateResult += $(call CreateDirectory, $(OUT_OBJECT))
 CreateResult += $(call CreateDirectory, $(OUT_BIN))
-dummy += $(foreach dir, $(OUT_OBJECT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
+dummy := $(foreach dir, $(OUT_OBJECT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
+endif
 ifneq ($(strip $(CreateResult)),)
 	err = $(error create directory failed: $(CreateResult))
-endif
 endif
 
 # Compiler
@@ -82,7 +79,7 @@ after:
 
 success:
 
-$(DEPEND_C): $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.c
+$(DEPEND_C): $(OUT_DEPEND)/$(MODULE_NAME)/%.d : $(SOURCE_ROOT)/%.c
 	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
 	$(Q)set -e;$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
 	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
@@ -90,22 +87,26 @@ $(DEPEND_C): $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.c
 
 ifeq ($(MAKECMDGOALS),all)
 sinclude $(DEPEND_C)
+else ifeq ($(MAKECMDGOALS),)
+sinclude $(DEPEND_C)
 endif
 
-$(OBJECT_C):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.c
+$(OBJECT_C):  $(OUT_OBJECT)/$(MODULE_NAME)/%.o : $(SOURCE_ROOT)/%.c
 	@printf $(FORMAT) $(CCMSG) $(MODULE_NAME) $@
 	$(Q) $(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
-$(DEPEND_CXX) : $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.cpp
+$(DEPEND_CXX) : $(OUT_DEPEND)/$(MODULE_NAME)/%.d : $(SOURCE_ROOT)/%.cpp
 	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
 	$(Q)set -e;$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
 	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 ifeq ($(MAKECMDGOALS),all)
 sinclude $(DEPEND_CXX)
+else ifeq ($(MAKECMDGOALS),)
+sinclude $(DEPEND_CXX)
 endif
 
-$(OBJECT_CXX):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.cpp
+$(OBJECT_CXX):  $(OUT_OBJECT)/$(MODULE_NAME)/%.o : $(SOURCE_ROOT)/%.cpp
 	@printf $(FORMAT) $(CXXMSG) $(MODULE_NAME) $@
 	$(Q) $(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
