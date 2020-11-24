@@ -129,10 +129,12 @@ ifeq ($(BUILD_ENV),release)
 endif
 
 $(OUT_CONFIG_FILES): $(OUT_CONFIG)/% : $(SOURCE_ROOT)/%
+	@printf $(FORMAT) $(CONFMSG) $(MODULE_NAME) $@
 	$(Q) [ -d $(OUT_CONFIG) ] || $(MKDIR) $(OUT_CONFIG) || exit 1
 	$(Q)$(CP) $< $@
 
 $(OUT_ADDED_FILES): $(OUT_BIN)/% : $(SOURCE_ROOT)/%
+	@printf $(FORMAT) $(ADDEDMSG) $(MODULE_NAME) $@
 	$(Q) [ -d $(OUT_BIN) ] || $(MKDIR) $(OUT_BIN) || exit 1
 	$(Q)$(CP) $^ $@
 
