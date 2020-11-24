@@ -1,5 +1,14 @@
 ifeq ($(MAKELEVEL),0)
 
+# Env
+BUILD_ENV ?= release
+ifeq ("$(origin D)", "command line")
+ifeq ($(D),1)
+	BUILD_ENV = debug
+endif
+endif
+
+# Verbose
 BUILD_VERBOSE ?= 0
 ifeq ("$(origin V)", "command line")
 	BUILD_VERBOSE = $(V)
@@ -11,18 +20,17 @@ else
     MAKEFLAGS += --no-print-directory -s
 endif
 
-BUILD_PWD    := $(realpath $(CURDIR))
-BUILD_OUTPUT ?= $(realpath $(CURDIR))
+# Output
+BUILD_PWD    := $(abspath $(CURDIR))
+BUILD_OUTPUT ?= $(abspath $(CURDIR))/out
 ifeq ("$(origin O)", "command line")
-    BUILD_OUTPUT = $(shell realpath $(O))
+    BUILD_OUTPUT = $(abspath $(O))
 endif
-
-
 ifneq ($(BUILD_OUTPUT),$(BUILD_PWD))
 # MAKEFLAGS += --include-dir=$(BUILD_PWD)
 endif
 
-OUT_ROOT	:= $(BUILD_OUTPUT)/out
+OUT_ROOT	:= $(abspath $(BUILD_OUTPUT))
 OUT_INCLUDE := $(OUT_ROOT)/include
 OUT_BIN     := $(OUT_ROOT)/bin
 OUT_LIB     := $(OUT_ROOT)/lib
@@ -32,7 +40,6 @@ OUT_CFG     := $(OUT_ROOT)/etc
 
 # Compiler
 # ******************************
-
 CC		    := $(CROSS_COMPILE)gcc
 CXX         := $(CROSS_COMPILE)g++
 CPP		    := $(CC) -E
@@ -45,17 +52,16 @@ OBJCOPY	    := $(CROSS_COMPILE)objcopy
 OBJDUMP	    := $(CROSS_COMPILE)objdump
 OBJSIZE		:= $(CROSS_COMPILE)size
 
-CPPFLAGS    ?= -I$(OUT_INCLUDE)
+CPPFLAGS    := -I$(OUT_INCLUDE)
 CFLAGS      := -Wall -fstack-protector -Wmissing-prototypes -Wstrict-prototypes
 CXXFLAGS    := -Wall -fstack-protector
 ASFLAGS     := -D__ASSEMBLY__ -fno-PIE
 LDFLAGS     :=
-LOADLIBES   ?=
-LDLIBS      ?=
+LOADLIBES   :=
+LDLIBS      :=
 ARFLAGS     := rcs
 
-
-# Tool
+# Tools
 SHELL       := /bin/sh
 OS_TYPE     := $(shell uname)
 ifeq ($(OS_TYPE),Darwin)
@@ -66,7 +72,7 @@ endif
 RM          := rm -rf
 MKDIR       := mkdir -p
 
-BUILD_ENV ?= release
+
 ifeq ($(BUILD_ENV), release)
 	CFLAGS += -O2 -DNDEBUG
 	CXXFLAGS += -O2 -DNDEBUG
@@ -82,7 +88,6 @@ LDMSG="LD"
 ARMSG="AR"
 STRIPMSG="STRIP"
 FORMAT="%-6.6s [%s]  %s\n"
-
 
 export
 endif

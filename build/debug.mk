@@ -5,12 +5,13 @@ MODE=debug
 all:
 
 help-global:
-	@echo "make <BUILD_ENV=[release|debug]> <CROSS_COMPILE=arm-linux-gnueabi-> <O=/opt/out> <V=[0|1]> <show> <help>"
+	@echo "make <BUILD_ENV=[release|debug]> <CROSS_COMPILE=arm-linux-gnueabi-> <O=/opt/out> <V=[0|1]> <D=[0|1]> <show> <help>"
 	@echo ""
 	@echo "    BUILD_ENV       release or debug, default is release"
 	@echo "    CROSS_COMPILE   cross compile toolchain"
 	@echo "    O               output"
 	@echo "    V               verbose"
+	@echo "    D               debug or release"
 	@echo "    show            show current configuration"
 	@echo "    help            show this help"
 	@echo ""
@@ -21,6 +22,9 @@ show:
 	@echo "BUILD_VERBOSE      = " $(BUILD_VERBOSE)
 	@echo "BUILD_PWD          = " $(BUILD_PWD)
 	@echo "BUILD_OUTPUT       = " $(BUILD_OUTPUT)
+	@echo "D                  = " $(D)
+	@echo "Q                  = " $(Q)
+	@echo "O                  = " $(O)
 	@echo ""
 
 	@echo "OUT_ROOT           = " $(OUT_ROOT)
@@ -61,6 +65,7 @@ show:
 	@echo "CP                 = " $(CP)
 	@echo "RM                 = " $(RM)
 	@echo "MKDIR              = " $(MKDIR)
+	@echo ""
 
 	@echo "CURDIR             = " $(CURDIR)
 	@echo "MAKEFLAGS          = " $(MAKEFLAGS)
@@ -74,7 +79,6 @@ show:
 	@echo "MODE               = " $(MODE)
 	@echo "MODULE_ROOT        = " $(MODULE_ROOT)
 	@echo "MODULE_NAME        = " $(MODULE_NAME)
-	@echo "LIB_TYPE           = " $(LIB_TYPE)
 	@echo "SOURCE_ROOT        = " $(SOURCE_ROOT)
 	@echo "SOURCE_DIRS        = " $(SOURCE_DIRS)
 	@echo "SOURCE_OMIT        = " $(SOURCE_OMIT)
@@ -86,7 +90,14 @@ show:
 	@echo "DEPEND_CXX         = " $(DEPEND_CXX)
 	@echo "INCLUDE_DIRS       = " $(INCLUDE_DIRS)
 	@echo "OUT_OBJECT_DIRS    = " $(OUT_OBJECT_DIRS)
+	@echo "EXPORT_DIRS        = " $(EXPORT_DIRS)
+	@echo "CreateResult       = " $(CreateResult)
+	@echo ""
+
+	@echo "BIN                = " $(BIN)
+	@echo "LIB_TYPE           = " $(LIB_TYPE)
+	@echo "LIB                = " $(LIB)
+	@echo "SOLIB              = " $(SOLIB)
 	@echo "SUBDIRS            = " $(SUBDIRS)
-	@echo "Q                  = " $(Q)
 	@echo ""
 	@echo ""

@@ -70,7 +70,7 @@ endif
 default: all
 all: bin
 
-.PHONY: bin
+.PHONY: before after success
 bin: before $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(BIN) after success
 
 before:
@@ -81,7 +81,8 @@ success:
 
 $(DEPEND_C): $(OUT_DEPEND)/$(MODULE_NAME)/%.d : $(SOURCE_ROOT)/%.c
 	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
-	$(Q)set -e;$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
+	$(Q)set -e; \
+	$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
 	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
@@ -97,7 +98,8 @@ $(OBJECT_C):  $(OUT_OBJECT)/$(MODULE_NAME)/%.o : $(SOURCE_ROOT)/%.c
 
 $(DEPEND_CXX) : $(OUT_DEPEND)/$(MODULE_NAME)/%.d : $(SOURCE_ROOT)/%.cpp
 	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
-	$(Q)set -e;$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
+	$(Q)set -e; \
+	$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
 	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 ifeq ($(MAKECMDGOALS),all)
@@ -117,6 +119,15 @@ ifeq ($(BUILD_ENV),release)
 	@printf $(FORMAT) $(STRIPMSG) $(MODULE_NAME) $@
 	$(Q)$(STRIP) $@
 endif
+
+
+.PHONY: install
+install:
+
+
+.PHONY: uninstall
+uninstall:
+
 
 .PHONY: help
 help:
@@ -150,3 +161,6 @@ clean:
 ifeq ($(MAKELEVEL),0)
 	@echo "clean done"
 endif
+
+.PHONY: distclean
+distclean: clean

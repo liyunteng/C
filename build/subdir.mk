@@ -1,36 +1,56 @@
 # SUBDIRS:          subdirs
-MODE=subdir
+MODE := subdir
+MODULE_ROOT ?= $(shell pwd)
+MODULE_NAME ?= $(shell basename $(MODULE_ROOT))
+
 SUBDIRS ?=
 
-SUBDIRS_BUILD=$(addsuffix _build, $(SUBDIRS))
-SUBDIRS_CLEAN=$(addsuffix _clean, $(SUBDIRS))
-SUBDIRS_SHOW=$(addsuffix _show, $(SUBDIRS))
-unexport SUBDIRS SUBDIRS_BUILD SUBDIRS_CLEAN SUBDIRS_SHOW
+SUBDIRS_BUILD     := $(addsuffix _build, $(SUBDIRS))
+SUBDIRS_INSTALL   := $(addsuffix _install, $(SUBDIRS))
+SUBDIRS_UNINSTALL := $(addsuffix _uninstall, $(SUBDIRS))
+SUBDIRS_CLEAN     := $(addsuffix _clean, $(SUBDIRS))
+SUBDIRS_DISTCLEAN := $(addsuffix _distclean, $(SUBDIRS))
+SUBDIRS_SHOW      := $(addsuffix _show, $(SUBDIRS))
+unexport MODE MODULE_ROOT MODULE_NAME
+unexport SUBDIRS SUBDIRS_BUILD SUBDIRS_INSTALL SUBDIRS_UNINSTALL
+unexport SUBDIRS_CLEAN SUBDIRS_DISTCLEAN SUBDIRS_SHOW
 
+######################################################################
 default: all
 all: subdir
 
-.PHONY: subdir
+.PHONY: subdir $(SUBDIRS_BUILD)
 subdir: $(SUBDIRS_BUILD)
-
-.PHONY: $(SUBDIRS_BUILD)
 $(SUBDIRS_BUILD):
 	@$(MAKE) -C $(patsubst %_build,%,$@) all || exit 1
 
-.PHONY: clean
+.PHONY: install $(SUBDIRS_INSTALL)
+install: $(SUBDIRS_INSTALL)
+$(SUBDIRS_INSTALL):
+	@$(MAKE) -C $(patsubst %_install,%,$@) install || exit 1
+
+.PHONY: uninstall $(SUBDIRS_UNINSTALL)
+uninstall: $(SUBDIRS_UNINSTALL)
+$(SUBDIRS_UNINSTALL):
+	@$(MAKE) -C $(patsubst %_uninstall,%,$@) uninstall || exit 1
+
+.PHONY: clean $(SUBDIRS_CLEAN)
 clean: $(SUBDIRS_CLEAN)
 ifeq ($(MAKELEVEL),0)
 	@echo "clean done"
 endif
-
-.PHONY: $(SUBDIRS_CLEAN)
 $(SUBDIRS_CLEAN):
 	@$(MAKE) -C $(patsubst %_clean,%,$@) clean  || exit 1
 
-.PHONY: show
-show: $(SUBDIRS_SHOW)
 
-.PHONY: $(SUBDIRS_SHOW)
+.PHONY: distclean $(SUBDIRS_DISTCLEAN)
+distclean: $(SUBDIRS_DISTCLEAN) clean
+$(SUBDIRS_DISTCLEAN):
+	@$(MAKE) -C $(patsubst %_distclean,%,$@) distclean || exit 1
+
+
+.PHONY: show $(SUBDIRS_SHOW)
+show: $(SUBDIRS_SHOW)
 $(SUBDIRS_SHOW):
 	@$(MAKE) -C $(patsubst %_show,%,$@) show || exit 1
 
