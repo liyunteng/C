@@ -15,9 +15,9 @@
 # BUILD_OUTPUT:    output dir (MUST Before def.mk)
 
 # Create Directory
-CreateDirectory = $(shell [ -d $1 ] || mkdir -p $1 || echo "mkdir '$1' failed")
+CreateDirectory = $(shell [ -d $1 ] || $(MKDIR) $1 || echo "mkdir '$1' failed")
 # Remove Directory
-RemoveDirectory = $(shell [ -d $1 ] && rm -rf $1 || echo "rm dir '$1' failed")
+RemoveDirectory = $(shell [ -d $1 ] && $(RM) $1 || echo "rm dir '$1' failed")
 
 
 MODE=library
@@ -105,11 +105,7 @@ success:
 header:
 	$(Q)for dir in $(EXPORT_DIRS); do                             \
 		if [ -d $$dir ]; then                                     \
-			if [ `uname` = "Darwin" ]; then                       \
-                rsync -a $(SOURCE_ROOT)/$$dir/* $(OUT_INCLUDE) ;  \
-            else                                                  \
-                cp -ru $(SOURCE_ROOT)/$$dir/* $(OUT_INCLUDE) ;    \
-            fi                                                    \
+            $(CP) $(SOURCE_ROOT)/$$dir/* $(OUT_INCLUDE) ;         \
 		fi                                                        \
 	done
 
@@ -185,16 +181,16 @@ help:
 
 .PHONY: clean
 clean:
-# $(Q)$(RM) -rf $(OBJECT_C) $(OBJECT_CXX)
-# $(Q)$(RM) -rf $(LIB) $(SOLIB)
-# $(Q)$(RM) -rf $(DEPEND_C) $(DEPEND_CXX)
-# $(Q)$(RM) -rf $(HEADER_FILES)
-# $(Q)[ "`ls $(OUT_OBJECT)`"  ] || rm -rf $(OUT_OBJECT)
-# $(Q)[ "`ls $(OUT_INCLUDE)`" ] || rm -rf $(OUT_INCLUDE)
-# $(Q)[ "`ls $(OUT_LIB)`" ] || rm -rf $(OUT_LIB)
-# $(Q)[ "`ls $(OUT_DEPEND)`" ] || rm -rf $(OUT_DEPEND)
-# $(Q)[ "`ls $(OUT_ROOT)`" ] || rm -rf $(OUT_ROOT)
-	$(Q)$(RM) -rf $(OUT_ROOT)''
+# $(Q)$(RM) $(OBJECT_C) $(OBJECT_CXX)
+# $(Q)$(RM) $(LIB) $(SOLIB)
+# $(Q)$(RM) $(DEPEND_C) $(DEPEND_CXX)
+# $(Q)$(RM) $(HEADER_FILES)
+# $(Q)[ "`ls $(OUT_OBJECT)`"  ] || $(RM) $(OUT_OBJECT)
+# $(Q)[ "`ls $(OUT_INCLUDE)`" ] || $(RM) $(OUT_INCLUDE)
+# $(Q)[ "`ls $(OUT_LIB)`" ] || $(RM) $(OUT_LIB)
+# $(Q)[ "`ls $(OUT_DEPEND)`" ] || $(RM) $(OUT_DEPEND)
+# $(Q)[ "`ls $(OUT_ROOT)`" ] || $(RM) $(OUT_ROOT)
+	$(Q)$(RM) $(OUT_ROOT)''
 ifeq ($(MAKELEVEL),0)
 	@echo "clean done"
 endif

@@ -1,11 +1,4 @@
 ifeq ($(MAKELEVEL),0)
-CCMSG="CC"
-CXXMSG="CXX"
-DEPENDMSG="DEP"
-LDMSG="LD"
-ARMSG="AR"
-STRIPMSG="STRIP"
-FORMAT="%-6.6s [%s]  %s\n"
 
 BUILD_VERBOSE ?= 0
 ifeq ("$(origin V)", "command line")
@@ -61,6 +54,18 @@ LOADLIBES   ?=
 LDLIBS      ?=
 ARFLAGS     := rcs
 
+
+# Tool
+SHELL       := /bin/sh
+OS_TYPE     := $(shell uname)
+ifeq ($(OS_TYPE),Darwin)
+CP          := rsync -a
+else
+CP          := cp -ru
+endif
+RM          := rm -rf
+MKDIR       := mkdir -p
+
 BUILD_ENV ?= release
 ifeq ($(BUILD_ENV), release)
 	CFLAGS += -O2 -DNDEBUG
@@ -69,6 +74,15 @@ else
 	CFLAGS += -g -ggdb
 	CXXFLAGS += -g -ggdb
 endif
+
+CCMSG="CC"
+CXXMSG="CXX"
+DEPENDMSG="DEP"
+LDMSG="LD"
+ARMSG="AR"
+STRIPMSG="STRIP"
+FORMAT="%-6.6s [%s]  %s\n"
+
 
 export
 endif

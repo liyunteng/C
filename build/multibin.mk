@@ -10,9 +10,9 @@
 # BUILD_OUTPUT:    Output dir (MUST Before def.mk)
 
 # Create Directory
-CreateDirectory = $(shell [ -d $1 ] || mkdir -p $1 || echo "mkdir '$1' failed")
+CreateDirectory = $(shell [ -d $1 ] || $(MKDIR) $1 || echo "mkdir '$1' failed")
 # Remove Directory
-RemoveDirectory = $(shell [ -d $1 ] && rm -rf $1 || echo "rm dir '$1' failed")
+RemoveDirectory = $(shell [ -d $1 ] && $(RM) $1 || echo "rm dir '$1' failed")
 
 MODE=multibin
 MODULE_ROOT ?= $(shell pwd)
@@ -139,14 +139,14 @@ help:
 
 .PHONY: clean
 clean:
-# $(Q)$(RM) -rf $(OBJECT_C) $(OBJECT_CXX)
-# $(Q)$(RM) -rf $(BIN)
-# $(Q)$(RM) -rf $(DEPEND_C) $(DEPEND_CXX)
-# $(Q)[ "`ls $(OUT_OBJECT)`" ] || rm -rf $(OUT_OBJECT)
-# $(Q)[ "`ls $(OUT_BIN)`" ] || rm -rf $(OUT_BIN)
-# $(Q)[ "`ls $(OUT_DEPEND)`" ] || rm -rf $(OUT_DEPEND)
-# $(Q)[ "`ls $(OUT_ROOT)`" ] || rm -rf $(OUT_ROOT)
-	$(Q)$(RM) -rf $(OUT_ROOT)
+# $(Q)$(RM) $(OBJECT_C) $(OBJECT_CXX)
+# $(Q)$(RM) $(BIN)
+# $(Q)$(RM) $(DEPEND_C) $(DEPEND_CXX)
+# $(Q)[ "`ls $(OUT_OBJECT)`" ] || $(RM) $(OUT_OBJECT)
+# $(Q)[ "`ls $(OUT_BIN)`" ] || $(RM) $(OUT_BIN)
+# $(Q)[ "`ls $(OUT_DEPEND)`" ] || $(RM) $(OUT_DEPEND)
+# $(Q)[ "`ls $(OUT_ROOT)`" ] || $(RM) $(OUT_ROOT)
+	$(Q)$(RM) $(OUT_ROOT)
 ifeq ($(MAKELEVEL),0)
 	@echo "clean done"
 endif

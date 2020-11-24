@@ -56,6 +56,12 @@ show:
 	@echo "ARFLAGS            = " $(ARFLAGS)
 	@echo ""
 
+	@echo "SHELL              = " $(SHELL)
+	@echo "OS_TYPE            = " $(OS_TYPE)
+	@echo "CP                 = " $(CP)
+	@echo "RM                 = " $(RM)
+	@echo "MKDIR              = " $(MKDIR)
+
 	@echo "CURDIR             = " $(CURDIR)
 	@echo "MAKEFLAGS          = " $(MAKEFLAGS)
 	@echo "MAKEFILE_LIST      = " $(MAKEFILE_LIST)
