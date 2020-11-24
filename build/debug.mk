@@ -89,8 +89,12 @@ show:
 	@echo "OBJECT_CXX         = " $(OBJECT_CXX)
 	@echo "DEPEND_CXX         = " $(DEPEND_CXX)
 	@echo "INCLUDE_DIRS       = " $(INCLUDE_DIRS)
-	@echo "OUT_OBJECT_DIRS    = " $(OUT_OBJECT_DIRS)
 	@echo "EXPORT_DIRS        = " $(EXPORT_DIRS)
+	@echo "CONFIG_FILES       = " $(CONFIG_FILES)
+	@echo "ADDED_FILES        = " $(ADDED_FILES)
+	@echo "OUT_OBJECT_DIRS    = " $(OUT_OBJECT_DIRS)
+	@echo "OUT_CONFIG_FILES   = " $(OUT_CONFIG_FILES)
+	@echo "OUT_ADDED_FILES    = " $(OUT_ADDED_FILES)
 	@echo "CreateResult       = " $(CreateResult)
 	@echo ""
 

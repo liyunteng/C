@@ -57,10 +57,7 @@ BIN := $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_C))))
 BIN += $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_CXX))))
 
 # CreateDirectory
-OUT_OBJECT_DIRS := $(sort $(dir $(OBJECT_C)))
-OUT_OBJECT_DIRS += $(sort $(dir $(OBJECT_CXX)))
-OUT_OBJECT_DIRS += $(sort $(dir $(DEPEND_C)))
-OUT_OBJECT_DIRS += $(sort $(dir $(DEPEND_CXX)))
+OUT_OBJECT_DIRS := $(sort $(dir $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DPEND_CXX)))
 CreateResult :=
 ifeq ($(MAKECMDGOALS),all)
 CreateResult += $(call CreateDirectory, $(OUT_ROOT))

@@ -58,10 +58,7 @@ ADDED_FILES     := $(addprefix $(SOURCE_ROOT)/, $(ADDED_FILES))
 BIN   := $(OUT_BIN)/$(MODULE_NAME)
 
 # CreateDirectory
-OUT_OBJECT_DIRS := $(sort $(dir $(OBJECT_C)))
-OUT_OBJECT_DIRS += $(sort $(dir $(OBJECT_CXX)))
-OUT_OBJECT_DIRS += $(sort $(dir $(DEPEND_C)))
-OUT_OBJECT_DIRS += $(sort $(dir $(DEPEND_CXX)))
+OUT_OBJECT_DIRS := $(sort $(dir $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DEPEND_CXX)))
 CreateResult :=
 ifeq ($(MAKECMDGOALS),all)
 CreateResult := $(call CreateDirectory, $(OUT_ROOT))
