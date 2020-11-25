@@ -81,14 +81,22 @@ else
 	CXXFLAGS += -g -ggdb
 endif
 
-CCMSG="CC"
-CXXMSG="CXX"
-DEPENDMSG="DEP"
-LDMSG="LD"
-ARMSG="AR"
-STRIPMSG="STRIP"
-CPMSG="COPY"
-FORMAT="%-6.6s [%s]  %s\n"
+COLOR_RED    := \033[1;31m
+COLOR_GREEN  := \033[1;32m
+COLOR_YELLOW := \033[1;33m
+COLOR_BLUE   := \033[1;34m
+COLOR_PURPLE := \033[1;35m
+COLOR_CYAN   := \033[1;36m
+COLOR_NORMAL := \033[0m
+
+CCMSG     := "CC"
+CXXMSG    := "CXX"
+DEPENDMSG :="DEP"
+LDMSG     :="LD"
+ARMSG     :="AR"
+STRIPMSG  :="STRIP"
+CPMSG     :="COPY"
+FORMAT    :="$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s\n"
 
 export
 endif
