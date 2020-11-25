@@ -91,12 +91,15 @@ COLOR_NORMAL := \033[0m
 
 CCMSG     := "CC"
 CXXMSG    := "CXX"
-DEPENDMSG :="DEP"
-LDMSG     :="LD"
-ARMSG     :="AR"
-STRIPMSG  :="STRIP"
-CPMSG     :="COPY"
-FORMAT    :="$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s\n"
+DEPENDMSG := "DEP"
+LDMSG     := "LD"
+ARMSG     := "AR"
+STRIPMSG  := "STRIP"
+CPMSG     := "COPY"
+# PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s  =>  %s\n"
+PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %0.0s%s\n"
+# PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s%0.0s\n"
+PRINT3    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s\n"
 
 export
 endif

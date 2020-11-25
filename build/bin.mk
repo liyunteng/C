@@ -29,8 +29,8 @@ SOURCE_ROOT  ?= $(MODULE_ROOT)
 SOURCE_DIRS  ?= src
 SOURCE_OMIT  ?=
 
-SOURCE_C   := $(foreach dir, $(SOURCE_DIRS), $(shell find $(SOURCE_ROOT)/$(dir) -name "*.c"))
-SOURCE_CXX := $(foreach dir, $(SOURCE_DIRS), $(shell find $(SOURCE_ROOT)/$(dir) -name "*.cpp"))
+SOURCE_C   := $(foreach dir, $(SOURCE_DIRS), $(shell find $(abspath $(dir)) -name "*.c"))
+SOURCE_CXX := $(foreach dir, $(SOURCE_DIRS), $(shell find $(abspath $(dir)) -name "*.cpp"))
 ifneq ($(strip $(SOURCE_OMIT)),)
 SOURCE_OMIT := $(addprefix $(SOURCE_ROOT)/, $(SOURCE_OMIT))
 SOURCE_C   := $(filter-out $(SOURCE_ROOT)/$(SOURCE_OMIT), $(SOURCE_C))
@@ -89,7 +89,7 @@ after: $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)
 success:
 
 $(DEPEND_C): $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.c
-	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
+	$(PRINT4) $(DEPENDMSG) $(MODULE_NAME) $< $@
 	$(Q)set -e; \
 	$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
 	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
@@ -101,11 +101,11 @@ sinclude $(DEPEND_C)
 endif
 
 $(OBJECT_C):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.c
-	@printf $(FORMAT) $(CCMSG) $(MODULE_NAME) $@
+	$(PRINT4) $(CCMSG) $(MODULE_NAME) $< $@
 	$(Q) $(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 $(DEPEND_CXX) : $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.cpp
-	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
+	$(PRINT4) $(DEPENDMSG) $(MODULE_NAME) $< $@
 	$(Q)set -e; \
 	$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
 	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
@@ -117,23 +117,23 @@ sinclude $(DEPEND_CXX)
 endif
 
 $(OBJECT_CXX):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.cpp
-	@printf $(FORMAT) $(CXXMSG) $(MODULE_NAME) $@
+	$(PRINT4) $(CXXMSG) $(MODULE_NAME) $< $@
 	$(Q) $(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 $(BIN): $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX)
-	@printf $(FORMAT) $(LDMSG) $(MODULE_NAME) $@
+	$(PRINT3) $(LDMSG) $(MODULE_NAME) $@
 	$(Q)$(CC) -o $@ $(OBJECT_C) $(OBJECT_CXX) $(LDFLAGS) $(LOADLIBES) $(LDLIBS)
 ifeq ($(BUILD_ENV),release)
-	@printf $(FORMAT) $(STRIPMSG) $(MODULE_NAME) $@
+	$(PRINT4) $(STRIPMSG) $(MODULE_NAME) $@ $@
 	$(Q)$(STRIP) $@
 endif
 
 $(OUT_CONFIG_FILES): $(OUT_CONFIG)/% : $(SOURCE_ROOT)/%
-	@printf $(FORMAT) $(CPMSG) $(MODULE_NAME) $@
+	$(PRINT4) $(CPMSG) $(MODULE_NAME) $< $@
 	$(Q)$(CP) $< $@
 
 $(OUT_ADDED_FILES): $(OUT_BIN)/% : $(SOURCE_ROOT)/%
-	@printf $(FORMAT) $(CPMSG) $(MODULE_NAME) $@
+	$(PRINT4) $(CPMSG) $(MODULE_NAME) $< $@
 	$(Q)$(CP) $< $@
 
 .PHONY: install
