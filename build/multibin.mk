@@ -8,6 +8,8 @@
 # CPPFLAGS:        cpp Flags
 # CXXFLAGS:        g++ -c Flags
 # LDFLAGS:         ld Flags
+# LDLIBS:          ld libs
+# LOADLIBES:       ld libs
 # BUILD_VERBOSE:   Verbose output (MUST Before def.mk)
 # BUILD_OUTPUT:    Output dir (MUST Before def.mk)
 
@@ -47,6 +49,7 @@ CPPFLAGS += $(INCLUDE_PATH)
 CONFIG_FILES ?=
 OUT_CONFIG_FILES := $(addprefix $(OUT_CONFIG)/, $(CONFIG_FILES))
 CONFIG_FILES     := $(addprefix $(SOURCE_ROOT)/, $(CONFIG_FILES))
+
 # Added FileList
 ADDED_FILES ?=
 OUT_ADDED_FILES := $(addprefix $(OUT_BIN)/, $(ADDED_FILES))
@@ -57,24 +60,19 @@ BIN := $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_C))))
 BIN += $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_CXX))))
 
 # CreateDirectory
-OUT_OBJECT_DIRS := $(sort $(dir $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DPEND_CXX)))
+OUT_DIRS := $(sort $(OUT_ROOT) $(OUT_BIN) $(OUT_OBJECT) $(OUT_DPEND))
+OUT_DIRS += $(sort $(dir $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DPEND_CXX) $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)))
 CreateResult :=
 ifeq ($(MAKECMDGOALS),all)
-CreateResult += $(call CreateDirectory, $(OUT_ROOT))
-CreateResult += $(call CreateDirectory, $(OUT_OBJECT))
-CreateResult += $(call CreateDirectory, $(OUT_BIN))
-dummy := $(foreach dir, $(OUT_OBJECT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
+dummy := $(foreach dir, $(OUT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
 else ifeq ($(MAKECMDGOALS),)
-CreateResult += $(call CreateDirectory, $(OUT_ROOT))
-CreateResult += $(call CreateDirectory, $(OUT_OBJECT))
-CreateResult += $(call CreateDirectory, $(OUT_BIN))
-dummy := $(foreach dir, $(OUT_OBJECT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
+dummy := $(foreach dir, $(OUT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
 endif
 ifneq ($(strip $(CreateResult)),)
 	err = $(error create directory failed: $(CreateResult))
 endif
 
-# Compiler
+##############################
 default: all
 all: bin
 
@@ -129,13 +127,11 @@ ifeq ($(BUILD_ENV),release)
 endif
 
 $(OUT_CONFIG_FILES): $(OUT_CONFIG)/% : $(SOURCE_ROOT)/%
-	@printf $(FORMAT) $(CONFMSG) $(MODULE_NAME) $@
-	$(Q) [ -d $(OUT_CONFIG) ] || $(MKDIR) $(OUT_CONFIG) || exit 1
+	@printf $(FORMAT) $(CPMSG) $(MODULE_NAME) $@
 	$(Q)$(CP) $< $@
 
 $(OUT_ADDED_FILES): $(OUT_BIN)/% : $(SOURCE_ROOT)/%
-	@printf $(FORMAT) $(ADDEDMSG) $(MODULE_NAME) $@
-	$(Q) [ -d $(OUT_BIN) ] || $(MKDIR) $(OUT_BIN) || exit 1
+	@printf $(FORMAT) $(CPMSG) $(MODULE_NAME) $@
 	$(Q)$(CP) $^ $@
 
 .PHONY: install
@@ -167,6 +163,8 @@ help:
 	@echo "    CPPFLAGS            cpp Flags"
 	@echo "    CXXFLAGS            g++ -c Flags"
 	@echo "    LDFLAGS             ld Flags"
+	@echo "    LDLIBS              ld libs"
+	@echo "    LOADLIBES           ld libs"
 	@echo ""
 
 .PHONY: clean

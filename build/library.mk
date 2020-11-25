@@ -5,7 +5,7 @@
 # SOURCE_DIRS:     Source directories (default src)
 # SOURCE_OMIT:     Ignored files
 # INCLUDE_DIRS:    Include directories (default include)
-# EXPORT_DIRS:     Export include directories (default include)
+# EXPORT_DIR:     Export include directories (default include)
 # CONFIG_FILES:    Files copy to OUT_CONFIG
 # ADDED_FILES:     Files copy to OUT_BIN
 # CFLAGS:          gcc -c Flags (added -fPIC)
@@ -49,9 +49,8 @@ DEPEND_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_DEPEND)/%.d)
 DEPEND_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_DEPEND)/%.d)
 
 # Include FileList
-INCLUDE_DIRS ?= include
-INCLUDE_PATH += $(foreach dir, $(SOURCE_ROOT)/$(INCLUDE_DIRS), -I$(dir))
-CPPFLAGS += $(INCLUDE_PATH)
+INCLUDE_DIR ?= include
+CPPFLAGS += $(foreach dir, $(SOURCE_ROOT)/$(INCLUDE_DIRS), -I$(dir))
 CFLAGS += -fPIC
 
 # Config FileList
@@ -63,34 +62,31 @@ CONFIG_FILES     := $(addprefix $(SOURCE_ROOT)/, $(CONFIG_FILES))
 ADDED_FILES  ?=
 OUT_ADDED_FILES := $(addprefix $(OUT_BIN)/, $(ADDED_FILES))
 ADDED_FILES     := $(addprefix $(SOURCE_ROOT)/, $(ADDED_FILES))
+
 # Export dirs
-EXPORT_DIRS ?= include
+EXPORT_DIR := $(SOURCE_ROOT)/include
+EXPORT_FILES := $(foreach dir, $(EXPORT_DIR), $(shell find $(dir) -type f))
+OUT_EXPORT_FILES := $(EXPORT_FILES:$(EXPORT_DIR)/%=$(OUT_INCLUDE)/%)
+CPPFLAGS += -I$(EXPORT_DIR)
 
 # Lib Name
 LIB   := $(OUT_LIB)/lib$(MODULE_NAME).a
 SOLIB := $(OUT_LIB)/lib$(MODULE_NAME).so
 
 # CreateDirectory
-OUT_OBJECT_DIRS := $(sort $(dir $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DEPEND_CXX)))
+OUT_DIRS := $(sort $(OUT_ROOT) $(OUT_LIB) $(OUT_OBJECT) $(OUT_DEPEND))
+OUT_DIRS += $(sort $(dir $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DEPEND_CXX) $(OUT_EXPORT_FILES) $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)))
 CreateResult :=
 ifeq ($(MAKECMDGOALS),all)
-CreateResult += $(call CreateDirectory, $(OUT_ROOT))
-CreateResult += $(call CreateDirectory, $(OUT_INCLUDE))
-CreateResult += $(call CreateDirectory, $(OUT_OBJECT))
-CreateResult += $(call CreateDirectory, $(OUT_LIB))
-dummy := $(foreach dir, $(OUT_OBJECT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
+dummy := $(foreach dir, $(OUT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
 else ifeq ($(MAKECMDGOALS),)
-CreateResult += $(call CreateDirectory, $(OUT_ROOT))
-CreateResult += $(call CreateDirectory, $(OUT_INCLUDE))
-CreateResult += $(call CreateDirectory, $(OUT_OBJECT))
-CreateResult += $(call CreateDirectory, $(OUT_LIB))
-dummy := $(foreach dir, $(OUT_OBJECT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
+dummy := $(foreach dir, $(OUT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
 endif
 ifneq ($(strip $(CreateResult)),)
 	err = $(error create directory failed: $(CreateResult))
 endif
 
-# Compiler
+##############################
 default:all
 
 all: library
@@ -104,18 +100,13 @@ else ifeq ($(strip $(LIB_TYPE)),all)
 library: before header $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(LIB) $(SOLIB) after success
 endif
 
-before:
-
+before: 
+ 
 after: $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)
 
 success:
 
-header:
-	$(Q)for dir in $(EXPORT_DIRS); do                             \
-		if [ -d $$dir ]; then                                     \
-            $(CP) $(SOURCE_ROOT)/$$dir/* $(OUT_INCLUDE) ;         \
-		fi                                                        \
-	done
+header: $(OUT_EXPORT_FILES)
 
 $(DEPEND_C): $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.c
 	@printf $(FORMAT) $(DEPENDMSG) $(MODULE_NAME) $@
@@ -165,14 +156,15 @@ ifeq ($(BUILD_ENV),release)
 	$(Q)$(STRIP) $@
 endif
 
+$(OUT_EXPORT_FILES) : $(OUT_INCLUDE)/% : $(EXPORT_DIR)/%
+	@printf $(FORMAT) $(CPMSG) $(MODULE_NAME) $@
+	$(Q)$(CP) $< $@
 $(OUT_CONFIG_FILES) : $(OUT_CONFIG)/% : $(SOURCE_ROOT)/%
-	@printf $(FORMAT) $(CONFMSG) $(MODULE_NAME) $@
-	$(Q) [ -d $(OUT_CONFIG) ] || $(MKDIR) $(OUT_CONFIG) || exit 1
+	@printf $(FORMAT) $(CPMSG) $(MODULE_NAME) $@
 	$(Q)$(CP) $< $@
 
 $(OUT_ADDED_FILES) : $(OUT_BIN)/% : %(SOURCE_ROOT)/%
-	@printf $(FORMAT) $(ADDEDMSG) $(MODULE_NAME) $@
-	$(Q) [ -d $(OUT_BIN) ] || $(MKDIR) $(OUT_BIN) || exit 1
+	@printf $(FORMAT) $(CPMSG) $(MODULE_NAME) $@
 	$(Q)$(CP) $^ $@
 
 
@@ -193,7 +185,7 @@ help:
 	@echo "    SOURCE_DIRS         source directories (default src)"
 	@echo "    SOURCE_OMIT         ignored files"
 	@echo "    INCLUDE_DIRS        include directories (default include)"
-	@echo "    EXPORT_DIRS         export include directories (default include)"
+	@echo "    EXPORT_DIR          export include directory (default include)"
 	@echo "    CONFIG_FILES        files copy to OUT_CONFIG"
 	@echo "    ADDED_FILES         files copy to OUT_BIN "
 	@echo ""

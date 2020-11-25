@@ -33,7 +33,7 @@ show:
 	@echo "OUT_LIB            = " $(OUT_LIB)
 	@echo "OUT_OBJECT         = " $(OUT_OBJECT)
 	@echo "OUT_DEPEND         = " $(OUT_DEPEND)
-	@echo "OUT_CFG            = " $(OUT_CFG)
+	@echo "OUT_CONFIG         = " $(OUT_CONFIG)
 	@echo ""
 
 	@echo "CROSS_COMPILE      = " $(CROSS_COMPILE)
@@ -89,10 +89,11 @@ show:
 	@echo "OBJECT_CXX         = " $(OBJECT_CXX)
 	@echo "DEPEND_CXX         = " $(DEPEND_CXX)
 	@echo "INCLUDE_DIRS       = " $(INCLUDE_DIRS)
-	@echo "EXPORT_DIRS        = " $(EXPORT_DIRS)
+	@echo "EXPORT_DIR         = " $(EXPORT_DIR)
 	@echo "CONFIG_FILES       = " $(CONFIG_FILES)
 	@echo "ADDED_FILES        = " $(ADDED_FILES)
-	@echo "OUT_OBJECT_DIRS    = " $(OUT_OBJECT_DIRS)
+	@echo "OUT_DIRS           = " $(OUT_DIRS)
+	@echo "OUT_EXPORT_FILES   = " $(OUT_EXPORT_FILES)
 	@echo "OUT_CONFIG_FILES   = " $(OUT_CONFIG_FILES)
 	@echo "OUT_ADDED_FILES    = " $(OUT_ADDED_FILES)
 	@echo "CreateResult       = " $(CreateResult)

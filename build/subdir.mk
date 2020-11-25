@@ -1,3 +1,5 @@
+# MODULE_ROOT:     The root directory of this module
+# MODULE_NAME:     The name of this mudule
 # SUBDIRS:          subdirs
 MODE := subdir
 MODULE_ROOT ?= $(shell pwd)
@@ -59,5 +61,7 @@ $(SUBDIRS_SHOW):
 help:
 	@echo "subdir: Build Sub Directories"
 	@echo ""
-	@echo "    SUBDIRS:          subdirs"
+	@echo "    MODULE_ROOT         the root directory of this module"
+	@echo "    MODULE_NAME         the name of this mudule"
+	@echo "    SUBDIRS             subdirs"
 	@echo ""

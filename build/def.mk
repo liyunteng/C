@@ -67,7 +67,7 @@ OS_TYPE     := $(shell uname)
 ifeq ($(OS_TYPE),Darwin)
 CP          := rsync -a
 else
-CP          := cp -ru
+CP          := cp -rf
 endif
 RM          := rm -rf
 MKDIR       := mkdir -p
@@ -87,8 +87,7 @@ DEPENDMSG="DEP"
 LDMSG="LD"
 ARMSG="AR"
 STRIPMSG="STRIP"
-CONFMSG="CONF"
-ADDEDMSG="ADD"
+CPMSG="COPY"
 FORMAT="%-6.6s [%s]  %s\n"
 
 export
