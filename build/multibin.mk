@@ -150,7 +150,7 @@ install:
 .PHONY: uninstall
 uninstall:
 
-.PHONY: showall
+.PHONY: showall show
 showall: show
 show:
 	@echo "=============== $(CURDIR) ==============="
