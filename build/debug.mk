@@ -5,13 +5,13 @@ MODE=debug
 all:
 
 help-global:
-	@echo "make <BUILD_ENV=[release|debug]> <CROSS_COMPILE=arm-linux-gnueabi-> <O=/opt/out> <V=[0|1]> <D=[0|1]> <show> <help>"
+	@echo "make <BUILD_ENV=[release|debug|debuginfo|map]> <CROSS_COMPILE=arm-linux-gnueabi-> <O=/opt/out> <V=[0|1|2|3]> <D=[0|1|2|3]> <show> <help>"
 	@echo ""
-	@echo "    BUILD_ENV       release or debug, default is release"
+	@echo "    BUILD_ENV       [release|debug|debuginfo|map] default is release"
 	@echo "    CROSS_COMPILE   cross compile toolchain"
 	@echo "    O               output"
-	@echo "    V               verbose"
-	@echo "    D               debug or release"
+	@echo "    V               [0|1|2|3] verbose"
+	@echo "    D               0 release | 1 debug | 2 gen debuginfo | 3 gen map"
 	@echo "    show            show current configuration"
 	@echo "    help            show this help"
 	@echo ""
@@ -23,7 +23,9 @@ show:
 	@echo "BUILD_PWD          = " $(BUILD_PWD)
 	@echo "BUILD_OUTPUT       = " $(BUILD_OUTPUT)
 	@echo "D                  = " $(D)
-	@echo "Q                  = " $(Q)
+	@echo "Q1                 = " $(Q1)
+	@echo "Q2                 = " $(Q2)
+	@echo "Q3                 = " $(Q3)
 	@echo "O                  = " $(O)
 	@echo ""
 

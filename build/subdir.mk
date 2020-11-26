@@ -25,17 +25,17 @@ all: subdir
 .PHONY: subdir $(SUBDIRS_BUILD)
 subdir: $(SUBDIRS_BUILD)
 $(SUBDIRS_BUILD):
-	@$(MAKE) -C $@ all OUT_OBJECT=$(OUT_OBJECT)/$@ OUT_DEPEND=$(OUT_DEPEND)/$@ || exit 1
+	$(Q3)$(MAKE) -C $@ all OUT_OBJECT=$(OUT_OBJECT)/$@ OUT_DEPEND=$(OUT_DEPEND)/$@ || exit 1
 
 .PHONY: install $(SUBDIRS_INSTALL)
 install: $(SUBDIRS_INSTALL)
 $(SUBDIRS_INSTALL):
-	@$(MAKE) -C $(patsubst %_install,%,$@) install || exit 1
+	$(Q3)$(MAKE) -C $(patsubst %_install,%,$@) install || exit 1
 
 .PHONY: uninstall $(SUBDIRS_UNINSTALL)
 uninstall: $(SUBDIRS_UNINSTALL)
 $(SUBDIRS_UNINSTALL):
-	@$(MAKE) -C $(patsubst %_uninstall,%,$@) uninstall || exit 1
+	$(Q3)$(MAKE) -C $(patsubst %_uninstall,%,$@) uninstall || exit 1
 
 .PHONY: clean $(SUBDIRS_CLEAN)
 clean: $(SUBDIRS_CLEAN)
@@ -43,19 +43,19 @@ ifeq ($(MAKELEVEL),0)
 	@echo "clean done"
 endif
 $(SUBDIRS_CLEAN):
-	@$(MAKE) -C $(patsubst %_clean,%,$@) clean OUT_OBJECT=$(OUT_OBJECT)/$(@:%_clean=%) OUT_DEPEND=$(OUT_DEPEND)/$(@:%_clean=%) || exit 1
+	$(Q3)$(MAKE) -C $(patsubst %_clean,%,$@) clean OUT_OBJECT=$(OUT_OBJECT)/$(@:%_clean=%) OUT_DEPEND=$(OUT_DEPEND)/$(@:%_clean=%) || exit 1
 
 
 .PHONY: distclean $(SUBDIRS_DISTCLEAN)
 distclean: $(SUBDIRS_DISTCLEAN) clean
 $(SUBDIRS_DISTCLEAN):
-	@$(MAKE) -C $(patsubst %_distclean,%,$@) distclean || exit 1
+	$(Q3)$(MAKE) -C $(patsubst %_distclean,%,$@) distclean || exit 1
 
 
 .PHONY: show $(SUBDIRS_SHOW)
 show: $(SUBDIRS_SHOW)
 $(SUBDIRS_SHOW):
-	@$(MAKE) -C $(patsubst %_show,%,$@) show || exit 1
+	$(Q3)$(MAKE) -C $(patsubst %_show,%,$@) show || exit 1
 
 .PHONY: help
 help:

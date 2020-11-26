@@ -73,6 +73,9 @@ CPPFLAGS += -I$(EXPORT_DIR)
 LIB   := $(OUT_LIB)/lib$(MODULE_NAME).a
 SOLIB := $(OUT_LIB)/lib$(MODULE_NAME).so
 
+ifeq ($(BUILD_ENV),map)
+    LDFLAGS += -Wl,-Map,$@.map
+endif
 # CreateDirectory
 OUT_DIRS := $(sort $(OUT_ROOT) $(OUT_LIB) $(OUT_OBJECT) $(OUT_DEPEND))
 OUT_DIRS += $(sort $(dir $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DEPEND_CXX) $(OUT_EXPORT_FILES) $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)))
@@ -100,8 +103,8 @@ else ifeq ($(strip $(LIB_TYPE)),all)
 library: before header $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(LIB) $(SOLIB) after success
 endif
 
-before: 
- 
+before:
+
 after: $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)
 
 success:
@@ -110,7 +113,7 @@ header: $(OUT_EXPORT_FILES)
 
 $(DEPEND_C): $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.c
 	$(PRINT4) $(DEPENDMSG) $(MODULE_NAME) $< $@
-	$(Q)set -e; \
+	$(Q3)set -e; \
 	$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
 	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
@@ -122,11 +125,11 @@ endif
 
 $(OBJECT_C):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.c
 	$(PRINT4) $(CCMSG) $(MODULE_NAME) $< $@
-	$(Q)$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+	$(Q1)$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 $(DEPEND_CXX) : $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.cpp
 	$(PRINT4) $(DEPENDMSG) $(MODULE_NAME) $< $@
-	$(Q)set -e; \
+	$(Q3)set -e; \
 	$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
 	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
@@ -138,34 +141,47 @@ endif
 
 $(OBJECT_CXX): $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.cpp
 	$(PRINT4) $(CXXMSG) $(MODULE_NAME) $< $@
-	$(Q) $(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+	$(Q1)$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 $(LIB): $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX)
 	$(PRINT3) $(ARMSG) $(MODULE_NAME) $@
-	$(Q)$(AR) $(ARFLAGS) $@ $(OBJECT_C) $(OBJECT_CXX)
-ifeq ($(BUILD_ENV),release)
-	$(PRINT4) $(STRIPMSG) $(MODULE_NAME) $@ $@
-	$(Q)$(STRIP) $@
+	$(Q1)$(AR) $(ARFLAGS) $@ $(OBJECT_C) $(OBJECT_CXX)
+ifeq ($(BUILD_ENV),debuginfo)
+	$(PRINT4) $(DBGMSG) $(MODULE_NAME) $@ $@.debuginfo
+	$(Q1)$(OBJCOPY) --only-keep-debug $@ $@.debuginfo
+	$(Q1)$(OBJCOPY) --strip-debug $@
+	$(Q1)$(OBJCOPY) --add-gnu-debuglink=$@.debuginfo $@
 endif
+ifneq ($(BUILD_ENV),debug)
+	$(PRINT4) $(STRIPMSG) $(MODULE_NAME) $@ $@
+	$(Q2)$(STRIP) $@
+endif
+
 
 $(SOLIB): $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX)
 	$(PRINT3) $(LDMSG) $(MODULE_NAME) $@
-	$(Q)$(CC) -o $@ $(OBJECT_C) $(OBJECT_CXX) -shared $(LDFLAGS)
-ifeq ($(BUILD_ENV),release)
+	$(Q1)$(CC) -o $@ $(OBJECT_C) $(OBJECT_CXX) -shared $(LDFLAGS)
+ifeq ($(BUILD_ENV),debuginfo)
+	$(PRINT4) $(DBGMSG) $(MODULE_NAME) $@ $@.debuginfo
+	$(Q1)$(OBJCOPY) --only-keep-debug $@ $@.debuginfo
+	$(Q1)$(OBJCOPY) --strip-debug $@
+	$(Q1)$(OBJCOPY) --add-gnu-debuglink=$@.debuginfo $@
+endif
+ifneq ($(BUILD_ENV),debug)
 	$(PRINT4) $(STRIPMSG) $(MODULE_NAME) $@ $@
-	$(Q)$(STRIP) $@
+	$(Q2)$(STRIP) $@
 endif
 
 $(OUT_EXPORT_FILES) : $(OUT_INCLUDE)/% : $(EXPORT_DIR)/%
 	$(PRINT4) $(CPMSG) $(MODULE_NAME) $< $@
-	$(Q)$(CP) $< $@
+	$(Q2)$(CP) $< $@
 $(OUT_CONFIG_FILES) : $(OUT_CONFIG)/% : $(SOURCE_ROOT)/%
 	$(PRINT4)  $(CPMSG) $(MODULE_NAME) $< $@
-	$(Q)$(CP) $< $@
+	$(Q2)$(CP) $< $@
 
 $(OUT_ADDED_FILES) : $(OUT_BIN)/% : %(SOURCE_ROOT)/%
 	$(PRINT4) $(CPMSG) $(MODULE_NAME) $< $@
-	$(Q)$(CP) $^ $@
+	$(Q2)$(CP) $^ $@
 
 
 .PHONY: install
@@ -202,16 +218,16 @@ help:
 
 .PHONY: clean
 clean:
-# $(Q)$(RM) $(OBJECT_C) $(OBJECT_CXX)
-# $(Q)$(RM) $(LIB) $(SOLIB)
-# $(Q)$(RM) $(DEPEND_C) $(DEPEND_CXX)
-# $(Q)$(RM) $(HEADER_FILES)
-# $(Q)[ "`ls $(OUT_OBJECT)`"  ] || $(RM) $(OUT_OBJECT)
-# $(Q)[ "`ls $(OUT_INCLUDE)`" ] || $(RM) $(OUT_INCLUDE)
-# $(Q)[ "`ls $(OUT_LIB)`" ] || $(RM) $(OUT_LIB)
-# $(Q)[ "`ls $(OUT_DEPEND)`" ] || $(RM) $(OUT_DEPEND)
-# $(Q)[ "`ls $(OUT_ROOT)`" ] || $(RM) $(OUT_ROOT)
-	$(Q)$(RM) $(OUT_ROOT)''
+# $(Q2)$(RM) $(OBJECT_C) $(OBJECT_CXX)
+# $(Q2)$(RM) $(LIB) $(SOLIB)
+# $(Q2)$(RM) $(DEPEND_C) $(DEPEND_CXX)
+# $(Q2)$(RM) $(HEADER_FILES)
+# $(Q2)[ "`ls $(OUT_OBJECT)`"  ] || $(RM) $(OUT_OBJECT)
+# $(Q2)[ "`ls $(OUT_INCLUDE)`" ] || $(RM) $(OUT_INCLUDE)
+# $(Q2)[ "`ls $(OUT_LIB)`" ] || $(RM) $(OUT_LIB)
+# $(Q2)[ "`ls $(OUT_DEPEND)`" ] || $(RM) $(OUT_DEPEND)
+# $(Q2)[ "`ls $(OUT_ROOT)`" ] || $(RM) $(OUT_ROOT)
+	$(Q2)$(RM) $(OUT_ROOT)''
 ifeq ($(MAKELEVEL),0)
 	@echo "clean done"
 endif

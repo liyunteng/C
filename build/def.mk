@@ -5,19 +5,37 @@ BUILD_ENV ?= release
 ifeq ("$(origin D)", "command line")
 ifeq ($(D),1)
 	BUILD_ENV = debug
+else ifeq ($(D),2)
+	BUILD_ENV = debuginfo
+else ifeq ($(D),3)
+	BUILD_ENV = map
 endif
 endif
 
 # Verbose
 BUILD_VERBOSE ?= 0
 ifeq ("$(origin V)", "command line")
-	BUILD_VERBOSE = $(V)
+    BUILD_VERBOSE = $(V)
 endif
-ifeq ($(BUILD_VERBOSE),1)
-	Q =
-else
-	Q = @
-    MAKEFLAGS += --no-print-directory -s
+ifeq ($(BUILD_VERBOSE),0)
+    Q1 = @
+    Q2 = @
+    Q3 = @
+    MAKEFLAGS += --no-print-directory
+else ifeq ($(BUILD_VERBOSE),1)
+    Q1 =
+    Q2 = @
+    Q3 = @
+    MAKEFLAGS += --no-print-directory
+else ifeq ($(BUILD_VERBOSE),2)
+    Q1 =
+    Q2 =
+    Q3 = @
+    MAKEFLAGS += --no-print-directory
+else ifeq ($(BUILD_VERBOSE),3)
+    Q1 =
+    Q2 =
+    Q3 =
 endif
 
 # Output
@@ -30,13 +48,13 @@ ifneq ($(BUILD_OUTPUT),$(BUILD_PWD))
 # MAKEFLAGS += --include-dir=$(BUILD_PWD)
 endif
 
-OUT_ROOT	:= $(abspath $(BUILD_OUTPUT))
-OUT_INCLUDE := $(OUT_ROOT)/include
-OUT_BIN     := $(OUT_ROOT)/bin
-OUT_LIB     := $(OUT_ROOT)/lib
-OUT_OBJECT  := $(OUT_ROOT)/obj
-OUT_DEPEND  := $(OUT_ROOT)/obj
-OUT_CONFIG  := $(OUT_ROOT)/etc
+OUT_ROOT	  := $(abspath $(BUILD_OUTPUT))
+OUT_INCLUDE   := $(OUT_ROOT)/include
+OUT_BIN       := $(OUT_ROOT)/bin
+OUT_LIB       := $(OUT_ROOT)/lib
+OUT_OBJECT    := $(OUT_ROOT)/obj
+OUT_DEPEND    := $(OUT_ROOT)/obj
+OUT_CONFIG    := $(OUT_ROOT)/etc
 
 # Compiler
 # ******************************
@@ -76,7 +94,13 @@ MKDIR       := mkdir -p
 ifeq ($(BUILD_ENV), release)
 	CFLAGS += -O2 -DNDEBUG
 	CXXFLAGS += -O2 -DNDEBUG
-else
+else ifeq ($(BUILD_ENV), debug)
+	CFLAGS += -g -ggdb
+	CXXFLAGS += -g -ggdb
+else ifeq ($(BUILD_ENV), debuginfo)
+	CFLAGS += -g -ggdb
+	CXXFLAGS += -g -ggdb
+else ifeq ($(BUILD_ENV), map)
 	CFLAGS += -g -ggdb
 	CXXFLAGS += -g -ggdb
 endif
@@ -96,6 +120,7 @@ LDMSG     := "LD"
 ARMSG     := "AR"
 STRIPMSG  := "STRIP"
 CPMSG     := "COPY"
+DBGMSG    := "DBG"
 # PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s  =>  %s\n"
 PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %0.0s%s\n"
 # PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s%0.0s\n"
