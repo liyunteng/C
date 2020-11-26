@@ -1,5 +1,6 @@
 include ../../build/def.mk
 
-ADDED_FILES += regex_data1 regex_data2
+SOURCE_DIRS = .
+LOADLIBES += -ljson
 
 include ../../build/multibin.mk

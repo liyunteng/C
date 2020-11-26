@@ -15,7 +15,7 @@
 #include <unistd.h>
 
 #define RELOAD_TIMEOUT 6
-#define DEFAULT_FILE "sample.html"
+#define DEFAULT_FILE "libevent-sample.html"
 
 char *filedata;
 time_t lasttime = 0;

@@ -1,5 +1,6 @@
 include ../../build/def.mk
 
-ADDED_FILES += regex_data1 regex_data2
+ADDED_FILES += ata2slot.xml test.xml
+LOADLIBES += -lxml2
 
 include ../../build/multibin.mk
