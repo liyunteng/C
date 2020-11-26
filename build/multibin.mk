@@ -56,15 +56,15 @@ OUT_ADDED_FILES := $(addprefix $(OUT_BIN)/, $(ADDED_FILES))
 ADDED_FILES     := $(addprefix $(SOURCE_ROOT)/, $(ADDED_FILES))
 
 # BINS Name
-BINS := $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_C))))
-BINS += $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_CXX))))
+BINS := $(addprefix $(OUT_BIN)/, $(SOURCE_C:$(SOURCE_ROOT)/%.c=%))
+BINS += $(addprefix $(OUT_BIN)/, $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=%))
 
 ifeq ($(BUILD_ENV),map)
     LDFLAGS += -Wl,-Map,$@.map
 endif
 # CreateDirectory
 OUT_DIRS := $(sort $(OUT_ROOT) $(OUT_BIN) $(OUT_OBJECT) $(OUT_DPEND))
-OUT_DIRS += $(sort $(dir $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DPEND_CXX) $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)))
+OUT_DIRS += $(sort $(dir $(BINS) $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DPEND_CXX) $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)))
 CreateResult :=
 ifeq ($(MAKECMDGOALS),all)
 dummy := $(foreach dir, $(OUT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))

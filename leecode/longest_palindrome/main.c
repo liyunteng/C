@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if 0
 int ispalindrome(char *begin, char *end)
 {
     if (end - begin < 1) {
@@ -25,6 +24,7 @@ int ispalindrome(char *begin, char *end)
     return 1;
 }
 
+#if 0
 char* longestPalindrome(char* s) {
     char *begin = s, *end = s;
     int longest = 0;

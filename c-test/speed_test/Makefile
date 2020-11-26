@@ -1,6 +1,5 @@
 include ../../build/def.mk
 
-SOURCE_DIRS = .
-SOURCE_OMIT = ping
+SUBDIRS += srv cli ping
 
-include ../../build/bin.mk
+include ../../build/subdir.mk

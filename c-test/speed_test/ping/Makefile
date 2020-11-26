@@ -1,3 +1,3 @@
 include ../../../build/def.mk
-LOADLIBES += -lev
+
 include ../../../build/multibin.mk

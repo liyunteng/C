@@ -1,0 +1,7 @@
+include ../../../build/def.mk
+
+MODULE_NAME = speed_test_cli
+SOURCE_DIRS = .
+INCLUDE_DIRS += ../include
+
+include ../../../build/bin.mk
