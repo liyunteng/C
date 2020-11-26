@@ -21,7 +21,7 @@ ifeq ($(BUILD_VERBOSE),0)
     Q1 = @
     Q2 = @
     Q3 = @
-    MAKEFLAGS += --no-print-directory
+    MAKEFLAGS += --no-print-directory -s
 else ifeq ($(BUILD_VERBOSE),1)
     Q1 =
     Q2 = @
