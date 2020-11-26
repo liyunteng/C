@@ -55,9 +55,9 @@ ADDED_FILES ?=
 OUT_ADDED_FILES := $(addprefix $(OUT_BIN)/, $(ADDED_FILES))
 ADDED_FILES     := $(addprefix $(SOURCE_ROOT)/, $(ADDED_FILES))
 
-# BIN Name
-BIN := $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_C))))
-BIN += $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_CXX))))
+# BINS Name
+BINS := $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_C))))
+BINS += $(addprefix $(OUT_BIN)/, $(notdir $(basename $(SOURCE_CXX))))
 
 ifeq ($(BUILD_ENV),map)
     LDFLAGS += -Wl,-Map,$@.map
@@ -80,7 +80,7 @@ default: all
 all: bin
 
 .PHONY: before success
-bin: before $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(BIN) after success
+bin: before $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(BINS) after success
 
 before:
 
@@ -121,7 +121,7 @@ $(OBJECT_CXX):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.cpp
 	$(PRINT4) $(CXXMSG) $(MODULE_NAME) $< $@
 	$(Q1)$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
-$(BIN): $(filter-out $(notdir $(@)).o, $(OBJECT_C))
+$(BINS): $(OUT_BIN)/% : $(OUT_OBJECT)/%.o
 	$(PRINT3) $(LDMSG) $(MODULE_NAME) $@
 	$(Q1)$(CC) -o $@ $<  $(LDFLAGS) $(LOADLIBES) $(LDLIBS)
 ifeq ($(BUILD_ENV),debuginfo)
@@ -217,7 +217,7 @@ show:
 	@echo "MODE               = " $(MODE)
 	@echo "MODULE_ROOT        = " $(MODULE_ROOT)
 	@echo "MODULE_NAME        = " $(MODULE_NAME)
-	@echo "BIN                = " $(BIN)
+	@echo "BINS               = " $(BINS)
 	@echo "SOURCE_ROOT        = " $(SOURCE_ROOT)
 	@echo "SOURCE_DIRS        = " $(SOURCE_DIRS)
 	@echo "SOURCE_OMIT        = " $(SOURCE_OMIT)
@@ -278,7 +278,7 @@ help:
 .PHONY: clean
 clean:
 # $(Q2)$(RM) $(OBJECT_C) $(OBJECT_CXX)
-# $(Q2)$(RM) $(BIN)
+# $(Q2)$(RM) $(BINS)
 # $(Q2)$(RM) $(DEPEND_C) $(DEPEND_CXX)
 # $(Q2)[ "`ls $(OUT_OBJECT)`" ] || $(RM) $(OUT_OBJECT)
 # $(Q2)[ "`ls $(OUT_BIN)`" ] || $(RM) $(OUT_BIN)
