@@ -39,9 +39,6 @@ $(SUBDIRS_UNINSTALL):
 
 .PHONY: clean $(SUBDIRS_CLEAN)
 clean: $(SUBDIRS_CLEAN)
-ifeq ($(MAKELEVEL),0)
-	@echo "clean done"
-endif
 $(SUBDIRS_CLEAN):
 	$(Q3)$(MAKE) -C $(patsubst %_clean,%,$@) clean OUT_OBJECT=$(OUT_OBJECT)/$(@:%_clean=%) OUT_DEPEND=$(OUT_DEPEND)/$(@:%_clean=%) || exit 1
 

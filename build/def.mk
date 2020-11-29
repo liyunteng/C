@@ -120,11 +120,15 @@ LDMSG     := "LD"
 ARMSG     := "AR"
 STRIPMSG  := "STRIP"
 CPMSG     := "COPY"
+RMMSG     := "RM"
 DBGMSG    := "DBG"
+MKDIRMSG  := "MKDIR"
 # PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s  =>  %s\n"
 PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %0.0s%s\n"
 # PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s%0.0s\n"
 PRINT3    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s\n"
 
 export
+
+.DELETE_ON_ERROR:
 endif

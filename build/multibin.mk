@@ -18,6 +18,70 @@ CreateDirectory = $(shell [ -d $1 ] || $(MKDIR) $1 || echo "mkdir '$1' failed")
 # Remove Directory
 RemoveDirectory = $(shell [ -d $1 ] && $(RM) $1 || echo "rm dir '$1' failed")
 
+define cmd_cp
+	$(PRINT4) $(CPMSG) $(MODULE_NAME) $< $@
+	$(Q2)$(CP) $< $@
+endef
+
+define cmd_mkdir
+	$(PRINT3) $(MKDIRMSG) $(MODULE_NAME) $1
+	$(Q2)$(MKDIR) $1
+endef
+
+define cmd_rm
+	$(PRINT3) $(RMMSG) $(MODULE_NAME) $1
+	$(Q2)$(RM) $1
+endef
+
+define cmd_dep_c
+	$(PRINT4) $(DEPENDMSG) $(MODULE_NAME) $< $@
+	$(Q3)set -e; \
+	$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
+	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+endef
+
+define cmd_dep_cxx
+	$(PRINT4) $(DEPENDMSG) $(MODULE_NAME) $< $@
+	$(Q3)set -e; \
+	$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
+	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+endef
+
+define cmd_c
+	$(PRINT4) $(CCMSG) $(MODULE_NAME) $< $@
+	$(Q1)$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+endef
+
+define cmd_cxx
+	$(PRINT4) $(CXXMSG) $(MODULE_NAME) $< $@
+	$(Q1)$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+endef
+
+ifeq ($(BUILD_ENV),debuginfo)
+define cmd_debuginfo
+	$(PRINT4) $(DBGMSG) $(MODULE_NAME) $@ $@.debuginfo
+	$(Q1)$(OBJCOPY) --only-keep-debug $@ $@.debuginfo
+	$(Q1)$(OBJCOPY) --strip-debug $@
+	$(Q1)$(OBJCOPY) --add-gnu-debuglink=$@.debuginfo $@
+endef
+endif
+
+ifeq ($(BUILD_ENV),debug)
+define cmd_debug
+	$(PRINT4) $(STRIPMSG) $(MODULE_NAME) $@ $@
+	$(Q2)$(STRIP) $@
+endef
+endif
+
+define cmd_bins
+	$(PRINT3) $(LDMSG) $(MODULE_NAME) $@
+	$(Q1)$(CC) -o $@ $<  $(LDFLAGS) $(LOADLIBES) $(LDLIBS)
+	$(call cmd_debuginfo)
+	$(call cmd_debug)
+endef
+
 MODE=multibin
 MODULE_ROOT ?= $(shell pwd)
 MODULE_NAME ?= $(shell basename $(MODULE_ROOT))
@@ -62,17 +126,18 @@ BINS += $(addprefix $(OUT_BIN)/, $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=%))
 ifeq ($(BUILD_ENV),map)
     LDFLAGS += -Wl,-Map,$@.map
 endif
+
 # CreateDirectory
 OUT_DIRS := $(sort $(OUT_ROOT) $(OUT_BIN) $(OUT_OBJECT) $(OUT_DPEND))
 OUT_DIRS += $(sort $(dir $(BINS) $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DPEND_CXX) $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)))
 CreateResult :=
 ifeq ($(MAKECMDGOALS),all)
-dummy := $(foreach dir, $(OUT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
+CreateResult += $(foreach dir, $(OUT_DIRS), $(call CreateDirectory, $(dir)))
 else ifeq ($(MAKECMDGOALS),)
-dummy := $(foreach dir, $(OUT_DIRS), CreateResult += $(call CreateDirectory, $(dir)))
+CreateResult += $(foreach dir, $(OUT_DIRS), $(call CreateDirectory, $(dir)))
 endif
 ifneq ($(strip $(CreateResult)),)
-	err = $(error create directory failed: $(CreateResult))
+	$(error create directory failed: $(CreateResult))
 endif
 
 ##############################
@@ -89,59 +154,35 @@ after: $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)
 success:
 
 $(DEPEND_C): $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.c
-	$(PRINT4) $(DEPENDMSG) $(MODULE_NAME) $< $@
-	$(Q3)set -e; \
-	$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
-	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
+	$(call cmd_dep_c)
 ifeq ($(MAKECMDGOALS),all)
-sinclude $(DEPEND_C)
+-include $(DEPEND_C)
 else ifeq ($(MAKECMDGOALS),)
-sinclude $(DEPEND_C)
+-include $(DEPEND_C)
 endif
 
 $(OBJECT_C):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.c
-	$(PRINT4) $(CCMSG) $(MODULE_NAME) $< $@
-	$(Q1)$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+	$(call cmd_c)
 
 $(DEPEND_CXX) : $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.cpp
-	$(PRINT4) $(DEPENDMSG) $(MODULE_NAME) $< $@
-	$(Q3)set -e; \
-	$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
-	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
+	$(call cmd_dep_cxx)
 ifeq ($(MAKECMDGOALS),all)
-sinclude $(DEPEND_CXX)
+-include $(DEPEND_CXX)
 else ifeq ($(MAKECMDGOALS),)
-sinclude $(DEPEND_CXX)
+-include $(DEPEND_CXX)
 endif
 
 $(OBJECT_CXX):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.cpp
-	$(PRINT4) $(CXXMSG) $(MODULE_NAME) $< $@
-	$(Q1)$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+	$(call cmd_cxx)
 
 $(BINS): $(OUT_BIN)/% : $(OUT_OBJECT)/%.o
-	$(PRINT3) $(LDMSG) $(MODULE_NAME) $@
-	$(Q1)$(CC) -o $@ $<  $(LDFLAGS) $(LOADLIBES) $(LDLIBS)
-ifeq ($(BUILD_ENV),debuginfo)
-	$(PRINT4) $(DBGMSG) $@ $@.debuginfo
-	$(Q1)$(OBJCOPY) --only-keep-debug $@ $@.debuginfo
-	$(Q1)$(OBJCOPY) --strip-debug $@
-	$(Q1)$(OBJCOPY) --add-gnu-debuglink=$@.debuginfo $@
-endif
-ifneq ($(BUILD_ENV),debug)
-	$(PRINT4) $(STRIPMSG) $(MODULE_NAME) $@ $@
-	$(Q2)$(STRIP) $@
-endif
+	$(call cmd_bins)
 
 $(OUT_CONFIG_FILES): $(OUT_CONFIG)/% : $(SOURCE_ROOT)/%
-	$(PRINT4) $(CPMSG) $(MODULE_NAME) $< $@
-	$(Q2)$(CP) $< $@
+	$(call cmd_cp)
 
 $(OUT_ADDED_FILES): $(OUT_BIN)/% : $(SOURCE_ROOT)/%
-	$(PRINT4) $(CPMSG) $(MODULE_NAME) $< $@
-	$(Q2)$(CP) $^ $@
+	$(call cmd_cp)
 
 .PHONY: install
 install:
@@ -284,10 +325,7 @@ clean:
 # $(Q2)[ "`ls $(OUT_BIN)`" ] || $(RM) $(OUT_BIN)
 # $(Q2)[ "`ls $(OUT_DEPEND)`" ] || $(RM) $(OUT_DEPEND)
 # $(Q2)[ "`ls $(OUT_ROOT)`" ] || $(RM) $(OUT_ROOT)
-	$(Q2)$(RM) $(OUT_ROOT)
-ifeq ($(MAKELEVEL),0)
-	@echo "clean done"
-endif
+	$(call cmd_rm,$(OUT_ROOT))
 
 .PHONY: distclean
 distclean: clean
