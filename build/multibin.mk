@@ -47,7 +47,7 @@ define cmd_debuginfo
 endef
 endif
 
-ifeq ($(BUILD_ENV),debug)
+ifneq ($(BUILD_ENV),debug)
 define cmd_debug
 	$(Q)$(PRINT4) $(STRIPMSG) $(MODULE_NAME) $@ $@
 	$(Q2)$(STRIP) $@
@@ -103,7 +103,11 @@ BINS := $(addprefix $(OUT_BIN)/, $(SOURCE_C:$(SOURCE_ROOT)/%.c=%))
 BINS += $(addprefix $(OUT_BIN)/, $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=%))
 
 ifeq ($(BUILD_ENV),map)
-    LDFLAGS += -Wl,-Map,$@.map
+ifeq ($(ISCLANG),)
+	LDFLAGS += -Wl,-Map,$@.map
+else
+	LDFLAGS += -Wl,-map,$@.map
+endif
 endif
 
 # CreateDirectory
