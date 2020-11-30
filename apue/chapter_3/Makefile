@@ -1,5 +1,6 @@
-include ../../build/def.mk
+PROJECT_ROOT ?= $(abspath ../..)
+include $(PROJECT_ROOT)/build/def.mk
 
 SOURCE_OMIT += hole_file.c
 
-include ../../build/multibin.mk
+include $(PROJECT_ROOT)/build/multibin.mk

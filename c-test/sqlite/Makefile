@@ -1,5 +1,6 @@
-include ../../build/def.mk
+PROJECT_ROOT ?= $(abspath ../..)
+include $(PROJECT_ROOT)/build/def.mk
 
 LOADLIBES += -lsqlite3
 
-include ../../build/multibin.mk
+include $(PROJECT_ROOT)/build/multibin.mk

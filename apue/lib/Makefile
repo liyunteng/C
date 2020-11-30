@@ -1,5 +1,6 @@
-include ../../build/def.mk
+PROJECT_ROOT ?= $(abspath ../..)
+include $(PROJECT_ROOT)/build/def.mk
 
 SOURCE_DIRS = .
 
-include ../../build/library.mk
+include $(PROJECT_ROOT)/build/library.mk

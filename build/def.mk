@@ -21,21 +21,25 @@ ifeq ($(BUILD_VERBOSE),0)
     Q1 = @
     Q2 = @
     Q3 = @
+	Q  = @
     MAKEFLAGS += --no-print-directory -s
 else ifeq ($(BUILD_VERBOSE),1)
     Q1 =
     Q2 = @
     Q3 = @
+	Q  = @
     MAKEFLAGS += --no-print-directory
 else ifeq ($(BUILD_VERBOSE),2)
     Q1 =
     Q2 =
     Q3 = @
+	Q  = @
     MAKEFLAGS += --no-print-directory
 else ifeq ($(BUILD_VERBOSE),3)
     Q1 =
     Q2 =
     Q3 =
+	Q  = @
 endif
 
 # Output
@@ -53,7 +57,6 @@ OUT_INCLUDE   := $(OUT_ROOT)/include
 OUT_BIN       := $(OUT_ROOT)/bin
 OUT_LIB       := $(OUT_ROOT)/lib
 OUT_OBJECT    := $(OUT_ROOT)/obj
-OUT_DEPEND    := $(OUT_ROOT)/obj
 OUT_CONFIG    := $(OUT_ROOT)/etc
 
 # Compiler
@@ -66,7 +69,7 @@ LD		    := $(CROSS_COMPILE)ld
 AR		    := $(CROSS_COMPILE)ar
 NM		    := $(CROSS_COMPILE)nm
 STRIP	    := $(CROSS_COMPILE)strip
-OBJCOPY	    := $(CROSS_COMPILE)objcopy
+OBJCOPY	    := $(CROSS_COMPILE)llvm-objcopy
 OBJDUMP	    := $(CROSS_COMPILE)objdump
 OBJSIZE		:= $(CROSS_COMPILE)size
 
@@ -82,14 +85,9 @@ ARFLAGS     := rcs
 # Tools
 SHELL       := /bin/sh
 OS_TYPE     := $(shell uname)
-ifeq ($(OS_TYPE),Darwin)
-CP          := rsync -a
-else
 CP          := cp -rf
-endif
 RM          := rm -rf
 MKDIR       := mkdir -p
-
 
 ifeq ($(BUILD_ENV), release)
 	CFLAGS += -O2 -DNDEBUG
@@ -115,7 +113,6 @@ COLOR_NORMAL := \033[0m
 
 CCMSG     := "CC"
 CXXMSG    := "CXX"
-DEPENDMSG := "DEP"
 LDMSG     := "LD"
 ARMSG     := "AR"
 STRIPMSG  := "STRIP"
@@ -123,10 +120,10 @@ CPMSG     := "COPY"
 RMMSG     := "RM"
 DBGMSG    := "DBG"
 MKDIRMSG  := "MKDIR"
-# PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s  =>  %s\n"
-PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %0.0s%s\n"
-# PRINT4    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s%0.0s\n"
-PRINT3    := @printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s\n"
+# PRINT4    := printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s  =>  %s\n"
+PRINT4    := printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %0.0s%s\n"
+# PRINT4    := printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s%0.0s\n"
+PRINT3    := printf "$(COLOR_GREEN)%-6.6s$(COLOR_NORMAL) [%s]  %s\n"
 
 export
 

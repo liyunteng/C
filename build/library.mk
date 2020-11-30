@@ -16,55 +16,34 @@
 # BUILD_VERBOSE:   verbose output (MUST Before def.mk)
 # BUILD_OUTPUT:    output dir (MUST Before def.mk)
 
-# Create Directory
-CreateDirectory = $(shell [ ! -d $1 ] && ($(MKDIR) $1 || echo "mkdir '$1' failed"))
-# Remove Directory
-RemoveDirectory = $(shell [ -d $1 ] && ($(RM) $1 || echo "rm dir '$1' failed"))
-
 define cmd_cp
-	$(PRINT4) $(CPMSG) $(MODULE_NAME) $< $@
+	$(Q)$(PRINT4) $(CPMSG) $(MODULE_NAME) $< $@
 	$(Q2)$(CP) $< $@
 endef
 
 define cmd_mkdir
-	$(PRINT3) $(MKDIRMSG) $(MODULE_NAME) $1
+	$(Q)$(PRINT3) $(MKDIRMSG) $(MODULE_NAME) $1
 	$(Q2)$(MKDIR) $1
 endef
 
 define cmd_rm
+	$(Q2)[ -d $1 ] && $(RM) $1 || exit 0; \
 	$(PRINT3) $(RMMSG) $(MODULE_NAME) $1
-	$(Q2)$(RM) $1
-endef
-
-define cmd_dep_c
-	$(PRINT4) $(DEPENDMSG) $(MODULE_NAME) $< $@
-	$(Q3)set -e; \
-	$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $@.$$$$; \
-	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-endef
-
-define cmd_dep_cxx
-	$(PRINT4) $(DEPENDMSG) $(MODULE_NAME) $< $@
-	$(Q3)set -e; \
-	$(CC) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
-	sed 's,.*\.o[ :]*,$(@:%.d=%.o) $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
 endef
 
 define cmd_c
-	$(PRINT4) $(CCMSG) $(MODULE_NAME) $< $@
-	$(Q1)$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+	$(Q)$(PRINT4) $(CCMSG) $(MODULE_NAME) $< $@
+	$(Q1)$(CC) -MMD -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 endef
 
 define cmd_cxx
-	$(PRINT4) $(CXXMSG) $(MODULE_NAME) $< $@
-	$(Q1)$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+	$(Q)$(PRINT4) $(CXXMSG) $(MODULE_NAME) $< $@
+	$(Q1)$(CXX) -MMD -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 endef
 
 ifeq ($(BUILD_ENV),debuginfo)
 define cmd_debuginfo
-	$(PRINT4) $(DBGMSG) $(MODULE_NAME) $@ $@.debuginfo
+	$(Q)$(PRINT4) $(DBGMSG) $(MODULE_NAME) $@ $@.debuginfo
 	$(Q1)$(OBJCOPY) --only-keep-debug $@ $@.debuginfo
 	$(Q1)$(OBJCOPY) --strip-debug $@
 	$(Q1)$(OBJCOPY) --add-gnu-debuglink=$@.debuginfo $@
@@ -73,23 +52,24 @@ endif
 
 ifeq ($(BUILD_ENV),debug)
 define cmd_debug
-	$(PRINT4) $(STRIPMSG) $(MODULE_NAME) $@ $@
+	$(Q)$(PRINT4) $(STRIPMSG) $(MODULE_NAME) $@ $@
 	$(Q2)$(STRIP) $@
 endef
 endif
-define cmd_ar
-	$(PRINT3) $(ARMSG) $(MODULE_NAME) $@
+define cmd_lib
+	$(Q)$(PRINT3) $(ARMSG) $(MODULE_NAME) $@
 	$(Q1)$(AR) $(ARFLAGS) $@ $(OBJECT_C) $(OBJECT_CXX)
 	$(call cmd_debug)
 endef
 
 define cmd_solib
-	$(PRINT3) $(LDMSG) $(MODULE_NAME) $@
+	$(Q)$(PRINT3) $(LDMSG) $(MODULE_NAME) $@
 	$(Q1)$(CC) -o $@ $(OBJECT_C) $(OBJECT_CXX) -shared $(LDFLAGS)
 	$(call cmd_debuginfo)
 	$(call cmd_debug)
 endef
 
+##############################
 MODE=library
 MODULE_ROOT ?= $(shell pwd)
 MODULE_NAME ?= $(shell basename $(MODULE_ROOT))
@@ -113,8 +93,8 @@ endif
 # Object FileList
 OBJECT_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_OBJECT)/%.o)
 OBJECT_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_OBJECT)/%.o)
-DEPEND_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_DEPEND)/%.d)
-DEPEND_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_DEPEND)/%.d)
+DEPEND_C   := $(SOURCE_C:$(SOURCE_ROOT)/%.c=$(OUT_OBJECT)/%.d)
+DEPEND_CXX := $(SOURCE_CXX:$(SOURCE_ROOT)/%.cpp=$(OUT_OBJECT)/%.d)
 
 # Include FileList
 INCLUDE_DIR ?= include
@@ -146,33 +126,24 @@ ifeq ($(BUILD_ENV),map)
 endif
 
 # CreateDirectory
-OUT_DIRS := $(sort $(OUT_ROOT) $(OUT_LIB) $(OUT_OBJECT) $(OUT_DEPEND))
-OUT_DIRS += $(sort $(dir $(OBJECT_C) $(OBJECT_CXX) $(DEPEND_C) $(DEPEND_CXX) $(OUT_EXPORT_FILES) $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)))
-CreateResult :=
-ifeq ($(MAKECMDGOALS),all)
-CreateResult += $(foreach dir, $(OUT_DIRS), $(call CreateDirectory, $(dir)))
-else ifeq ($(MAKECMDGOALS),)
-CreateResult += $(foreach dir, $(OUT_DIRS), $(call CreateDirectory, $(dir)))
-endif
-ifneq ($(strip $(CreateResult)),)
-	$(error create directory failed: $(CreateResult))
-endif
+OUT_DIRS += $(sort $(patsubst %/,%, $(OUT_ROOT) $(OUT_LIB) $(OUT_OBJECT) \
+	$(dir $(OBJECT_C) $(OBJECT_CXX) $(OUT_EXPORT_FILES) $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES))))
 
 ##############################
 default:all
 
 all: library
 
-.PHONY: before success
+.PHONY: success
 ifeq ($(strip $(LIB_TYPE)),static)
-library: before header $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(LIB)  after success
+library: before header $(OBJECT_C) $(OBJECT_CXX) $(LIB)  after success
 else ifeq ($(strip $(LIB_TYPE)),dynamic)
-library: before header  $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(SOLIB) after success
+library: before header $(OBJECT_C) $(OBJECT_CXX) $(SOLIB) after success
 else ifeq ($(strip $(LIB_TYPE)),all)
-library: before header $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX) $(LIB) $(SOLIB) after success
+library: before header $(OBJECT_C) $(OBJECT_CXX) $(LIB) $(SOLIB) after success
 endif
 
-before:
+before: $(OUT_DIRS)
 
 after: $(OUT_CONFIG_FILES) $(OUT_ADDED_FILES)
 
@@ -180,33 +151,23 @@ success:
 
 header: $(OUT_EXPORT_FILES)
 
-$(DEPEND_C): $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.c
-	$(call cmd_dep_c)
-ifeq ($(MAKECMDGOALS),all)
--include $(DEPEND_C)
-else ifeq ($(MAKECMDGOALS),)
--include $(DEPEND_C)
-endif
 
 $(OBJECT_C):  $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.c
 	$(call cmd_c)
-
-$(DEPEND_CXX) : $(OUT_DEPEND)/%.d : $(SOURCE_ROOT)/%.cpp
-	$(call cmd_dep_cxx)
-ifeq ($(MAKECMDGOALS),all)
--include $(DEPEND_CXX)
-else ifeq ($(MAKECMDGOALS),)
--include $(DEPEND_CXX)
-endif
+-include $(DEPEND_C)
 
 $(OBJECT_CXX): $(OUT_OBJECT)/%.o : $(SOURCE_ROOT)/%.cpp
 	$(call cmd_cxx)
+-include $(DEPEND_CXX)
 
-$(LIB): $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX)
-	$(call cmd_ar)
+$(LIB): $(OBJECT_C) $(OBJECT_CXX)
+	$(call cmd_lib)
 
-$(SOLIB): $(DEPEND_C) $(OBJECT_C) $(DEPEND_CXX) $(OBJECT_CXX)
+$(SOLIB): $(OBJECT_C) $(OBJECT_CXX)
 	$(call cmd_solib)
+
+$(OUT_DIRS):
+	$(call cmd_mkdir,$@)
 
 $(OUT_EXPORT_FILES) : $(OUT_INCLUDE)/% : $(EXPORT_DIR)/%
 	$(call cmd_cp)
@@ -259,7 +220,6 @@ show:
 	@echo "OUT_BIN            = " $(OUT_BIN)
 	@echo "OUT_LIB            = " $(OUT_LIB)
 	@echo "OUT_OBJECT         = " $(OUT_OBJECT)
-	@echo "OUT_DEPEND         = " $(OUT_DEPEND)
 	@echo "OUT_CONFIG         = " $(OUT_CONFIG)
 	@echo ""
 
@@ -353,15 +313,6 @@ help:
 
 .PHONY: clean
 clean:
-# $(Q2)$(RM) $(OBJECT_C) $(OBJECT_CXX)
-# $(Q2)$(RM) $(LIB) $(SOLIB)
-# $(Q2)$(RM) $(DEPEND_C) $(DEPEND_CXX)
-# $(Q2)$(RM) $(HEADER_FILES)
-# $(Q2)[ "`ls $(OUT_OBJECT)`"  ] || $(RM) $(OUT_OBJECT)
-# $(Q2)[ "`ls $(OUT_INCLUDE)`" ] || $(RM) $(OUT_INCLUDE)
-# $(Q2)[ "`ls $(OUT_LIB)`" ] || $(RM) $(OUT_LIB)
-# $(Q2)[ "`ls $(OUT_DEPEND)`" ] || $(RM) $(OUT_DEPEND)
-# $(Q2)[ "`ls $(OUT_ROOT)`" ] || $(RM) $(OUT_ROOT)
 	$(call cmd_rm,$(OUT_ROOT))
 
 .PHONY: distclean

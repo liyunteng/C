@@ -1,4 +1,5 @@
-include ../../build/def.mk
+PROJECT_ROOT ?= $(abspath ../..)
+include $(PROJECT_ROOT)/build/def.mk
 
 SOURCE_DIRS = .
 LOADLIBES += -ljson-c
@@ -6,4 +7,4 @@ LOADLIBES += -ljson-c
 DUMMY := $(OUT_BIN)
 OUT_BIN = $(DUMMY)/json
 
-include ../../build/multibin.mk
+include $(PROJECT_ROOT)/build/multibin.mk

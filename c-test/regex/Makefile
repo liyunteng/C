@@ -1,8 +1,9 @@
-include ../../build/def.mk
+PROJECT_ROOT ?= $(abspath ../..)
+include $(PROJECT_ROOT)/build/def.mk
 
 ADDED_FILES += regex_data1 regex_data2
 
 DUMMY := $(OUT_BIN)
 OUT_BIN = $(DUMMY)/regex
 
-include ../../build/multibin.mk
+include $(PROJECT_ROOT)/build/multibin.mk

@@ -25,7 +25,7 @@ all: subdir
 .PHONY: subdir $(SUBDIRS_BUILD)
 subdir: $(SUBDIRS_BUILD)
 $(SUBDIRS_BUILD):
-	$(Q3)$(MAKE) -C $@ all OUT_OBJECT=$(OUT_OBJECT)/$@ OUT_DEPEND=$(OUT_DEPEND)/$@ || exit 1
+	$(Q3)$(MAKE) -C $@ all OUT_OBJECT=$(OUT_OBJECT)/$@ || exit 1
 
 .PHONY: install $(SUBDIRS_INSTALL)
 install: $(SUBDIRS_INSTALL)
@@ -40,7 +40,7 @@ $(SUBDIRS_UNINSTALL):
 .PHONY: clean $(SUBDIRS_CLEAN)
 clean: $(SUBDIRS_CLEAN)
 $(SUBDIRS_CLEAN):
-	$(Q3)$(MAKE) -C $(patsubst %_clean,%,$@) clean OUT_OBJECT=$(OUT_OBJECT)/$(@:%_clean=%) OUT_DEPEND=$(OUT_DEPEND)/$(@:%_clean=%) || exit 1
+	$(Q3)$(MAKE) -C $(patsubst %_clean,%,$@) clean OUT_OBJECT=$(OUT_OBJECT)/$(@:%_clean=%) || exit 1
 
 
 .PHONY: distclean $(SUBDIRS_DISTCLEAN)
@@ -52,7 +52,7 @@ $(SUBDIRS_DISTCLEAN):
 .PHONY: showall $(SUBDIRS_SHOW) show
 showall: $(SUBDIRS_SHOW) show
 $(SUBDIRS_SHOW):
-	$(Q3)$(MAKE) -C $(patsubst %_show,%,$@) showall OUT_OBJECT=$(OUT_OBJECT)/$(@:%_show=%) OUT_DEPEND=$(OUT_DEPEND)/$(@:%_show=%) || exit 1
+	$(Q3)$(MAKE) -C $(patsubst %_show,%,$@) showall OUT_OBJECT=$(OUT_OBJECT)/$(@:%_show=%) || exit 1
 
 show:
 	@echo "=============== $(CURDIR) ==============="
@@ -88,7 +88,6 @@ show:
 	@echo "OUT_BIN            = " $(OUT_BIN)
 	@echo "OUT_LIB            = " $(OUT_LIB)
 	@echo "OUT_OBJECT         = " $(OUT_OBJECT)
-	@echo "OUT_DEPEND         = " $(OUT_DEPEND)
 	@echo "OUT_CONFIG         = " $(OUT_CONFIG)
 	@echo ""
 
