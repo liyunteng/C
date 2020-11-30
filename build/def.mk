@@ -68,10 +68,11 @@ MKDIR       := mkdir -p
 
 # Compiler
 # ******************************
-ISCLANG := $(findstring clang,$(shell $(CC) --version))
 CC		    := $(CROSS_COMPILE)gcc
 CXX         := $(CROSS_COMPILE)g++
 CPP		    := $(CC) -E
+
+ISCLANG := $(findstring clang,$(shell $(CC) --version))
 
 ifneq ($(ISCLANG),)
 AS          := $(CROSS_COMPILE)llvm-as
