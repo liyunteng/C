@@ -83,7 +83,7 @@ int test_rtsp_easy(char *URL, char *fname)
         res = -1;
         goto cleanup;
     }
-
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     /* range request */
     /* curl_easy_setopt(curl, CURLOPT_RANGE, "100-200"); */
     curl_easy_setopt(curl, CURLOPT_RTSP_STREAM_URI, stream_uri);
@@ -101,14 +101,14 @@ int test_rtsp_easy(char *URL, char *fname)
 
     curl_easy_setopt(curl, CURLOPT_INTERLEAVEFUNCTION, rtp_write);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, protofile);
 
     char tmp[1024];
     strcpy(tmp, stream_uri);
-    strcat(tmp, "/traceID=65536");
+    strcat(tmp, "/trackID=2");
     curl_easy_setopt(curl,  CURLOPT_RTSP_STREAM_URI, tmp);
     free(stream_uri);
+    stream_uri = NULL;
     curl_easy_setopt(curl, CURLOPT_RTSP_TRANSPORT, "RTP/AVP/TCP;interleaved=0-1");
     curl_easy_setopt(curl, CURLOPT_RTSP_REQUEST, CURL_RTSPREQ_SETUP);
     res = curl_easy_perform(curl);
@@ -126,6 +126,7 @@ int test_rtsp_easy(char *URL, char *fname)
     }
     curl_easy_setopt(curl, CURLOPT_RTSP_STREAM_URI, stream_uri);
     free(stream_uri);
+    stream_uri = NULL;
     curl_easy_setopt(curl, CURLOPT_RTSP_REQUEST, CURL_RTSPREQ_PLAY);
     res = curl_easy_perform(curl);
     if (res)
@@ -161,5 +162,5 @@ int main(int argc, char *argv[])
 }
 
 /* Local Variables: */
-/* compile-command: "gcc rtsp_easy.c -o rtsp_easy -lcurl" */
+/* compile-command: "gcc rtsp_easy.c -o rtsp_easy -lcurl -ggdb" */
 /* End: */
